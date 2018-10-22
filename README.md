@@ -1,6 +1,8 @@
-If you'd like to learn about administration procedures, an introduction to the code base, and see the full test protocol, visit the __App Store Wiki__ page:
-<http://wiki.cytoscape.org/AppStore>
+This is a Loraine Lab fork of the Cytoscape App Store code, with some changes.
 
-Note that the App Store can also be deployed as a Docker container. To find out more, visit: https://github.com/cytoscape/appstore/wiki. (This setup is likely stale, and is not supported.)
+* The Cytoscape App code branch `wip` (work-in-progress) branch is our `master` branch
+* The Cytoscape App code branch `master` branch is our `master-old` branch
 
-If you'd like to go to the App Store __bug tracker__, visit the Cytoscape Redmine page: <https://code.cytoscape.org/redmine/projects/cytoscape3>
+We are using this repository to develop an IGB App Store, working from the Cytoscape code base. 
+
+We hope our changes can be incorporated into the Cytoscape App Store code, which is hosted here: https://github.com/cytoscape/appstore
