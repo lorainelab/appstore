@@ -7,6 +7,7 @@ We are using this repository to develop an IGB App Store, working from the Cytos
 
 We hope our changes can be incorporated into the Cytoscape App Store code, which is hosted here: https://github.com/cytoscape/appstore
 
+Link to Instructions for CytoScape setup - https://github.com/cytoscape/appstore/wiki/Steps-to-Setup-Cytoscape-Appstore-on-VM
 
 ## Steps to set up on EC-2:
 
