@@ -13,7 +13,7 @@ envname="appstoreEnv"
 echo "Give virtual environment name:(Default:appstoreEnv):"
 read name
 name="${name:-$envname}"
-sudo python3 -m venv $name
+python3 -m venv $name
 source  $name"/bin/activate"
 for i in "${pippackages[@]}"
 do
