@@ -72,9 +72,37 @@ Once logged in, follow the steps below:
 4. Copy all the files with ‘-template.py’ end with their names after removing ‘-template’ part (dbs-template.py, apikeys-template.py, geoip-template.py, mvn-template.py, emails-template.py) Eg. ‘cp dbs-template.py dbs.py’
 5. In the home directory, `cp maven-app-repo-settings-template.xml maven-app-repo-settings.xml`
 
+#### Installing MySQL-server:
+1. `sudo apt-get install mysql-server`
+2. Set up mysql security settings like root passwordetc. using `sudo mysql_secure_installation`
+3. To see if the mysql server is running, use `sudo systemctl status mysql.service`
+refer this link for more information
+https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-ubuntu-16-04#step-2-%E2%80%94-installing-mysql
+
+#### Setting up the MySQL:
+1. Create a database in mysql. You can enter MySQL client using `mysql -u <username> -p`
+2. Update the settings.py file in the home folder of the appstore repo to include the database settings:
+	---settings.py:---
+	DATABASES = {
+			'default':{
+			'ENGINE': 'django.db.backends.mysql',
+			'OPTIONS': {
+				'read_default_file': '/etc/mysql/my.cnf',
+			},
+			}
+		}
+
+3. Add the database details in the file /etc/mysql/my.conf
+	[client]
+	database = <name_of_db>
+	user = <username>
+	password = <pwd>
+	default-character-set = utf8
+
 ### Starting the app:
 
 1. Comment the line starting with STATIC_ROOT = SITE_DIR + "/Static/"..........
 2. Comment the line starting with filejoin(Site_dir, '/home/jeff.......
 3. Run `python3 manage.py migrate`
 4. Run `python3 manage.py runserver 8080` This will host the app on localhost:8080
+
