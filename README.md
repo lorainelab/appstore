@@ -15,20 +15,21 @@ Login to the ec2 instance using the pem file. Find more [here](https://docs.aws.
 (For Ubuntu AMI, The username is 'ubuntu')
 Once logged in, follow the steps below:
 
+### Use virtualenv to install dependencies. `sudo pip3 install virtualenv` [usage info](https://virtualenv.pypa.io/en/latest/userguide/#usage)
 1. Use `sudo apt-get update` to update the package lists.
-2. Download “pip3” for Python3 to facilitate easy installation of Python packages using the command `sudo apt-get install python3-pip`
-3. Install Django Version 1.8 using command: `pip3 install django==1.8` (installed at location: /home/<ubuntu>/.local/lib/python3.6/site-packages/django)
+2. Download “pip3” for Python3 to facilitate easy installation of Python packages using the command `sudo apt-get install python3-pip`  
+
+3. Install Django Version 1.8 using command: `pip3 install django==1.8` (installed at location: /home/<ubuntu>/.local/lib/python3.6/site-packages/django)  
 4. Install apache using `sudo apt-get install apache2`
-5. First, fork from this repo, and then clone the repo from your own bitbucket using `git clone git@bitbucket.org:<username>/appstore.git`
+5. First, fork from this repo, and then clone the repo from your own bitbucket using `git clone git@bitbucket.org:<username>/appstore.git CyAppStore`
 	First, we need to enable ssh into your bitbucket. Follow the instructions [here](https://confluence.atlassian.com/bitbucket/set-up-an-ssh-key-728138079.html#SetupanSSHkey-ssh2) to create a public and private ssh keys and add it to the bitbucket account.  
 	Then clone the repository.  
-6. move the cloned directory to /var/www using `sudo mv CyAppStore /var/www`
-7. cd into CyAppStore and add logs directory: `mkdir logs`
-8. `sudo chgrp -R www-data *` and `sudo chgrp -R www-data .git*`
-9. Install social-auth-app-django using `sudo pip3 install social-auth-app-django`
-10. Install zlib1g-dev: `sudo apt-get install zlib1g-dev`
-11. Install Pillow using `sudo pip3 install Pillow`
-12. Install Xapian: Detailed steps [here](https://xapian.org/docs/install.html)
+6. cd into CyAppStore and add logs directory: `mkdir logs`
+7. `sudo chgrp -R www-data *` and `sudo chgrp -R www-data .git*`
+8. Install social-auth-app-django using `sudo pip3 install social-auth-app-django`
+9. Install zlib1g-dev: `sudo apt-get install zlib1g-dev`
+10. Install Pillow using `sudo pip3 install Pillow`
+11. Install Xapian: Detailed steps [here](https://xapian.org/docs/install.html)
 	`curl -O https://oligarchy.co.uk/xapian/1.4.7/xapian-core-1.4.7.tar.xz`
 	`curl -O https://oligarchy.co.uk/xapian/1.4.7/xapian-omega-1.4.7.tar.xz`
 	`curl -O https://oligarchy.co.uk/xapian/1.4.7/xapian-bindings-1.4.7.tar.xz`
@@ -50,12 +51,11 @@ Once logged in, follow the steps below:
 	Xapian bindings:
 	`cd xapian-bindings-1.4.7` then `./configure` then `make` followed by `sudo make install`
 
-13. `sudo apt-get install python3-dev libmysqlclient-dev`
-14. `pip3 install mysqlclient` (instead of MySQL-python as it doesn't support python3)
-14.  mod_wsgi for python 3:  `sudo apt-get install python3-pip apache2 libapache2-mod-wsgi-py3`
+12. `sudo apt-get install python3-dev libmysqlclient-dev`
+13. `pip3 install mysqlclient` (instead of MySQL-python as it doesn't support python3)
 
 #### Install dependencies:
-1. `pip3 install django-haystack`
+1. `pip3 install django-haystack==2.2`  
 2. `pip3 install Whoosh`
 3. `sudo apt-get install libjpeg-dev`
 4. `sudo apt-get install libpng-dev`
@@ -70,36 +70,88 @@ Once logged in, follow the steps below:
 4. Copy all the files with ‘-template.py’ end with their names after removing ‘-template’ part (dbs-template.py, apikeys-template.py, geoip-template.py, mvn-template.py, emails-template.py) Eg. ‘cp dbs-template.py dbs.py’
 5. In the home directory, `cp maven-app-repo-settings-template.xml maven-app-repo-settings.xml`
 
-#### Installing MySQL-server:
+#### Set-up MySQL-server:
 1. `sudo apt-get install mysql-server`
 2. Set up mysql security settings like root passwordetc. using `sudo mysql_secure_installation`
 3. To see if the mysql server is running, use `sudo systemctl status mysql.service`
 refer [this link](https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-ubuntu-16-04#step-2-%E2%80%94-installing-mysql) for more information 
 
-#### Setting up the MySQL:
-1. Create a database in mysql. You can enter MySQL client using `mysql -u <username> -p`
-2. Update the settings.py file in the home folder of the appstore repo to include the database settings:   
+4. Create a database in mysql. You can enter MySQL client using `mysql -u <username> -p`
+5. Update the settings.py file in the home folder of the appstore repo to include the database settings:   
 	---settings.py:---
-DATABASES = {  
-'default':{  
-		'ENGINE': 'django.db.backends.mysql',  
-		'OPTIONS': {  
-		'read_default_file': '/etc/mysql/my.cnf',  
-		},  
-	}  
-}  
+change the database settings:
+		DATABASES = {
+	    'default': {
+	        'ENGINE': 'django.db.backends.mysql', 
+	        'NAME': 'testdjango',
+	        'USER': '<username-of-mysql-user>',
+	        'PASSWORD': '<password-of-mysql-user>',
+	        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+	        'PORT': '3306',
+	    	}
+	   }
 
-3. Add the database details in the file /etc/mysql/my.conf  
-[client]  
-database = <name_of_db>  
-user = <username>  
-password = <pwd>  
-default-character-set = utf8  
+6. Create new user in mysql, other than root, which we will be used by django app to accesst the db:
+	a. enter mysql with root: `sudo mysql -u root -p`
+	b. create user 'igbuser'@'localhost' identified by 'Igb@1234';
+	c. grant usage on *.* to 'igbuser'@'localhost';
+	d. grant all privileges on testdjango.* to 'igbuser'@'localhost';
+
+### Setting up Apache
+1. install apache2:  `sudo apt-get install python3-pip apache2 apache2-dev`
+2. install mod_wsgi using the instructions from [this link](https://modwsgi.readthedocs.io/en/develop/user-guides/quick-installation-guide.html)
+3. create a new file igbstore.conf and add following apache config to the file in order to host django app on apache.   
+
+
+```python
+	#note- give the path to site-packages directory in the virtual enviornment ('env' here), where django is installed. doesnt work without virtual environment.   
+	WSGIDaemonProcess cyappstore python-path= <path-to-CyAppStore>/env/lib/python3.6/site-packages   
+
+	WSGIProcessGroup cyappstore   
+	Alias /static <path-to-CyAppStore>/static   
+
+	#path to wsgi config for the django app to be hosted   
+	WSGIScriptAlias / <path-to-CyAppStore>/django.wsgi   
+
+	#Give access to static files like css   
+	<Directory <path-to-CyAppStore>/static>   
+	   Require all granted   
+	</Directory>   
+
+	#give access to django.wsgi   
+	<Directory <path-to-CyAppStore> >   
+		<Files django.wsgi>   
+			Order deny,allow   
+			Require all granted   
+		</Files>   
+	</Directory>  
+```
+
+	Replace <path-to-CyAppStore> with your path to the directory containing the project. eg- /home/jack/CyAppStore  
+
+Include this config in apache using Include directive:
+	add following line in the /etc/apache/sites-available/000-default.conf (modify the path)
+	Include <path to cyappstore.conf>
+	
+#### Changes to CyAppStore/django.wsgi:
+
+1. Change path of SITE_PARENT_DIR to point to the parent directory of the project CyAppStore.
+2. Change the los.environ['DJANGO_SETTINGS_MODULE'] to have the value of 'CyAppStore.settings'
+
+
+#### Changes to CyAppStore/settings.py:
+1. Change SITE_DIR to give absolute path to the CyAppStore directory.
+2. Comment the line starting with STATIC_ROOT = SITE_DIR + "/Static/"..........
+3. Comment the line starting with filejoin(Site_dir, '/home/jeff.......
 
 ### Starting the app:
+1. Run `sudo python3 manage.py makemigrations`
+2. Run `sudo python3 manage.py migrate`
+3. Run `python3 manage.py runserver 8080` This will host the app on localhost:8080  
 
-1. Comment the line starting with STATIC_ROOT = SITE_DIR + "/Static/"..........
-2. Comment the line starting with filejoin(Site_dir, '/home/jeff.......
-3. Run `python3 manage.py migrate`
-4. Run `python3 manage.py runserver 8080` This will host the app on localhost:8080
+
+To run on apache, make sure you performed the steps mentioned above for ** setting up apache ** then restart apache using `sudo service apache2 restart`  
+Any lgs are generated in Ubuntu at- var/log/apache2
+
+
 
