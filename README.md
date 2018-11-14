@@ -76,26 +76,26 @@ Once logged in, follow the steps below:
 3. To see if the mysql server is running, use `sudo systemctl status mysql.service`
 refer [this link](https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-ubuntu-16-04#step-2-%E2%80%94-installing-mysql) for more information 
 
-4. Create a database in mysql. You can enter MySQL client using `mysql -u <username> -p`
-5. Update the settings.py file in the home folder of the appstore repo to include the database settings:   
-	---settings.py:---
-change the database settings:
-		DATABASES = {
-	    'default': {
-	        'ENGINE': 'django.db.backends.mysql', 
-	        'NAME': 'testdjango',
-	        'USER': '<username-of-mysql-user>',
-	        'PASSWORD': '<password-of-mysql-user>',
-	        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
-	        'PORT': '3306',
-	    	}
-	   }
-
-6. Create new user in mysql, other than root, which we will be used by django app to accesst the db:
-	a. enter mysql with root: `sudo mysql -u root -p`
-	b. create user 'igbuser'@'localhost' identified by 'Igb@1234';
-	c. grant usage on *.* to 'igbuser'@'localhost';
-	d. grant all privileges on testdjango.* to 'igbuser'@'localhost';
+4. Create a database in mysql. You can enter MySQL client using `mysql -u <username> -p`  
+	However, root user needs to use sudo to enter databse
+5. Create new user in mysql, other than root, which we will be used by django app to accesst the db:  
+	a. enter mysql with root: `sudo mysql -u root -p`  
+	b. create user 'igbuser'@'localhost' identified by 'Igb@1234';  
+	c. grant usage on *.* to 'igbuser'@'localhost';  
+	d. grant all privileges on testdjango.* to 'igbuser'@'localhost';  
+6. Update the settings.py file in the home folder of the appstore repo to include the database settings:   
+	---settings.py:---  
+change the database settings:  
+		DATABASES = {  
+	    'default': {  
+	        'ENGINE': 'django.db.backends.mysql',  
+	        'NAME': 'testdjango',  
+	        'USER': '<username-of-mysql-user>',  
+	        'PASSWORD': '<password-of-mysql-user>',  
+	        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on  
+	        'PORT': '3306',  
+			  }  
+	   }  
 
 ### Setting up Apache
 1. install apache2:  `sudo apt-get install python3-pip apache2 apache2-dev`
