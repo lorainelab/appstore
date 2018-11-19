@@ -17,19 +17,14 @@ Once logged in, follow the steps below:
 
 ### Use virtualenv to install dependencies. `sudo pip3 install virtualenv` [usage info](https://virtualenv.pypa.io/en/latest/userguide/#usage)
 1. Use `sudo apt-get update` to update the package lists.
-2. Download “pip3” for Python3 to facilitate easy installation of Python packages using the command `sudo apt-get install python3-pip`  
-
-3. Install Django Version 1.8 using command: `pip3 install django==1.8` (installed at location: /home/<ubuntu>/.local/lib/python3.6/site-packages/django)  
-4. Install apache using `sudo apt-get install apache2`
-5. First, fork from this repo, and then clone the repo from your own bitbucket using `git clone git@bitbucket.org:<username>/appstore.git CyAppStore`
+2. Fork this repo, and then clone the repo from your own bitbucket using `git clone git@bitbucket.org:<username>/appstore.git CyAppStore`
 	First, we need to enable ssh into your bitbucket. Follow the instructions [here](https://confluence.atlassian.com/bitbucket/set-up-an-ssh-key-728138079.html#SetupanSSHkey-ssh2) to create a public and private ssh keys and add it to the bitbucket account.  
-	Then clone the repository.  
-6. cd into CyAppStore and add logs directory: `mkdir logs`
-7. `sudo chgrp -R www-data *` and `sudo chgrp -R www-data .git*`
-8. Install social-auth-app-django using `sudo pip3 install social-auth-app-django`
-9. Install zlib1g-dev: `sudo apt-get install zlib1g-dev`
-10. Install Pillow using `sudo pip3 install Pillow`
-11. Install Xapian: Detailed steps [here](https://xapian.org/docs/install.html)
+	Then clone the repository.
+3. cd into CyAppStore and add logs directory: `mkdir logs`
+4. `sudo chgrp -R www-data *` and `sudo chgrp -R www-data .git*`
+5. use `./installDependencies.sh` to install all the dependencies required by the Appstore. you may need to give permission to execute the file using chmod command
+
+6. Install Xapian: Detailed steps [here](https://xapian.org/docs/install.html)
 	`curl -O https://oligarchy.co.uk/xapian/1.4.7/xapian-core-1.4.7.tar.xz`
 	`curl -O https://oligarchy.co.uk/xapian/1.4.7/xapian-omega-1.4.7.tar.xz`
 	`curl -O https://oligarchy.co.uk/xapian/1.4.7/xapian-bindings-1.4.7.tar.xz`
@@ -51,17 +46,6 @@ Once logged in, follow the steps below:
 	Xapian bindings:
 	`cd xapian-bindings-1.4.7` then `./configure` then `make` followed by `sudo make install`
 
-12. `sudo apt-get install python3-dev libmysqlclient-dev`
-13. `pip3 install mysqlclient` (instead of MySQL-python as it doesn't support python3)
-
-#### Install dependencies:
-1. `pip3 install django-haystack==2.2`  
-2. `pip3 install Whoosh`
-3. `sudo apt-get install libjpeg-dev`
-4. `sudo apt-get install libpng-dev`
-5. `pip3 install ipython` for debugging purposes
-
-
 #### GeoIP:
 
 1. go to download/geolite directory, type `make`.
@@ -71,8 +55,8 @@ Once logged in, follow the steps below:
 5. In the home directory, `cp maven-app-repo-settings-template.xml maven-app-repo-settings.xml`
 
 #### Set-up MySQL-server:
-1. `sudo apt-get install mysql-server`
-2. Set up mysql security settings like root passwordetc. using `sudo mysql_secure_installation`
+1. make sure mysql-server is installed.
+2. Set up mysql security settings like root password using `sudo mysql_secure_installation`
 3. To see if the mysql server is running, use `sudo systemctl status mysql.service`
 refer [this link](https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-ubuntu-16-04#step-2-%E2%80%94-installing-mysql) for more information 
 
@@ -98,10 +82,9 @@ change the database settings:
 	   }  
 
 ### Setting up Apache
-1. install apache2:  `sudo apt-get install python3-pip apache2 apache2-dev`
-2. install mod_wsgi using the instructions from [this link](https://modwsgi.readthedocs.io/en/develop/user-guides/quick-installation-guide.html)
-3. create a new file igbstore.conf and add following apache config to the file in order to host django app on apache.   
 
+1. install mod_wsgi using the instructions from [this link](https://modwsgi.readthedocs.io/en/develop/user-guides/quick-installation-guide.html)
+2. create a new file igbstore.conf and add following apache config to the file in order to host django app on apache.   
 
 ```python
 	#note- give the path to site-packages directory in the virtual enviornment ('env' here), where django is installed. doesnt work without virtual environment.   
@@ -151,7 +134,7 @@ Include this config in apache using Include directive:
 
 
 To run on apache, make sure you performed the steps mentioned above for ** setting up apache ** then restart apache using `sudo service apache2 restart`  
-Any lgs are generated in Ubuntu at- var/log/apache2
+Any logs for apache are generated in Ubuntu at- var/log/apache2
 
 
 
