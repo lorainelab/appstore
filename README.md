@@ -68,7 +68,7 @@ Once logged in, follow the steps below:
 5. Create new user in mysql, other than root, which we will be used by django app to accesst the db:   
 	a. enter mysql with root: `sudo mysql -u root -p`  
 	b. `create user 'igbuser'@'localhost' identified by 'Igb@1234';`  
-	c. `grant usage on \*.\* to 'igbuser'@'localhost';`  
+	c. `grant usage on *.* to 'igbuser'@'localhost';`  
 	d. `grant all privileges on testdjango.* to 'igbuser'@'localhost';`  
 6. Update the settings.py file in the home folder of the appstore repo to include the database settings:   
 	---settings.py:---  
@@ -113,7 +113,7 @@ change the database settings:
 	</Directory>  
 ```
 
-	**Note: Change '/home/<username>/CyAppStore' according to your username**
+**Note: Change '/home/<username>/CyAppStore' according to your username**
 
 Include this config in apache using Include directive:
 	add following line in the /etc/apache/sites-available/000-default.conf
