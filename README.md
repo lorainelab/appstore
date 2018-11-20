@@ -43,10 +43,10 @@ Once logged in, follow the steps below:
 	`sudo apt-get update`
 	`sudo apt-get install libpcre3 libpcre3-dev`
 	
-	`cd xapian-omega-1.4.7` then `./configure` then `make` followed by `sudo make install`
+	`cd ../xapian-omega-1.4.7` then `./configure` then `make` followed by `sudo make install`
 	
 	Xapian bindings:
-	`cd xapian-bindings-1.4.7` then `./configure` then `make` followed by `sudo make install`
+	`cd ../xapian-bindings-1.4.7` then `./configure` then `make` followed by `sudo make install`
 
 #### GeoIP: (**Optional for now**)
 
@@ -63,12 +63,13 @@ Once logged in, follow the steps below:
 	refer [this link](https://www.digitalocean.com/community/tutorials/how-to-install-the-latest-mysql-on-ubuntu-16-04#step-2-%E2%80%94-installing-mysql) for more information 
 
 4. Create a database in mysql. You can enter MySQL client using `mysql -u <username> -p`  
-	However, root user needs to use sudo to enter databse
-5. Create new user in mysql, other than root, which we will be used by django app to accesst the db:  
+	However, root user needs to use sudo to enter databse.
+	query for creting new database (named testdjango) is: `create database testdjango`
+5. Create new user in mysql, other than root, which we will be used by django app to accesst the db:   
 	a. enter mysql with root: `sudo mysql -u root -p`  
-	b. create user 'igbuser'@'localhost' identified by 'Igb@1234';  
-	c. grant usage on *.* to 'igbuser'@'localhost';  
-	d. grant all privileges on testdjango.* to 'igbuser'@'localhost';  
+	b. `create user 'igbuser'@'localhost' identified by 'Igb@1234';`  
+	c. `grant usage on *.* to 'igbuser'@'localhost';`  
+	d. `grant all privileges on testdjango.* to 'igbuser'@'localhost';`  
 6. Update the settings.py file in the home folder of the appstore repo to include the database settings:   
 	---settings.py:---  
 change the database settings:  
@@ -86,25 +87,25 @@ change the database settings:
 ### Setting up Apache
 
 1. install mod_wsgi using the instructions from [this link](https://modwsgi.readthedocs.io/en/develop/user-guides/quick-installation-guide.html)
-2. create a new file cyappstore.conf in `~/CyAppStore/apache/` and add following apache config to the file in order to host django app on apache.   
+2. create a new file CyAppStore.conf in `~/CyAppStore/apache/`. and add following apache config to the file in order to host django app on apache.   
 
 ```python
 	#note- give the path to site-packages directory (where django is installed) in the virtual enviornment ('appstoreEnv' here). doesnt work without virtual environment.   
-	WSGIDaemonProcess cyappstore python-path= ~/CyAppStore/appstoreEnv)/lib/python3.6/site-packages   
+	WSGIDaemonProcess cyappstore python-path= /home/<username>/CyAppStore/appstoreEnv)/lib/python3.6/site-packages   
 
 	WSGIProcessGroup cyappstore   
-	Alias /static ~/CyAppStore/static   
+	Alias /static /home/<username>/CyAppStore/static   
 
 	#path to wsgi config for the django app to be hosted   
-	WSGIScriptAlias / ~/CyAppStore/django.wsgi   
+	WSGIScriptAlias / /home/<username>/CyAppStore/django.wsgi   
 
 	#Give access to static files like css   
-	<Directory ~/CyAppStore/static>   
+	<Directory /home/<username>/CyAppStore/static>   
 	   Require all granted   
 	</Directory>   
 
 	#give access to django.wsgi   
-	<Directory ~/CyAppStore >   
+	<Directory /home/<username>/CyAppStore >   
 		<Files django.wsgi>   
 			Order deny,allow   
 			Require all granted   
@@ -112,9 +113,11 @@ change the database settings:
 	</Directory>  
 ```
 
+	**Note: Change '/home/<username>/CyAppStore' according to your username**
+
 Include this config in apache using Include directive:
 	add following line in the /etc/apache/sites-available/000-default.conf
-	Include ~/CyAppStore/apache/cyappstore.conf
+	Include ~/CyAppStore/apache/CyAppStore.conf
 	
 #### Changes to CyAppStore/django.wsgi:
 
