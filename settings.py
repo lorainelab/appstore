@@ -5,6 +5,7 @@ try:
 except ImportError:
      from urlparse import urljoin
 
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # credentials provided
 try:
     from conf.paths import *
@@ -13,18 +14,22 @@ try:
     from conf.apikeys import *
     from conf.socialauth import *
     from conf.geoip import *
-    SITE_DIR ="/var/www/CyAppStore/"
+    SITE_DIR ="~/CyAppStore/"
 except:
     from conf.mock import *
-    SITE_DIR ="/var/www/CyAppStore/"
+    SITE_DIR ="~/CyAppStore/"
     DATABASES = {
-        'default':{
-        'NAME':'/var/www/CyAppStore/CyAppStore.sqlite',
-        'ENGINE':'django.db.backends.sqlite3',
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.mysql', 
+        'NAME': 'testdjango',
+        'USER': 'igbuser',
+        'PASSWORD': 'Igb@1234',
+        'HOST': 'localhost',   # Or an IP Address that your DB is hosted on
+        'PORT': '3306',
     }
+}
 # Django settings for CyAppStore project.
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 DEBUG = True 
 TEMPLATE_DEBUG = DEBUG
 DJANGO_STATIC_AND_MEDIA = DEBUG
@@ -68,7 +73,7 @@ MEDIA_URL = urljoin(SITE_URL, 'media/')
 # in apps' "static/" subdirectories and in STATICFILES_DIRS.
 # Example: "/home/media/media.lawrence.com/static/"
 #STATIC_ROOT = ''
-STATIC_ROOT = SITE_DIR + "/static/"
+#STATIC_ROOT = SITE_DIR + "/static/"
 
 # URL prefix for static files.
 # Example: "http://media.lawrence.com/static/"
@@ -123,7 +128,7 @@ TEMPLATE_DIRS = (
     # Always use forward slashes, even on Windows.
     # Don't forget to use absolute paths, not relative paths.
     filejoin(SITE_DIR, 'templates'),
-    filejoin(SITE_DIR, '/home/jeff/.local/lib/python3.6/site-packages/django/contrib/admin/templates'),
+    #filejoin(SITE_DIR, '/home/jeff/.local/lib/python3.6/site-packages/django/contrib/admin/templates'),
 )
 
 INSTALLED_APPS = (
