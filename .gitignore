@@ -23,3 +23,6 @@
 /xapian-bindings-1.4.5
 /xapian_indices
 /whoosh_index
+env
+*.conf
+.idea
