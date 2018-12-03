@@ -1,7 +1,7 @@
 var AppPage = (function($) {
 	/*
      ================================================================
-       Install via Cytoscape 3 App Manager
+       Install via IGB App Manager
      ================================================================
 	*/
 
@@ -80,7 +80,7 @@ var AppPage = (function($) {
                 set_install_btn_to_installing();
                 install_app(app_name, latest_release_version, function(result) {
                     if (result['install_status'] === 'success') {
-                        CyMsgs.add_msg(result['name'] + ' has been installed! Go to Cytoscape to use it.', 'success');
+                        CyMsgs.add_msg(result['name'] + ' has been installed! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed();
                     } else {
                         CyMsgs.add_msg('Could not install &ldquo;' + result['name'] + '&rdquo; app: <tt>' + result['install_status'] + '</tt>', 'error');
@@ -100,7 +100,7 @@ var AppPage = (function($) {
                 set_install_btn_to_upgrading();
                 install_app(app_name, latest_release_version, function(result) {
                     if (result['install_status'] === 'success') {
-                        CyMsgs.add_msg(result['name'] + ' has been updated! Go to Cytoscape to use it.', 'success');
+                        CyMsgs.add_msg(result['name'] + ' has been updated! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed();
                     } else {
                         CyMsgs.add_msg('Could not update &ldquo;' + result['name'] + '&rdquo; app: <tt>' + result['install_status'] + '</tt>', 'error');

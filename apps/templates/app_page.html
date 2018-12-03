@@ -85,7 +85,7 @@
 
 		{# Helpdesk #}
 		<a> | </a>
-		<a href="https://groups.google.com/forum/?fromgroups#!searchin/cytoscape-helpdesk/{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search Cytoscape Helpdesk for questions about this app.">helpdesk</a>
+		<a href="https://groups.google.com/forum/?fromgroups#!searchin/cytoscape-helpdesk/{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">helpdesk</a>
 		{# End Helpdesk #}
 
 		{# Citations #}
@@ -103,7 +103,7 @@
 
 		{# badges #}
 		{% if app.has_releases %}
-		<img src="{% get_static_prefix %}apps/img/cy3_sticker.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is available for Cytoscape 3.0 and above.">
+		<img src="{% get_static_prefix %}apps/img/cy3_sticker.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is available for IGB.">
 		{% endif %}
 
 		{% if app.competition_winner_dec_2012 %}
@@ -224,7 +224,7 @@
 
 						{# Works with #}
 						<p>
-							<strong>Works with</strong> Cytoscape
+							<strong>Works with</strong> IGB
 							{{ release.works_with }}
 						</p>
 						{# End Works with #}
@@ -277,7 +277,7 @@
 		{# 3.0 download panel #}
 		{% if app.has_releases %}
 		<div class="well">
-			<h6 class="panel-title muted">CYTOSCAPE 3</h6>
+			<h6 class="panel-title muted">IGB</h6>
 			<button class="btn btn-large btn-block" id="cy-app-install-btn">
 				<i></i> {# <-- download button icon will go here #}
 				<h4></h4> {# <-- download button text will go here #}
@@ -285,7 +285,7 @@
 			<p><strong>Version</strong> {{ cy3_latest_release.version }}</p>
 			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>{% endif %}
 			<p><strong>Released</strong> {{ cy3_latest_release.created|date:'j M Y' }}</p>
-			<p><strong>Works with</strong> <a href="http://www.cytoscape.org" target="_blank">Cytoscape {{ cy3_latest_release.works_with }}</a></p>
+			<p><strong>Works with</strong> <a href="http://www.cytoscape.org" target="_blank">IGB {{ cy3_latest_release.works_with }}</a></p>
 			<p><strong>Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a>
 		</div>
 		{% endif %}
@@ -306,7 +306,7 @@
 			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>{% endif %}
 			{% endif %}
 			{% if app.cy_2x_plugin_release_date %}<p><strong>Released</strong> {{ app.cy_2x_plugin_release_date|date:'j M Y' }}</p>{% endif %}
-			{% if app.cy_2x_versions %}<p><strong>Works with</strong> <a href="http://www.cytoscape.org" target="_blank">Cytoscape {{ app.cy_2x_versions }}</a></p>{% endif %}
+			{% if app.cy_2x_versions %}<p><strong>Works with</strong> <a href="http://www.cytoscape.org" target="_blank">IGB {{ app.cy_2x_versions }}</a></p>{% endif %}
 			<p><strong>Download Stats</strong> <a href="http://chianti.ucsd.edu/cyto_web/plugins/plugindownloadstatistics.php">Click here</a></p>
 		</div>
 		{% endif %}

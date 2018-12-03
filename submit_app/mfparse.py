@@ -196,7 +196,7 @@ def _lower_cytoscape_pkg_versions(s):
 # Given a string containing the 'Import-Package' value,
 # returns the maximum version across all the lower
 # versions of 'org.cytoscape.*' packages.
-# Returns None if there are no Cytoscape packages.
+# Returns None if there are no IGB packages.
 def max_of_lower_cytoscape_pkg_versions(s):
     try:
         return max(_lower_cytoscape_pkg_versions(s))
