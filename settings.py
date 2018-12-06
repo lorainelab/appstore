@@ -20,7 +20,7 @@ except:
     SITE_DIR ="~/CyAppStore/"
     DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql', 
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'testdjango',
         'USER': 'igbuser',
         'PASSWORD': 'Igb@1234',
@@ -30,7 +30,7 @@ except:
 }
 # Django settings for CyAppStore project.
 
-DEBUG = True 
+DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DJANGO_STATIC_AND_MEDIA = DEBUG
 #REVIEW_ALLOW_ANONYMOUS= True
@@ -178,6 +178,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
+    'util.constants.global_constants'
 )
 
 
