@@ -90,7 +90,7 @@ var AppPageEdit = (function($)
     }
     
     function encourage_cy3_port(){
-    	CyMsgs.add_msg('<a href="http://wiki.cytoscape.org/Cytoscape_3/AppDeveloper" target="_blank">Cytoscape 3.0 is here! Time to port your 2.x plugin to a 3.x app.</a>', 'info');
+    	CyMsgs.add_msg('<a href="http://wiki.cytoscape.org/Cytoscape_3/AppDeveloper" target="_blank">IGB is here! Time to port your 2.x plugin to a 3.x app.</a>', 'info');
     }
     
     /* ===============================
