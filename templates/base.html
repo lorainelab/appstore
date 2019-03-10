@@ -16,7 +16,7 @@
   
   {% block more_head %}{% endblock %}
 
-  <title>Cytoscape App Store {% block title %}{% endblock %}</title>
+  <title>IGB App Store {% block title %}{% endblock %}</title>
 
   {# Google Analytics Snippet #}
   <script type="text/javascript">
@@ -38,19 +38,32 @@
   <div class="navbar navbar-inverse navbar-static-top">
     <div class="navbar-inner">
       <div class="container">
-        <a href="{% url 'default-page' %}"><img src="{% get_static_prefix %}common/img/logo.png"></a>
-        <ul class="nav pull-right">
-          {# Submit App menu #}
-          <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Submit an App <b class="caret"></b></a>
-            <ul class="dropdown-menu">
-              <li><a href="{% url 'submit-app' %}">Submit a 3.0 App</a></li>
-              <li><a href="http://www.cytoscape.org/plugin_submit.html" target="_blank">Submit a 2.x Plugin</a></li>
-              <li class="divider"></li>
-              <li><a target="_blank" href="http://wiki.cytoscape.org/Cytoscape_3/AppDeveloper">Guide to 3.0 App Development</a></li>
-            </ul>
-          </li>
-          {# Search field #}
+        {%comment%}
+              Showing Brand name and logo
+
+              The variables brand.name and brand.logo_img are coming from a utils.constants.py
+              file, which is included in settings.py as a TEMPLATE_CONTEXT_PROCESSORS
+
+        {%endcomment%}
+        <a class= "brand" href="{% url 'default-page' %}">
+          <img class="appstore-brand-logo"
+               src="{%if brand and brand.logo_img%}
+                      {% get_static_prefix %}{{brand.logo_img}}
+                    {%else%}
+                     {% get_static_prefix %}common/img/logo.png
+                    {%endif%}
+                    ">
+        {%if brand and brand.name%}
+          <span class="appstore-brand-name">
+            {{ brand.name }}
+          </span>
+        {%endif%}
+          <span class="appstore-name">
+            App Store
+          </span>
+        </a>
+        <ul class="nav pull-right appstore-navbar-item">
+          <!--{# Search field #}-->
           <li>
             <form action="{% url 'haystack_search' %}" method="get" class="navbar-search pull-right">
               <input type="text" name="q" value="{{ search_query }}" class="search-query" placeholder="Search the App Store">

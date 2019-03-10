@@ -2,15 +2,25 @@ body {
   padding-top: 8em;
   padding-bottom: 10em;
 }
-.navbar .navbar-inner .container {
-  padding-top: 0.6em;
-  padding-bottom: 0.6em;
-}
-
-.navbar .navbar-inner .container img {
-  padding-top: 0.35em;
-}
-
 .footer-divider {
   margin-left: 3em;
+}
+
+.navbar .navbar-inner .container .appstore-brand-logo{
+    width:1.5em;
+    height:1.5em;
+}
+
+.navbar .navbar-inner .container .appstore-navbar-item{
+    padding: 0.3em 0em;
+}
+
+.navbar .navbar-inner .container .appstore-brand-name{
+    color:#d7d382;
+}
+
+.navbar .navbar-inner .container .appstore-name{
+    padding-left:0.2em;
+    font-weight:bold;
+    color:#d5d5d5
 }
