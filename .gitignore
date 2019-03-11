@@ -26,3 +26,6 @@ env
 venv
 *.conf
 .idea
+*~
+*#
+.DS_Store
