@@ -37,6 +37,17 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'whoosh',
+    'haystack',
+    'social_django',
+    'appstore',
+    'apps',
+    'search',
+    'submit_app',
+    'users',
+    'help',
+    'backend',
+    'download',
 ]
 
 MIDDLEWARE = [
