@@ -1,11 +1,12 @@
 import os
+import tzlocal
 from os.path import join as filejoin
 try:
     from urllib.parse import urljoin
 except ImportError:
      from urlparse import urljoin
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+SITE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # credentials provided
 try:
     from conf.paths import *
@@ -14,10 +15,8 @@ try:
     from conf.apikeys import *
     from conf.socialauth import *
     from conf.geoip import *
-    SITE_DIR ="~/CyAppStore/"
 except:
     from conf.mock import *
-    SITE_DIR ="~/CyAppStore/"
     DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
@@ -34,14 +33,8 @@ DEBUG = True
 TEMPLATE_DEBUG = DEBUG
 DJANGO_STATIC_AND_MEDIA = DEBUG
 #REVIEW_ALLOW_ANONYMOUS= True
-# Local time zone for this installation. Choices can be found here:
-# http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
-# although not all choices may be available on all operating systems.
-# On Unix systems, a value of None will cause Django to use the same
-# timezone as the operating system.
-# If running in a Windows environment this must be set to the same as your
-# system time zone.
-TIME_ZONE = 'America/Los_Angeles'
+# Local time zone for this installation. 
+TIME_ZONE=tzlocal.get_localzone().zone
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
