@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'whoosh',
     'haystack',
     'social_django',
-    'appstore',
     'apps',
     'search',
     'submit_app',
