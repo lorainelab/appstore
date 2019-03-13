@@ -40,13 +40,13 @@ INSTALLED_APPS = [
     'whoosh',
     'haystack',
     'social_django',
-    'apps',
-    'search',
-    'submit_app',
-    'users',
-    'help',
-    'backend',
-    'download',
+    'apps.apps.AppsConfig',
+    'search.apps.SearchConfig',
+    'submit_app.apps.SubmitAppConfig',
+    'users.apps.UsersConfig',
+    'help.apps.HelpConfig',
+    'backend.apps.BackendConfig',
+    'download.apps.DownloadConfig',
 ]
 
 MIDDLEWARE = [
