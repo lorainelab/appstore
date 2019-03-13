@@ -15,16 +15,20 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
+from apps import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path(r'^accounts/',include('users.urls')),
-#    path(r'^$',          apps.views.apps_default, name='default-page'),
-    path(r'^apps/',       include('apps.urls')),
-    path(r'^search',      include('haystack.urls')),
-    path(r'^download/',   include('download.urls')),
-    path(r'^submit_app/', include('submit_app.urls')),
-    path(r'^users/',      include('users.urls')),
-    path(r'^help/',       include('help.urls')),
-    path(r'^backend/',    include('backend.urls')),
-]
+    path(r'accounts/',include('users.urls')),
+    path(r'',          views.apps_default, name='default-page'),
+    path(r'apps/',       include('apps.urls')),
+    path(r'search',      include('haystack.urls')),
+    path(r'download/',   include('download.urls')),
+    path(r'submit_app/', include('submit_app.urls')),
+    path(r'users/',      include('users.urls')),
+    path(r'help/',       include('help.urls')),
+    path(r'backend/',    include('backend.urls')),
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+# see https://docs.djangoproject.com/en/2.1/howto/static-files/
