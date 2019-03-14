@@ -1,3 +1,5 @@
+This branch requires Django 1.8. 
+
 This is a Loraine Lab fork of the Cytoscape App Store code, with some changes.
 
 * The Cytoscape App code branch `wip` (work-in-progress) branch is our `master` branch
