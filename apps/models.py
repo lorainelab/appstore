@@ -9,7 +9,8 @@ from urllib.parse import urljoin
 from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
-from django.core.urlresolvers import reverse
+#from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 class Author(models.Model):
 	name        = models.CharField(max_length=255)
@@ -130,8 +131,8 @@ class App(models.Model):
         return self.name
 
 class OrderedAuthor(models.Model):
-    author       = models.ForeignKey(Author)
-    app          = models.ForeignKey(App)
+    author       = models.ForeignKey(Author,on_delete=models.CASCADE)
+    app          = models.ForeignKey(App,on_delete=models.CASCADE)
     author_order = models.PositiveSmallIntegerField(default = 0)
 
     def __unicode__(self):
@@ -146,7 +147,7 @@ def release_file_path(release, filename):
     return pathjoin(release.app.name, 'releases', release.version, filename)
 
 class Release(models.Model):
-    app           = models.ForeignKey(App)
+    app           = models.ForeignKey(App,on_delete=models.CASCADE)
     version       = models.CharField(max_length=31)
     works_with    = models.CharField(max_length=31)
     notes         = models.TextField(blank=True, null=True)
@@ -212,7 +213,7 @@ def thumbnail_path(screenshot, filename):
     return pathjoin(screenshot.app.name, 'thumbnails', filename)
 
 class Screenshot(models.Model):
-    app        = models.ForeignKey(App)
+    app        = models.ForeignKey(App,on_delete=models.CASCADE)
     screenshot = models.ImageField(upload_to=screenshot_path)
     thumbnail  = models.ImageField(upload_to=thumbnail_path)
 
@@ -226,7 +227,7 @@ def pom_xml_path(release_api, filename):
     return pathjoin(release_api.release.app.name, 'releases', release_api.release.version, filename)
 
 class ReleaseAPI(models.Model):
-    release           = models.ForeignKey(Release)
+    release           = models.ForeignKey(Release,on_delete=models.CASCADE)
     javadocs_jar_file = models.FileField(upload_to=javadocs_path)
     pom_xml_file      = models.FileField(upload_to=pom_xml_path)
 
