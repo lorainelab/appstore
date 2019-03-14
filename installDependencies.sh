@@ -1,7 +1,7 @@
 #!/bin/bash
 
 declare -a aptpackages=("python3" "python3-pip" "apache2" "libapache2-mod-wsgi-py3" "zlib1g-dev" "python-dev" "libmysqlclient-dev" "libjpeg-dev" "libpng-dev" "mysql-server")
-declare -a pippackages=("wheel" "django==1.8" "Pillow" "social-auth-app-django" "whoosh" "ipython" "django-haystack==2.2" "mysqlclient")
+declare -a pippackages=("wheel" "django" "Pillow" "social-auth-app-django" "whoosh" "ipython" "django-haystack" "mysqlclient" "geoip2")
 echo "Installing packages required by App store.."
 
 for i in "${aptpackages[@]}"
