@@ -1,5 +1,6 @@
 import re
 import datetime
+import base64
 from urllib.parse import unquote
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
@@ -10,7 +11,6 @@ from util.view_util import json_response, html_response, obj_to_dict, get_object
 from util.img_util import scale_img
 from util.id_util import fullname_to_name
 from apps.models import Tag, App, Author, OrderedAuthor, Screenshot, Release
-
 # Returns a unicode string encoded in a cookie
 def _unescape_and_unquote(s):
 	if not s: return s
@@ -177,6 +177,7 @@ def _latest_release(app):
 	return releases[0] # go by the ordering provided by Release.Meta
 
 def _mk_app_page(app, user, request):
+
 	c = {
 		'app': app,
 		'is_editor': (user and app.is_editor(user)),
@@ -193,8 +194,10 @@ _AppActions = {
 
 def app_page(request, app_name):
 	app = get_object_or_404(App, active = True, name = app_name)
-	user = request.user if request.user.is_authenticated() else None
-
+	#decoding base64 description. dont use this if the input is not encoded
+	app.details =  base64.b64decode(app.details)
+	#temporarily remove if condition
+	user = request.user #if request.user.is_authenticated() else None
 	if request.method == 'POST':
 		action = request.POST.get('action')
 		if not action:
