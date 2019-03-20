@@ -4,6 +4,8 @@
 *.swp
 *.swo
 /apps/migrations
+/download/migrations
+/submit_app/migrations
 /backups
 /media
 /conf/apikeys.py
