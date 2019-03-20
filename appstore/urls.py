@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from apps import views
@@ -24,6 +24,7 @@ urlpatterns = [
     path(r'accounts/',include('users.urls')),
     path(r'',          views.apps_default, name='default-page'),
     path(r'apps/',       include('apps.urls')),
+    #re_path(r'apps/<slug:>/,       include('apps.urls')),
     path(r'search',      include('haystack.urls')),
     path(r'download/',   include('download.urls')),
     path(r'submit_app/', include('submit_app.urls')),
