@@ -72,10 +72,29 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'social_django.context_processors.backends', # Added social django backends processer
+                'social_django.context_processors.login_redirect', # < Added social django login redirect processor
             ],
         },
     },
 ]
+
+
+AUTHENTICATION_BACKENDS = (
+'social_core.backends.google.GoogleOAuth2', # This is for Google OAuth2
+
+ 'django.contrib.auth.backends.ModelBackend', # This is to ensure that we are able to login into Django admin
+)
+
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='1021453897231-47d8do1k3ashh6e7vr8fq15lht3up3b7.apps.googleusercontent.com'  #Paste CLient Key that we generate in google console
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'OfM4FsAIqTiWQmQo8R6OiRlJ' #Paste Secret Key that we generate in google console
+
+
+LOGIN_URL = '/auth/login/google-oauth2/'
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
 
 WSGI_APPLICATION = 'appstore.wsgi.application'
 
@@ -142,4 +161,3 @@ HAYSTACK_CONNECTIONS = {
         'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
     },
 }
-
