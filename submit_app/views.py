@@ -110,7 +110,7 @@ The following app has been submitted:
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
 """.format(id = pending.id, fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('IGB App Store - App Submitted', msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+    #send_mail('IGB App Store - App Submitted', msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 def _verify_javadocs_jar(file):
     error_msg = None

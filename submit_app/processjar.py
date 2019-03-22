@@ -3,10 +3,10 @@ from .mfparse import parse_manifest, max_of_lower_cytoscape_pkg_versions, parse_
 from apps.models import App, Release, VersionRE
 from django.utils.encoding import smart_text
 from util.view_util import get_object_or_none
-
+import logging, io, sys
 _MANIFEST_FILE_NAME = 'META-INF/MANIFEST.MF'
 _MAX_MANIFEST_FILE_SIZE_B = 1024 * 1024
-
+logger = logging.getLogger(__name__)
 def process_jar(jar_file, expect_app_name):
     try:
         archive = ZipFile(jar_file)
@@ -61,6 +61,7 @@ def _get_manifest_file(zip_archive):
 
     try:
         manifest_file = zip_archive.open(_MANIFEST_FILE_NAME , 'r')
+        manifest_file = io.TextIOWrapper(manifest_file)
         return manifest_file
     except IOError:
         raise ValueError('does not have an accessible manifest file located in <tt>%s</tt>' % _MANIFEST_FILE_NAME)
@@ -83,9 +84,9 @@ def _get_name_and_version(manifest, name_attr, version_attr):
     return (app_name, app_version)
 
 def _parse_simple_app(manifest):
-    app_name, app_version = _get_name_and_version(manifest, 'Cytoscape-App-Name', 'Cytoscape-App-Version')
+    app_name, app_version = _get_name_and_version(manifest, 'IGB-App-Name', 'IGB-App-Version')
 
-    app_works_with = _last(manifest, 'Cytoscape-API-Compatibility')
+    app_works_with = _last(manifest, 'IGB-API-Compatibility')
     if not app_works_with:
         raise ValueError('does not have <tt>Cytoscape-API-Compatibility</tt> in its manifest')
 
@@ -108,15 +109,15 @@ def _parse_osgi_bundle(manifest):
     if max_cy_ver:
         app_works_with = _ver_tuple_to_str(max_cy_ver)
     else:
-        raise ValueError('does not import Cytoscape packages in <tt>Import-Package</tt>')
+        raise ValueError('does not import IGB packages in <tt>Import-Package</tt>')
 
-    app_dependencies_str = _last(manifest, 'Cytoscape-App-Dependencies')
+    app_dependencies_str = _last(manifest, 'IGB-App-Dependencies')
     if app_dependencies_str:
         try:
             app_dependencies = list(parse_app_dependencies(app_dependencies_str))
         except ValueError as e:
             (msg, ) = e.args
-            raise ValueError('has a problem with the <tt>Cytoscape-App-Dependencies</tt> entry: ' + msg)
+            raise ValueError('has a problem with the <tt>IGB-App-Dependencies</tt> entry: ' + msg)
     else:
         app_dependencies = list()
 
