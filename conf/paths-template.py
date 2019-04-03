@@ -1,4 +1,4 @@
-# should be the absolute path to the CyAppStore directory on the filesystem
+# should be the absolute path to the appstore directory on the filesystem
 SITE_DIR = './'
 
 # Should be the URL path to the App Store site relative to the server root.
