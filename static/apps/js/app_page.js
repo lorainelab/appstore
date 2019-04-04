@@ -5,13 +5,57 @@ var AppPage = (function($) {
      ================================================================
 	*/
 
-	var AppManagerURL = 'http://localhost:2607/';
+	var AppManagerURL = 'http://localhost:7090/';
 
-	function is_manager_running(callback) {
-		$.ajax(AppManagerURL + 'status/',
-			{'type': 'GET',
-			 'success': function() { callback(true); },
-			 'error': function() { callback(false); }});
+	function is_manager_running(app_symbolicName,callback) {
+           var settings = {
+              "async": true,
+              "crossDomain": true,
+              "url": "http://127.0.0.1:7090/manageApp",
+              "method": "POST",
+              "headers": {
+                "cache-control": "no-cache",
+                "postman-token": "51de096d-cd02-3745-aa62-fef9548c608f"
+              },
+              "data": "{\n\t\"symbolicName\" : \"org.lorainelab.igb.protannot\",\n\t\"action\" : \"getInfo\"\n}"
+            }
+
+            $.ajax(settings).done(function (response) {
+              console.log(response);
+            });
+
+//         $.ajax({
+//            "method": "POST",
+//            "dataType": "jsonp",
+//            async : true,
+//            contentType: 'application/json; charset=utf-8',
+//            "url": 'http://127.0.0.1:7090/manageApp',
+//            "crossDomain" : true,
+//            "data":{
+//                    csrfmiddlewaretoken : '{{csrf_token}}',
+//                    symbolicName :app_symbolicName,
+//                    action: "getInfo"},
+//            "success": function(result) {
+//                console.log(result);
+//            }
+//            +
+//
+//        });
+
+//	    var settings = {
+//	    data: {symbolicName :"org.lorainelab.igb.protannot",action: "getInfo"},
+//         dataType : 'json',
+//          jsonp:false,
+//          crossDomain : true,
+//          url: 'http://127.0.0.1:7090/manageApp',
+//          method: 'POST'
+//
+//        }
+//
+//        $.ajax(settings).done(function (response) {
+//          console.log(response);
+//        });
+
 	}
 	
 	function get_app_status(fullname, callback) {
@@ -114,11 +158,13 @@ var AppPage = (function($) {
 		setup_install_btn('btn-success', 'icon-cy-install-installed', 'Installed');
 	}
 
-	function setup_install(app_name, app_fullname, latest_release_url, latest_release_version, install_app_help_url) {
-        set_install_btn_to_download(latest_release_url);
+	function setup_install(app_name, app_symbolicName, latest_release_url) {
 
-		is_manager_running(function(is_running) {
+
+		is_manager_running(app_symbolicName,function(is_running) {
+
 			if (is_running) {
+			 set_install_btn_to_download(latest_release_url);
 				get_app_status(app_fullname, function(app_status) {
 					if (app_status.status === 'not-found' || app_status.status === 'uninstalled') {
 						set_install_btn_to_install(app_fullname, latest_release_version);
