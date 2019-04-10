@@ -279,24 +279,23 @@ logger = logging.getLogger("app_page.html") %}
 	<div class="span3 offset1">
 
 		{# 3.0 download panel #}
-		<div class="well">
+		<div class="well" id="app_status_block">
 			<h6 class="panel-title muted">IGB</h6>
 			<button class="btn btn-large btn-block" id="cy-app-install-btn">
 				<i></i> {# <-- download button icon will go here #}
 				<h4></h4> {# <-- download button text will go here #}
 			</button>
-			<p><strong>Version</strong> {{ cy3_latest_release.version }}</p>
-			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>{% endif %}
-			<p><strong>Released</strong> {{ cy3_latest_release.created|date:'j M Y' }}</p>
-			<p><strong>Works with</strong> <a href="http://www.cytoscape.org" target="_blank">IGB {{ cy3_latest_release.works_with }}</a></p>
-			<p><strong>Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a>
+			<p id="app_version"></p>
+			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>Download Stats{% endif %}
+			<p><strong>Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a></p>
+			<p><strong>Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a></p>
 		</div>
 
 		{# end 3.0 download panel #}
 			
 		{# 2.x download panel #}
 
-		<div class="well">
+		<!--<div class="well">
 			<h6 class="panel-title muted">IGB</h6>
 			{% if app.has_releases %}
 			<p><strong>Version</strong> <a class="cy-app-2x-download-popover" href="{{ app.cy_2x_plugin_download }}">{{ app.cy_2x_plugin_version }}</a></p>
@@ -312,7 +311,7 @@ logger = logging.getLogger("app_page.html") %}
 			{% if app.cy_2x_versions %}<p><strong>Works with</strong> <a href="http://www.cytoscape.org" target="_blank">IGB {{ app.cy_2x_versions }}</a></p>{% endif %}
 			<p><strong>Download Stats</strong> <a href="http://chianti.ucsd.edu/cyto_web/plugins/plugindownloadstatistics.php">Click here</a></p>
 		</div>
-
+-->
 		{# end 2.x download panel #}
 				
 		{# in case there are no downloads... #}
@@ -442,7 +441,7 @@ logger = logging.getLogger("app_page.html") %}
 $('.has-tooltip').tooltip();
 AppPage.setup_install("{{ app.name|escapejs }}",
 	"{{ app.symbolicname|escapejs }}",
-	"{{ cy3_latest_release.version }}");
+	"{{ app.cy_2x_plugin_version|escapejs }}");
 AppPage.setup_cy_2x_download_popover('{% get_static_prefix %}apps/img/plugins_dir.png');
 
 {% if app.details %}
