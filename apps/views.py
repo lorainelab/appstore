@@ -195,7 +195,7 @@ _AppActions = {
 def app_page(request, app_name):
 	app = get_object_or_404(App, active = True, name = app_name)
 	#decoding base64 description. dont use this if the input is not encoded
-	app.details =  base64.b64decode(app.details)
+	app.details = base64.b64decode(app.details).decode("utf-8")
 	#temporarily remove if condition
 	user = request.user #if request.user.is_authenticated() else None
 	if request.method == 'POST':
