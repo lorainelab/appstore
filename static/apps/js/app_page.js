@@ -6,7 +6,7 @@ var AppPage = (function($) {
 	*/
 
     var AppManagerURL = 'http://127.0.0.1:7090/manageApp';
-	function is_manager_running(app_symbolicName,callback) {
+	function get_app_info(app_symbolicName,callback) {
 
          formData = {
             "symbolicName" : app_symbolicName,
@@ -17,8 +17,8 @@ var AppPage = (function($) {
               type: "POST",
               url: AppManagerURL,
               data: JSON.stringify(formData),
-              dataType: "text",
-			   contentType : "text/plain",
+              dataType: "json",
+			   contentType : "application/json",
               'success': function(data, textStatus, xhr) {
                             callback(data, xhr.status)
                          },
@@ -39,8 +39,8 @@ var AppPage = (function($) {
              type: "POST",
               url: AppManagerURL,
               data: JSON.stringify(formData),
-              dataType: "text",
-			   contentType : "text/plain",
+              dataType: "json",
+			  contentType : "application/json",
               'success': function(data, textStatus, xhr) {
                             callback(data, xhr.status)
                          },
@@ -59,18 +59,18 @@ var AppPage = (function($) {
 
         if (install_btn_last_class.length !== 0)
             install_btn.removeClass(install_btn_last_class.pop());
-		install_btn.addClass(btn_class);
-        install_btn_last_class.push(btn_class);
+            install_btn.addClass(btn_class);
+            install_btn_last_class.push(btn_class);
 
-		install_btn.find('i').attr('class', '');
-		install_btn.find('i').addClass(icon_class);
+            install_btn.find('i').attr('class', '');
+            install_btn.find('i').addClass(icon_class);
 
-		install_btn.find('h4').html(btn_text);
-		app_version.html("<strong>Version </strong>"+appVersion);
-		igb_version.html("IGB "+igbVersion);
+            install_btn.find('h4').html(btn_text);
+            app_version.html("<strong>Version </strong>"+appVersion);
+            igb_version.html("IGB "+igbVersion);
 
-        install_btn.off('click');
-        install_btn.removeClass('disabled');
+            install_btn.off('click');
+            install_btn.removeClass('disabled');
 		if (func) {
             var license_modal = $('#license_modal');
             if (license_modal.size() !== 0) {
@@ -102,8 +102,7 @@ var AppPage = (function($) {
 		setup_install_btn('btn-info', 'icon-cy-install-install', 'Install', appVersion, igbVersion,
             function() {
                 set_install_btn_to_installing(appVersion, igbVersion);
-                install_app(app_symbolicName, "install", function(data, status) {
-                    var app_status = JSON.parse(data);
+                install_app(app_symbolicName, "install", function(app_status, status) {
                     if (status == "200" && app_status.status == "INSTALLED") {
                         CyMsgs.add_msg(app_name + ' has been installed! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed(appVersion, igbVersion);
@@ -123,8 +122,7 @@ var AppPage = (function($) {
 		setup_install_btn('btn-warning', 'icon-cy-install-upgrade', 'Upgrade',appVersion, igbVersion,
             function() {
                 set_install_btn_to_upgrading(appVersion, igbVersion);
-                install_app(app_symbolicName,"update", function(data, status) {
-                    var app_status = JSON.parse(data);
+                install_app(app_symbolicName,"update", function(app_status, status) {
                     if (status == "200" && app_status.status == "UPDATED") {
                         CyMsgs.add_msg(app_name + ' has been updated! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed(appVersion, igbVersion);
@@ -142,9 +140,8 @@ var AppPage = (function($) {
 
 	function setup_install(app_name, app_symbolicName, latest_release_version) {
 
-		is_manager_running(app_symbolicName,function(data, is_running) {
+		get_app_info(app_symbolicName,function(app_status, is_running) {
 			if (is_running == "200") {
-			  var app_status = JSON.parse(data);
 					if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
 						set_install_btn_to_install(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
 					} else if (app_status.status === 'INSTALLED') {

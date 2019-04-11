@@ -183,9 +183,9 @@ logger = logging.getLogger("app_page.html") %}
 				{# End Screenshots #}
 
 				{# Details #}
-				{% if app.details %}
+				{% if decoded_details %}
 				<div class="row">
-					<div class="span8" id="cy-app-details-md">{{ app.details }}</div>
+					<div class="span8" id="cy-app-details-md">{{ decoded_details }}</div>
 				</div>
 				{% endif %}
 				{# End Details #}
@@ -313,14 +313,7 @@ logger = logging.getLogger("app_page.html") %}
 		</div>
 -->
 		{# end 2.x download panel #}
-				
-		{# in case there are no downloads... #}
-		{% if not app.has_releases and not app.cy_2x_plugin_download %}
-		<div class="alert alert-error">
-			No download available.
-		</div>
-		{% endif %}
-		{# end no downloads #}
+
 		{# app resources #}
 		<div class="alert">
 			<ul class="nav nav-list">
