@@ -176,10 +176,11 @@ def _latest_release(app):
 	if not releases: return None
 	return releases[0] # go by the ordering provided by Release.Meta
 
-def _mk_app_page(app, user, request):
+def _mk_app_page(app, user, request, decoded_details):
 
 	c = {
 		'app': app,
+		'decoded_details' : decoded_details,
 		'is_editor': (user and app.is_editor(user)),
 		'cy3_latest_release': _latest_release(app),
 		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
@@ -195,24 +196,26 @@ _AppActions = {
 def app_page(request, app_name):
 	app = get_object_or_404(App, active = True, name = app_name)
 	#decoding base64 description. dont use this if the input is not encoded
-	app.details =  base64.b64decode(app.details)
+
+	decoded_details = base64.b64decode(app.details).decode("utf-8")
 	#temporarily remove if condition
-	user = request.user #if request.user.is_authenticated() else None
-	if request.method == 'POST':
-		action = request.POST.get('action')
-		if not action:
-			return HttpResponseBadRequest('no action specified')
-		if not action in _AppActions:
-			return HttpResponseBadRequest('action "%s" invalid--must be: %s' % (action, ', '.join(_AppActions)))
-		try:
-			result = _AppActions[action](app, user, request.POST)
-		except ValueError as e:
-			return HttpResponseBadRequest(str(e))
-		if isinstance(result, HttpResponse):
-			return result
-		if request.is_ajax():
-			return json_response(result)
-	return _mk_app_page(app, user, request)
+	user = request.user if request.user.is_authenticated else None
+	if request.user.is_authenticated:
+		if request.method == 'POST':
+			action = request.POST.get('action')
+			if not action:
+				return HttpResponseBadRequest('no action specified')
+			if not action in _AppActions:
+				return HttpResponseBadRequest('action "%s" invalid--must be: %s' % (action, ', '.join(_AppActions)))
+			try:
+				result = _AppActions[action](app, user, request.POST)
+			except ValueError as e:
+				return HttpResponseBadRequest(str(e))
+			if isinstance(result, HttpResponse):
+				return result
+			if request.is_ajax():
+				return json_response(result)
+	return _mk_app_page(app, user, request, decoded_details)
 
 # ============================================
 #      App Page Editing
