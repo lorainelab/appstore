@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 {% load i18n %}
+{%import logging
+
+# Get an instance of a logger
+logger = logging.getLogger("app_page.html") %}
 
 {% block more_head %}
 <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_page.css" />
@@ -179,9 +183,9 @@
 				{# End Screenshots #}
 
 				{# Details #}
-				{% if app.details %}
+				{% if decoded_details %}
 				<div class="row">
-					<div class="span8" id="cy-app-details-md">{{ app.details }}</div>
+					<div class="span8" id="cy-app-details-md">{{ decoded_details }}</div>
 				</div>
 				{% endif %}
 				{# End Details #}
@@ -275,32 +279,30 @@
 	<div class="span3 offset1">
 
 		{# 3.0 download panel #}
-		{% if app.has_releases %}
-		<div class="well">
+		<div class="well" id="app_status_block">
 			<h6 class="panel-title muted">IGB</h6>
 			<button class="btn btn-large btn-block" id="cy-app-install-btn">
 				<i></i> {# <-- download button icon will go here #}
 				<h4></h4> {# <-- download button text will go here #}
 			</button>
-			<p><strong>Version</strong> {{ cy3_latest_release.version }}</p>
-			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>{% endif %}
-			<p><strong>Released</strong> {{ cy3_latest_release.created|date:'j M Y' }}</p>
-			<p><strong>Works with</strong> <a href="http://www.cytoscape.org" target="_blank">IGB {{ cy3_latest_release.works_with }}</a></p>
-			<p><strong>Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a>
+			<p id="app_version"></p>
+			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>Download Stats{% endif %}
+			<p><strong>Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a></p>
+			<p><strong>Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a></p>
 		</div>
-		{% endif %}
+
 		{# end 3.0 download panel #}
 			
 		{# 2.x download panel #}
-		{% if app.cy_2x_plugin_download %}
-		<div class="well">
-			<h6 class="panel-title muted">CYTOSCAPE 2</h6>
+
+		<!--<div class="well">
+			<h6 class="panel-title muted">IGB</h6>
 			{% if app.has_releases %}
 			<p><strong>Version</strong> <a class="cy-app-2x-download-popover" href="{{ app.cy_2x_plugin_download }}">{{ app.cy_2x_plugin_version }}</a></p>
 			{% else %}
 			<button class="btn btn-large btn-primary btn-block cy-app-2x-download-popover" id="cy-app-install-btn" onClick="window.location.href='{{ app.cy_2x_plugin_download|escapejs }}'" >
 				<i class="icon-cy-install-download"></i>
-				<h4>Download</h4>
+				<h4>Install</h4>
 			</button>
 			<p><strong>Version</strong> {{ app.cy_2x_plugin_version }}</p>
 			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>{% endif %}
@@ -309,16 +311,9 @@
 			{% if app.cy_2x_versions %}<p><strong>Works with</strong> <a href="http://www.cytoscape.org" target="_blank">IGB {{ app.cy_2x_versions }}</a></p>{% endif %}
 			<p><strong>Download Stats</strong> <a href="http://chianti.ucsd.edu/cyto_web/plugins/plugindownloadstatistics.php">Click here</a></p>
 		</div>
-		{% endif %}
+-->
 		{# end 2.x download panel #}
-				
-		{# in case there are no downloads... #}
-		{% if not app.has_releases and not app.cy_2x_plugin_download %}
-		<div class="alert alert-error">
-			No download available.
-		</div>
-		{% endif %}
-		{# end no downloads #}
+
 		{# app resources #}
 		<div class="alert">
 			<ul class="nav nav-list">
@@ -437,13 +432,9 @@
 	
 <script type="text/javascript">
 $('.has-tooltip').tooltip();
-{% if app.has_releases %}
 AppPage.setup_install("{{ app.name|escapejs }}",
-	"{{ app.fullname|escapejs }}",
-	"{% url 'release_download' app.name cy3_latest_release.version %}", 
-	"{{ cy3_latest_release.version }}",
-	"{% url 'getstarted_app_install' %}");
-{% endif %}
+	"{{ app.symbolicname|escapejs }}",
+	"{{ app.cy_2x_plugin_version|escapejs }}");
 AppPage.setup_cy_2x_download_popover('{% get_static_prefix %}apps/img/plugins_dir.png');
 
 {% if app.details %}
