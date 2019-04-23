@@ -52,7 +52,7 @@ class Tag(models.Model):
 GENERIC_ICON_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
 
 def app_icon_path(app, filename):
-    return pathjoin(app.name, filename)
+    return filename
 
 class App(models.Model):
     name         = models.CharField(max_length=127, unique=True)
@@ -62,7 +62,7 @@ class App(models.Model):
     details      = models.TextField(blank=True, null=True)
     tags         = models.ManyToManyField(Tag, blank=True)
 
-    icon         = models.ImageField(upload_to=app_icon_path, blank=True, null=True)
+    icon         = models.ImageField(blank=True, null=True)
 
     authors      = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
     editors      = models.ManyToManyField(User, blank=True)
