@@ -31,5 +31,5 @@ urlpatterns = [
     path(r'users/',      include('users.urls')),
     path(r'help/',       include('help.urls')),
     path(r'backend/',    include('backend.urls')),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # see https://docs.djangoproject.com/en/2.1/howto/static-files/
