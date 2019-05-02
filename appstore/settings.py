@@ -109,7 +109,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='1021453897231-47d8do1k3ashh6e7vr8fq15lht3up3b7.a
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'OfM4FsAIqTiWQmQo8R6OiRlJ' #Paste Secret Key that we generate in google console
 
 
-LOGIN_URL = '/auth/login/google-oauth2/'
+LOGIN_URL = '/users/login?next=/'
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
