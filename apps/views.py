@@ -12,6 +12,8 @@ from util.img_util import scale_img
 from util.id_util import fullname_to_name
 from apps.models import Tag, App, Author, OrderedAuthor, Screenshot, Release
 # Returns a unicode string encoded in a cookie
+import logging
+logger = logging.getLogger(__name__)
 def _unescape_and_unquote(s):
 	if not s: return s
 	return unescape_entities(unquote(s))
@@ -21,8 +23,8 @@ def _unescape_and_unquote(s):
 # ============================================
 
 class _NavPanelConfig:
-	min_tag_count = 3
-	num_of_top_tags = 20
+	min_tag_count = 0
+	num_of_top_tags = 5
 	tag_cloud_max_font_size_em = 2.0
 	tag_cloud_min_font_size_em = 1.0
 	tag_cloud_delta_font_size_em = tag_cloud_max_font_size_em - tag_cloud_min_font_size_em
@@ -62,7 +64,6 @@ def _nav_panel_context(request):
 			rel_count = 1
 		font_size_em = rel_count * _NavPanelConfig.tag_cloud_delta_font_size_em + _NavPanelConfig.tag_cloud_min_font_size_em
 		tag.font_size_em = '%.2f' % font_size_em
-
 	result = {
 		'all_tags': all_tags,
 		'top_tags': top_tags,
@@ -87,12 +88,12 @@ class _DefaultConfig:
 def apps_default(request):
 	latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')[:_DefaultConfig.num_of_top_apps]
 	downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()[:_DefaultConfig.num_of_top_apps]
-
 	c = {
 		'latest_apps': latest_apps,
 		'downloaded_apps': downloaded_apps,
 		'go_back_to': 'home',
 	}
+	# c.update(_nav_panel_context(request)) # This is another way to fix categories to display in homepage #Remove for loop in html_response method added in view_util.py.
 	return html_response('apps_default.html', c, request, processors = (_nav_panel_context, ))
 
 def all_apps(request):
@@ -177,7 +178,6 @@ def _latest_release(app):
 	return releases[0] # go by the ordering provided by Release.Meta
 
 def _mk_app_page(app, user, request, decoded_details):
-
 	c = {
 		'app': app,
 		'decoded_details' : decoded_details,
@@ -196,9 +196,8 @@ _AppActions = {
 def app_page(request, app_name):
 	app = get_object_or_404(App, active = True, name = app_name)
 	#decoding base64 description. dont use this if the input is not encoded
-
 	decoded_details = base64.b64decode(app.details).decode("utf-8")
-	#temporarily remove if condition
+	#temporarily remove if condition if you want any user to rate
 	user = request.user if request.user.is_authenticated else None
 	if request.user.is_authenticated:
 		if request.method == 'POST':
