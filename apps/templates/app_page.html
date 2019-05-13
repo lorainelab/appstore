@@ -99,10 +99,6 @@ logger = logging.getLogger("app_page.html") %}
 
 		{% endif %}
 		{# End Citations #}
-		{# discussions #}
-<a> | </a>
-<a href="https://www.biostars.org/local/search/page/?q=cytoscape+{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search BioStar for discussions about this app.">{% trans "discussions" %}</a>
-{# End Discussions #}
 		<span class="app-usage-info-divider"></span>
 
 		{# badges #}
@@ -210,7 +206,7 @@ logger = logging.getLogger("app_page.html") %}
 				{# End Authors #}
 			</div>
 			{# End Details tab #}
-				
+
 			{# Releases tab #}
 			{% if app.has_releases %}
 			<div class="tab-pane" id="cy-app-releases-tab">
@@ -274,7 +270,7 @@ logger = logging.getLogger("app_page.html") %}
 		</div>
 	</div>
 	{# End Tab content #}
-		
+
 	{# Right-hand panels #}
 	<div class="span3 offset1">
 
@@ -292,7 +288,7 @@ logger = logging.getLogger("app_page.html") %}
 		</div>
 
 		{# end 3.0 download panel #}
-			
+
 		{# 2.x download panel #}
 
 		<!--<div class="well">
@@ -318,9 +314,9 @@ logger = logging.getLogger("app_page.html") %}
 		<div class="alert">
 			<ul class="nav nav-list">
 			<!li class="nav-header">
-			
+
 			<h5>		<!i class="fa fa-circle-o-notch fa-spin" style="font-size:16px"><!/i>&ensp; RESOURCES</font> </h5>
-			<!/li> 
+			<!/li>
 
 				<li><a href="https://groups.google.com/forum/?fromgroups#!newtopic/cytoscape-helpdesk" target="_blank">
 					<i class="icon-question-sign"></i>
@@ -331,7 +327,6 @@ logger = logging.getLogger("app_page.html") %}
 					<i class="icon-comment"></i>
 					Search helpdesk
 				</a></li>
-				<li><a href="https://www.biostars.org/local/search/page/?q=cytoscape+{{ app.fullname }}" target="_blank"><i class="icon-comment"></i> Search BioStars</a></li>
 				<li class="divider"></li>
 
 				{% if app.website %}
@@ -360,7 +355,7 @@ logger = logging.getLogger("app_page.html") %}
 				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 				{% if 'www' in app.automation %}
 				<li><a href="http://{{app.automation}}" target="_blank">
-						
+
 						<i class="fa fa-gear fa-spin" style="color:black"></i>
  Automation Support
 				</a></li>
@@ -429,7 +424,7 @@ logger = logging.getLogger("app_page.html") %}
 {# End vote popover content #}
 
 <script type="text/javascript" src="{% get_static_prefix %}apps/js/app_page.js"></script>
-	
+
 <script type="text/javascript">
 $('.has-tooltip').tooltip();
 AppPage.setup_install("{{ app.name|escapejs }}",

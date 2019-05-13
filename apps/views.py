@@ -24,7 +24,7 @@ def _unescape_and_unquote(s):
 
 class _NavPanelConfig:
 	min_tag_count = 0
-	num_of_top_tags = 5
+	num_of_top_tags = 20
 	tag_cloud_max_font_size_em = 2.0
 	tag_cloud_min_font_size_em = 1.0
 	tag_cloud_delta_font_size_em = tag_cloud_max_font_size_em - tag_cloud_min_font_size_em
