@@ -8,7 +8,7 @@
         - Submit an App
     {% endif %}
 {% endblock %}
-    
+
 {% block more_head %}
     <style type="text/css">
         #instructions { display: none; }
@@ -32,7 +32,7 @@
     </div>
   </div>
 </div>
-    
+
 {% if error_msg %}
 <div class="row">
   <div class="span8">
@@ -62,24 +62,6 @@
     </div>
     <div class="row">
       <div class="span6">
-        <h3>Simple Apps</h3>
-        If you are submitting a simple app, your manifest must include the following:
-        <ul>
-          <li><tt>IGB-App-Name</tt>&mdash;this must match exactly the name of your app including spaces</li>
-          <li><tt>IGB-App-Version</tt>&mdash;this must follow this form:
-          <i>major</i>[.<i>minor</i>[.<i>tag</i>[.<i>patch</i>]]]
-          (<i>major</i>, <i>minor</i>, and <i>tag</i> must be non-negative integers,
-          and <i>patch</i> can be any string without spaces)</li>
-          <li><tt>IGB-API-Compatibility</tt>&mdash;this should match the versions of the IGB API jar with which your app can compile</li>
-        </ul>
-
-        <p>Example</p>
-        <pre>
-IGB-App-Name: My Example Plugin
-IGB-App-Version: 1.4
-IGB-API-Compatibility: 3.0, 3.1</pre>
-      </div>
-      <div class="span6">
         <h3>OSGi Bundles</h3>
         If you are submitting an OSGi bundle, your manifest must include the following:
         <ul>
@@ -97,7 +79,7 @@ IGB-API-Compatibility: 3.0, 3.1</pre>
 Bundle-SymbolicName: com.example.myplugin
 Bundle-Name: My Example Plugin
 Bundle-Version: 1.4
-Import-Package: org.cytoscape.application.swing;version="[3.0,4)", ...
+Import-Package: org.igb.application.swing;version="[3.0,4)", ...
 </pre>
       </div>
     </div>
@@ -115,8 +97,8 @@ Import-Package: org.cytoscape.application.swing;version="[3.0,4)", ...
     <div class="row">
         <div class="span8">
             <span class="label label-warning"><i class="icon-info-sign icon-white"></i> Notice</span>
-            Uploading an app using certain browsers/OS combinations may cause a hang or timeout. 
-            We have only seen this with linux distros so far. So, if your upload hangs, please 
+            Uploading an app using certain browsers/OS combinations may cause a hang or timeout.
+            We have only seen this with linux distros so far. So, if your upload hangs, please
             consider trying the upload from a different system.
         </div>
     </div>
@@ -126,12 +108,12 @@ Import-Package: org.cytoscape.application.swing;version="[3.0,4)", ...
             var loading_tag = $('#loading');
             var file_field = $('form input[type=file]');
             var submit_btn = $('button[type=submit]');
-            
+
             $('form').submit(function() {
                 submit_btn.hide();
                 loading_tag.show();
             })
-            
+
             file_field.change(function() {
                 instructions_tag.show('slow', 'linear');
                 if (file_field.val())
