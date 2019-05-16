@@ -13,17 +13,17 @@ def scale_img(f, name, max_px, dim):
 
     if dim == 'h':
         if h > max_px:
-            w = max_px * w / h
+            w = max_px * w // h
             h = max_px
         else:
             return f
     elif dim == 'both':
         if w > max_px or h > max_px:
             if w > h:
-                h = max_px * h / w
+                h = max_px * h // w
                 w = max_px
             else:
-                w = max_px * w / h
+                w = max_px * w // h
                 h = max_px
         else:
             return f
@@ -32,5 +32,5 @@ def scale_img(f, name, max_px, dim):
     scaled_buffer = BytesIO()
     scaled_img.save(scaled_buffer, 'PNG')
     scaled_f = File(scaled_buffer, name = name + '.png')
-    scaled_f._set_size(len(scaled_buffer.getvalue()))
+    #scaled_f._set_size(len(scaled_buffer.getvalue()))
     return scaled_f
