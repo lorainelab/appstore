@@ -110,7 +110,7 @@ The following app has been submitted:
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
 """.format(id = pending.id, fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    #send_mail('IGB App Store - App Submitted', msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+    send_mail('IGB App Store - App Submitted', msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 def _verify_javadocs_jar(file):
     error_msg = None
@@ -202,7 +202,7 @@ def _pending_app_accept(pending, request):
     pending.delete()
 
     server_url = _get_server_url(request)
-    _send_email_for_accepted_app(pending.submitter.email, settings.CONTACT_EMAIL, app.fullname, app.name, server_url)
+    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.fullname, app.name, server_url)
 
 def _pending_app_decline(pending_app, request):
     pending_app.delete_files()
