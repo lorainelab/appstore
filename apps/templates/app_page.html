@@ -215,7 +215,8 @@ logger = logging.getLogger("app_page.html") %}
 					<div class="span8">
 						{# Release version #}
 						<h4>
-							<a href="{% url 'release_download' app.name release.version %}">
+							<!-- Removed release.version argument -->
+							<a href="{% url 'release_download' app.name %}">
 								{{ release.version }}
 							</a>
 							<small><abbr class="timeago" title="{{ release.created_iso }}"></abbr></small>
