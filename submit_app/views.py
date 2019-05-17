@@ -29,6 +29,7 @@ def submit_app(request):
                 fullname, version, works_with, app_dependencies, has_export_pkg = process_jar(f, expect_app_name)
                 pending = _create_pending(request.user, fullname, version, works_with, app_dependencies, f)
                 _send_email_for_pending(pending)
+                _send_email_for_pending_user(pending)
                 version_pattern ="^[0-9].[0-9].[0-9]+"
                 version_pattern = re.compile(version_pattern)
                 if (bool(version_pattern.match(version))!=True):
@@ -111,6 +112,16 @@ The following app has been submitted:
     Submitter: {submitter_name} {submitter_email}
 """.format(id = pending.id, fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
     send_mail('IGB App Store - App Submitted', msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+
+def _send_email_for_pending_user(pending):
+    msg = u"""
+Your app has been submitted! You'll be notified by email when your app has been approved.
+The following app has been submitted:
+    Name: {fullname}
+    Version: {version}
+    Submitter: {submitter_name} {submitter_email}
+""".format(fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
+    send_mail('IGB App Store - Submission Done!', msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 def _verify_javadocs_jar(file):
     error_msg = None
