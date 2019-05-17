@@ -167,7 +167,7 @@ def _send_email_for_accepted_app(to_email, from_email, app_fullname, app_name, s
 To edit your app page:
  1. Go to {server_url}{app_url}
  2. Sign in as {author_email}
- 3. Under the "Editor's Actions" yellow button on the top-right, choose "Edit this page".
+ 3. Under the "Editor's Actions" on the top-right, choose "Edit this page".
 
 Make sure to add some tags to your app and a short app description, which is located
 right below the app name. You can also add screenshots, details about your app,
