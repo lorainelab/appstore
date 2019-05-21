@@ -105,7 +105,7 @@ var AppPage = (function($) {
                 install_app(app_symbolicName, "install", function(app_status, status) {
                     if (status == "200" && app_status.status == "INSTALLED") {
                         CyMsgs.add_msg(app_name + ' has been installed! Go to IGB to use it.', 'success');
-                        set_install_btn_to_installed(appVersion, igbVersion);
+                        set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
                         CyMsgs.add_msg('Could not install &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'error');
                         set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion);
@@ -125,7 +125,7 @@ var AppPage = (function($) {
                 install_app(app_symbolicName,"update", function(app_status, status) {
                     if (status == "200" && app_status.status == "UPDATED") {
                         CyMsgs.add_msg(app_name + ' has been updated! Go to IGB to use it.', 'success');
-                        set_install_btn_to_installed(appVersion, igbVersion);
+                        set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
                         CyMsgs.add_msg('Could not update &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'error');
                         set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion);
@@ -138,19 +138,17 @@ var AppPage = (function($) {
 		setup_install_btn('btn-success', 'icon-cy-install-installed', 'Installed', appVersion, igbVersion);
 	}
 
-	function setup_install(app_name, app_symbolicName, latest_release_version) {
+	function setup_install(app_name, app_symbolicName) {
 
 		get_app_info(app_symbolicName,function(app_status, is_running) {
 			if (is_running == "200") {
 					if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
 						set_install_btn_to_install(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
 					} else if (app_status.status === 'INSTALLED') {
-						var installed_version = app_status.appVersion;
-						if (installed_version === latest_release_version) {
-							set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
-						} else {
-							set_install_btn_to_upgrade(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
-						}
+						set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
+
+					} else if (app_status.status === 'TO_UPDATE') {
+                        set_install_btn_to_upgrade(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
 					}
 			} else {
 				CyMsgs.add_msg('IGB is not running!', 'info');
