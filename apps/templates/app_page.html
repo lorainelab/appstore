@@ -429,8 +429,7 @@ logger = logging.getLogger("app_page.html") %}
 <script type="text/javascript">
 $('.has-tooltip').tooltip();
 AppPage.setup_install("{{ app.name|escapejs }}",
-	"{{ app.symbolicname|escapejs }}",
-	"{{ app.cy_2x_plugin_version|escapejs }}");
+	"{{ app.symbolicname|escapejs }}");
 AppPage.setup_cy_2x_download_popover('{% get_static_prefix %}apps/img/plugins_dir.png');
 
 {% if app.details %}
