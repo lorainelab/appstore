@@ -67,10 +67,10 @@ class App(models.Model):
     authors      = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
     editors      = models.ManyToManyField(User, blank=True)
 
-    cy_2x_plugin_download     = models.URLField(blank=True, null=True)
-    cy_2x_plugin_version      = models.CharField(max_length=31, blank=True, null=True)
-    cy_2x_plugin_release_date = models.DateField(blank=True, null=True)
-    cy_2x_versions            = models.CharField(max_length=31, blank=True, null=True)
+    twox_plugin_download     = models.URLField(blank=True, null=True)
+    twox_plugin_version      = models.CharField(max_length=31, blank=True, null=True)
+    twox_plugin_release_date = models.DateField(blank=True, null=True)
+    twox_versions            = models.CharField(max_length=31, blank=True, null=True)
 
     latest_release_date       = models.DateField(blank=True, null=True)
     has_releases              = models.BooleanField(default=False)

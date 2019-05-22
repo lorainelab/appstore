@@ -20,7 +20,7 @@ class AppPending(models.Model):
     submitter     = models.ForeignKey(User,on_delete=models.CASCADE)
     fullname      = models.CharField(max_length=127)
     version       = models.CharField(max_length=31)
-    cy_works_with = models.CharField(max_length=31)
+    works_with = models.CharField(max_length=31)
     created       = models.DateTimeField(auto_now_add=True)
     release_file  = models.FileField(upload_to='pending_releases')
     dependencies  = models.ManyToManyField(Release, related_name='+', blank=True, null=True)
@@ -45,7 +45,7 @@ class AppPending(models.Model):
 
     def make_release(self, app):
         release, _ = Release.objects.get_or_create(app = app, version = self.version)
-        release.works_with = self.cy_works_with
+        release.works_with = self.works_with
         release.active = True
         release.created = datetime.datetime.today()
         release.save()
