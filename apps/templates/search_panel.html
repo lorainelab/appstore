@@ -6,14 +6,14 @@
   <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_button.css"/>
   <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_stars.css"/>
   <style type="text/css">
-    .icon-cy-tag-cloud {
+    .icon-tag-cloud {
       background-image: url("{% get_static_prefix %}apps/img/tag_cloud.png");
     }
   </style>
 {% endblock %}
 {% block content %}
 <div class="row">
- <div class="span4" id="cy-nav-panel">
+ <div class="span4" id="nav-panel">
 <!--    <div class="well">
       <div id="title">
         <table width="100%">
@@ -32,9 +32,9 @@
             <td><h3>Categories</h3></td>
             <td>
               <div class="pull-right">
-                <div id="cy-tag-buttons" class="btn-group">
-                  <button class="btn btn-mini" id="cy-tag-list-btn"><i class="icon-align-left"></i></button>
-                  <button class="btn btn-mini" id="cy-tag-cloud-btn"><i class="icon-cy-tag-cloud"></i></button>
+                <div id="tag-buttons" class="btn-group">
+                  <button class="btn btn-mini" id="tag-list-btn"><i class="icon-align-left"></i></button>
+                  <button class="btn btn-mini" id="tag-cloud-btn"><i class="icon-tag-cloud"></i></button>
                 </div>
               </div>
             </td>
@@ -42,7 +42,7 @@
 	</table>
       </div> -->
 	  
-      <div id="cy-tag-list">
+      <div id="tag-list">
         <ul class="nav nav-list" id="top-tags">
           {% for tag in top_tags %}
             <li {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
@@ -66,9 +66,9 @@
         </ul>
       </div>
 	
-      <div id="cy-tag-cloud">
+      <div id="tag-cloud">
         {% for tag in all_tags %}
-        <a {% ifequal tag.name selected_tag_name %} class="cy-tag-cloud-active" {% endifequal %} style="font-size: {{ tag.font_size_em }}em" href="{% url 'tag_page' tag.name %}">{{tag.fullname}}</a>
+        <a {% ifequal tag.name selected_tag_name %} class="tag-cloud-active" {% endifequal %} style="font-size: {{ tag.font_size_em }}em" href="{% url 'tag_page' tag.name %}">{{tag.fullname}}</a>
         {% endfor %}
       </div>
     </div>

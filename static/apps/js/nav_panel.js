@@ -45,18 +45,18 @@ $(function() {
     var TAGS_COOKIE = 'cytoscape.AppStore.Nav.Tags';
 
     function show_tag_list(animate) {
-	$('#cy-tag-cloud').hide();
-	$('#cy-tag-list').show(animate ? 'fast' : '');
-	$('#cy-tag-buttons button').removeClass('active');
-	$('#cy-tag-buttons #cy-tag-list-btn').addClass('active');
+	$('#tag-cloud').hide();
+	$('#tag-list').show(animate ? 'fast' : '');
+	$('#tag-buttons button').removeClass('active');
+	$('#tag-buttons #tag-list-btn').addClass('active');
 	$.cookie(TAGS_COOKIE, 'tag_list', {path: '/'})
     }
 
     function show_tag_cloud(animate) {
-	$('#cy-tag-list').hide();
-	$('#cy-tag-cloud').show(animate ? 'fast' : '');
-	$('#cy-tag-buttons button').removeClass('active');
-	$('#cy-tag-buttons #cy-tag-cloud-btn').addClass('active');
+	$('#tag-list').hide();
+	$('#tag-cloud').show(animate ? 'fast' : '');
+	$('#tag-buttons button').removeClass('active');
+	$('#tag-buttons #tag-cloud-btn').addClass('active');
 	$.cookie(TAGS_COOKIE, 'tag_cloud', {path: '/'})
     }
 
@@ -65,13 +65,13 @@ $(function() {
     else
 	show_tag_list(false);
     
-    $('#cy-tag-buttons #cy-tag-list-btn').click(function() {
-	if (!($('#cy-tag-list').is(':visible')))
+    $('#tag-buttons #tag-list-btn').click(function() {
+	if (!($('#tag-list').is(':visible')))
 	    show_tag_list(true);
     });
 
-    $('#cy-tag-buttons #cy-tag-cloud-btn').click(function() {
-	if (!($('#cy-tag-cloud').is(':visible')))
+    $('#tag-buttons #tag-cloud-btn').click(function() {
+	if (!($('#tag-cloud').is(':visible')))
 	    show_tag_cloud(true);
     });
 });

@@ -105,9 +105,9 @@ def _parse_osgi_bundle(manifest):
     if not import_packages:
         raise ValueError('does not import any packages--<tt>Import-Package</tt> is not in its manifest')
     import_packages = ','.join(import_packages)
-    max_cy_ver = max_of_lower_cytoscape_pkg_versions(import_packages)
-    if max_cy_ver:
-        app_works_with = _ver_tuple_to_str(max_cy_ver)
+    max_ver = max_of_lower_cytoscape_pkg_versions(import_packages)
+    if max_ver:
+        app_works_with = _ver_tuple_to_str(max_ver)
     else:
         raise ValueError('does not import IGB packages in <tt>Import-Package</tt>')
 

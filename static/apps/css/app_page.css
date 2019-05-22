@@ -49,11 +49,11 @@
 	text-align: center;
 }
 
-#cy-app-details-tab .span8 {
+#app-details-tab .span8 {
 	margin-bottom: 3em;
 }
 
-#cy-app-screenshots {
+#app-screenshots {
 	height: 170px;
 	overflow-x: auto;
 	overflow-y: hidden;
@@ -62,7 +62,7 @@
 	white-space: nowrap;
 }
 
-#cy-app-screenshots img,a {
+#app-screenshots img,a {
 	border: 0;
 	outline: none;
 }
@@ -72,40 +72,40 @@
     margin-bottom: 1em;
 }
 
-#cy-app-install-btn {
+#app-install-btn {
 	margin-bottom: 0.7em;
 }
 
-#cy-app-install-btn h4 {
+#app-install-btn h4 {
 	display: inline;
 	vertical-align: middle;
 	margin-left: 0.3em;
 }
 
-[class^="icon-cy-install-"], [class*="icon-cy-install-"] {
+[class^="icon-install-"], [class*="icon-install-"] {
     background-image: url('../img/install_icons.png');
     width: 24px;
     height: 24px;
     vertical-align: middle;
 }
 
-.icon-cy-install-upgrade {
+.icon-install-upgrade {
     background-position: 2px 0;
 }
 
-.icon-cy-install-installed {
+.icon-install-installed {
     background-position: -21px 0;
 }
 
-.icon-cy-install-download {
+.icon-install-download {
     background-position: -46px 0;
 }
 
-.icon-cy-install-install {
+.icon-install-install {
     background-position: -70px 0;
 }
 
-.cy-markdown-preview {
+.markdown-preview {
 	border: 2px dashed #aaa;
 	padding: 1em;
 	position: relative;
