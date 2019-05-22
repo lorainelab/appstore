@@ -1,5 +1,5 @@
 var CyMsgs = (function() {
-	var alerts_tag = $('#cy-alerts');
+	var alerts_tag = $('#alerts');
 
 	// Adds a message box at the top of the page.
 	// Arguments:
