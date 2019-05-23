@@ -4,10 +4,9 @@ This instructions show how to setup a local virtual environment.
 
 ## Checkout code base to a folder of your choice
 ```
-git clone https://github.com/cytoscape/appstore.git
+git clone https://bitbucket.org/lorainelab/appstore.git
 ```
-## [OLD]   The root folder must be named `CyAppStore` so that the relative imports are working.
-## [NEW] The root folder need not to be named, You can checkout to any folder of your choice -- Follow this.
+
 ## Additional requirements
 - mysql
 - xapian (https://xapian.org/docs/install.html, https://github.com/notanumber/xapian-haystack/blob/master/install_xapian.sh)
