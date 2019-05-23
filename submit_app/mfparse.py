@@ -187,7 +187,7 @@ def _parse_version_range(s):
 # Given a string containing the 'Import-Package' value,
 # returns a generator containing all the versions of
 # packages whose names begin with 'com.affymetrix'.
-def _lower_cytoscape_pkg_versions(s):
+def _lower_igb_pkg_versions(s):
     for (pkgname, attrs) in map(_extract_pkg_and_attrs, _split_by_pkg(s)):
         if not 'version' in attrs or not pkgname.startswith('com.affymetrix'):
             continue
@@ -195,11 +195,11 @@ def _lower_cytoscape_pkg_versions(s):
 
 # Given a string containing the 'Import-Package' value,
 # returns the maximum version across all the lower
-# versions of 'org.cytoscape.*' packages.
+# versions of 'org.igb.*' packages.
 # Returns None if there are no IGB packages.
-def max_of_lower_cytoscape_pkg_versions(s):
+def max_of_lower_igb_pkg_versions(s):
     try:
-        return max(_lower_cytoscape_pkg_versions(s))
+        return max(_lower_igb_pkg_versions(s))
     except ValueError:
         return None
 

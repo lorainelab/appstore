@@ -89,7 +89,7 @@ logger = logging.getLogger("app_page.html") %}
 
 		{# Helpdesk #}
 		<a> | </a>
-		<a href="https://groups.google.com/forum/?fromgroups#!searchin/cytoscape-helpdesk/{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">helpdesk</a>
+		<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">helpdesk</a>
 		{# End Helpdesk #}
 
 		{# Citations #}
@@ -103,7 +103,7 @@ logger = logging.getLogger("app_page.html") %}
 
 		{# badges #}
 		{% if app.has_releases %}
-		<img src="{% get_static_prefix %}apps/img/cy3_sticker.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is available for IGB.">
+		<img src="{% get_static_prefix %}apps/img/sticker.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is available for IGB.">
 		{% endif %}
 
 		{% if app.competition_winner_dec_2012 %}
@@ -305,8 +305,8 @@ logger = logging.getLogger("app_page.html") %}
 			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>{% endif %}
 			{% endif %}
 			{% if app.twox_plugin_release_date %}<p><strong>Released</strong> {{ app.twox_plugin_release_date|date:'j M Y' }}</p>{% endif %}
-			{% if app.twox_versions %}<p><strong>Works with</strong> <a href="http://www.cytoscape.org" target="_blank">IGB {{ app.twox_versions }}</a></p>{% endif %}
-			<p><strong>Download Stats</strong> <a href="http://chianti.ucsd.edu/cyto_web/plugins/plugindownloadstatistics.php">Click here</a></p>
+			{% if app.twox_versions %}<p><strong>Works with</strong> <a href="http://www.bioviz.org" target="_blank">IGB {{ app.twox_versions }}</a></p>{% endif %}
+
 		</div>
 -->
 		{# end 2.x download panel #}
@@ -319,12 +319,12 @@ logger = logging.getLogger("app_page.html") %}
 			<h5>		<!i class="fa fa-circle-o-notch fa-spin" style="font-size:16px"><!/i>&ensp; RESOURCES</font> </h5>
 			<!/li>
 
-				<li><a href="https://groups.google.com/forum/?fromgroups#!newtopic/cytoscape-helpdesk" target="_blank">
+				<li><a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
 					<i class="icon-question-sign"></i>
 					Ask a question
 				</a></li>
 
-				<li><a href="https://groups.google.com/forum/?fromgroups#!searchin/cytoscape-helpdesk/{{ app.fullname }}" target="_blank">
+				<li><a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank">
 					<i class="icon-comment"></i>
 					Search helpdesk
 				</a></li>
