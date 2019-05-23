@@ -177,7 +177,7 @@ $.get('{% get_static_prefix %}submit_app/html/twox_plugins.tmpl.html', function(
     $('#check-btn').click(function() {
       var fullname = $('#plugin-name').val();
       if (!(fullname in plugins)) {
-        CyMsgs.add_msg('No such plugin \"' + fullname + '\".', 'error', 'invalid_plugin_name');
+        Msgs.add_msg('No such plugin \"' + fullname + '\".', 'error', 'invalid_plugin_name');
         return;
       }
       var plugin = plugins[fullname];
@@ -200,7 +200,7 @@ $.get('{% get_static_prefix %}submit_app/html/twox_plugins.tmpl.html', function(
             btn.html('<i class="icon-ok icon-white"></i> Done');
             btn.parent().append('<a href="' + plugin.app_page_url + '">&rarr; Go to app page</a>');
           }).fail(function() {
-            CyMsgs.add_msg('Failed to submit app info update due to server error.', 'error', 'server_fail');
+            Msgs.add_msg('Failed to submit app info update due to server error.', 'error', 'server_fail');
           });
         });
       });
@@ -211,7 +211,7 @@ $.get('{% get_static_prefix %}submit_app/html/twox_plugins.tmpl.html', function(
     $.post('', {'action': 'plugins_xml'}, function(data) {
       update_page_with_plugins_dom($(data));
     }).fail(function() {
-      CyMsgs.add_msg('Could not load plugins.xml', 'error');
+      Msgs.add_msg('Could not load plugins.xml', 'error');
       $('#loading_plugins_xml').hide();
     });
   });
