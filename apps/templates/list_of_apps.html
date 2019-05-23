@@ -1,7 +1,6 @@
 {% load static %}
 {% load app_buttons %}
 
-{% if apps_with_releases %}
   <div class="row" style="margin-bottom: 4em;" id="apps-with-releases">
     <div class="span8">
       <table style="margin-bottom: 1em;">
@@ -20,7 +19,14 @@
         </tr>
       </table>
     </div>
-    {% app_buttons apps_with_releases %}
+      {% if apps_with_releases %}
+            {% app_buttons apps_with_releases %}
+      {% endif %}
+      {% if apps_without_releases %}
+            <div class="row">
+            {% app_buttons apps_without_releases %}
+            </div>
+      {% endif %}
   </div>
  
   <script type="text/javascript" src="{% get_static_prefix %}apps/js/sort_app_buttons.js"></script>
@@ -30,10 +36,6 @@
     });
   </script>
  
-{% endif %}
 
-{% if apps_without_releases %}
-  <div class="row">
-    {% app_buttons apps_without_releases %}
-  </div>
-{% endif %}
+
+
