@@ -182,7 +182,7 @@ def _mk_app_page(app, user, request, decoded_details):
 		'app': app,
 		'decoded_details' : decoded_details,
 		'is_editor': (user and app.is_editor(user)),
-		'cy3_latest_release': _latest_release(app),
+		'latest_release': _latest_release(app),
 		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
 		'go_back_to_url':   _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
 	}

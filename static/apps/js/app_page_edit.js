@@ -55,12 +55,12 @@ var AppPageEdit = (function($)
             var files = e.target.files;
             for (var i = 0, file; file = files[i]; i++) {
                 if (file.size > max_file_size_b ) {
-                    CyMsgs.add_msg('<strong>' + file.name + '</strong> is greater than 2 Mb.',  'error');
+                    Msgs.add_msg('<strong>' + file.name + '</strong> is greater than 2 Mb.',  'error');
                     continue;
                 }
 
                 if ($.inArray(file.type, supported_image_types) === -1) {
-                    CyMsgs.add_msg('<strong>' + file.name + '</strong> is not a recognized image file. The image type must be: ' + supported_image_names, 'error');
+                    Msgs.add_msg('<strong>' + file.name + '</strong> is not a recognized image file. The image type must be: ' + supported_image_names, 'error');
                     continue;
                 }
 
@@ -89,8 +89,8 @@ var AppPageEdit = (function($)
         max_file_size_b = _max_file_size_b;
     }
 
-    function encourage_cy3_port(){
-    	CyMsgs.add_msg('<a href="http://wiki.cytoscape.org/Cytoscape_3/AppDeveloper" target="_blank">IGB is here! Time to port your 2.x plugin to a 3.x app.</a>', 'info');
+    function encourage_port(){
+    	Msgs.add_msg('<a href="http://wiki.cytoscape.org/Cytoscape_3/AppDeveloper" target="_blank">IGB is here! Time to port your 2.x plugin to a 3.x app.</a>', 'info');
     }
 
     /* ===============================
@@ -154,7 +154,7 @@ var AppPageEdit = (function($)
             }
             img_tag.attr('width', w);
             img_tag.attr('height', h);
-            CyMsgs.add_msg('The image will be scaled down because it has dimensions greater than ' + max_dim_px + 'x' + max_dim_px + ' px.', 'warning');
+            Msgs.add_msg('The image will be scaled down because it has dimensions greater than ' + max_dim_px + 'x' + max_dim_px + ' px.', 'warning');
         }
     }
 
@@ -859,7 +859,7 @@ var AppPageEdit = (function($)
         });
 
         if (!all_valid)
-            CyMsgs.add_msg('Whoops! Please fix the fields in red. Once you\'re done, click Save again.', 'error', 'save');
+            Msgs.add_msg('Whoops! Please fix the fields in red. Once you\'re done, click Save again.', 'error', 'save');
         return all_valid;
     }
 
@@ -878,7 +878,7 @@ var AppPageEdit = (function($)
     }
 
     return {
-    	'encourage_cy3_port': encourage_cy3_port,
+    	'encourage_port': encourage_port,
         'set_max_file_img_size': set_max_file_image_size,
         'setup_text_fields': setup_text_fields,
         'setup_icon_selection': setup_icon_selection,
