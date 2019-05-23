@@ -15,22 +15,22 @@
 	width: 35%;
 }
 
-#cy-app-icon {
+#app-icon {
 	padding: 0.2em;
 	border: 1px dashed #aaa;
 	cursor: pointer;
 }
 
-#cy-app-icon-container:hover #cy-app-icon-edit-icon {
+#app-icon-container:hover #app-icon-edit-icon {
 	display: compact;
 }
 
 
-#cy-app-details-tab .row {
+#app-details-tab .row {
 	margin-bottom: 1em;
 }
 
-.cy-app-tag {
+.app-tag {
 	color: white;
 	background-color: #3A87AD;
 	padding: 0.3em 0.6em;
@@ -40,16 +40,16 @@
 	display: inline-block;
 }
 
-.cy-app-tag-remove {
+.app-tag-remove {
 	opacity: 0.6;
 	cursor: pointer;
 }
 
-.cy-app-tag-remove:hover {
+.app-tag-remove:hover {
 	opacity: 1.0;
 }
 
-#cy-tag-add-popover ul {
+#tag-add-popover ul {
 	height: 20em;
 	overflow: scroll;
 	overflow-x: hidden;
@@ -57,7 +57,7 @@
 }
 
 
-#cy-app-screenshots {
+#app-screenshots {
 	height: 170px;
 	overflow-x: auto;
 	overflow-y: hidden;
@@ -66,7 +66,7 @@
 	white-space: nowrap;
 }
 
-#cy-app-screenshots img {
+#app-screenshots img {
 	border: 2px solid white;
 	display: inline-block;
 }
@@ -75,21 +75,21 @@
 	border: 2px solid #F89406 !important;
 }
 
-#cy-app-details-preview {
+#app-details-preview {
 	border: 2px dashed #aaa;
 	padding: 1em;
 	position: relative;
 }
 
-.cy-right-panel input {
+.right-panel input {
 	width: 94%;
 }
 
-.cy-right-panel .help-block {
+.right-panel .help-block {
 	font-size: 0.87em;
 }
 
-.cy-right-panel fieldset {
+.right-panel fieldset {
 	margin: 1.5em 0 0 0;
 }
 
@@ -106,12 +106,12 @@ h4 button {
 	float: right;
 }
 
-.cy-release-notes {
+.release-notes {
     margin-left: 0.4em;
 	width: 95%;
 }
 
-.cy-release-notes-preview {
+.release-notes-preview {
 	border: 2px dashed #aaa;
 	padding: 1em;
 	position: relative;

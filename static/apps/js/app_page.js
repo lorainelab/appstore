@@ -50,7 +50,7 @@ var AppPage = (function($) {
           });
     }
 
-	var install_btn = $('#cy-app-install-btn');
+	var install_btn = $('#app-install-btn');
 	var igb_version = $('#igb_version');
 	var app_version = $('#app_version');
     var install_btn_last_class = [];
@@ -94,12 +94,12 @@ var AppPage = (function($) {
 
 
 	function set_install_btn_to_installing(appVersion, igbVersion) {
-		setup_install_btn('btn-info', 'icon-cy-install-install', 'Installing...',appVersion, igbVersion);
+		setup_install_btn('btn-info', 'icon-install-install', 'Installing...',appVersion, igbVersion);
     }
 
 	function set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion) {
 
-		setup_install_btn('btn-info', 'icon-cy-install-install', 'Install', appVersion, igbVersion,
+		setup_install_btn('btn-info', 'icon-install-install', 'Install', appVersion, igbVersion,
             function() {
                 set_install_btn_to_installing(appVersion, igbVersion);
                 install_app(app_symbolicName, "install", function(app_status, status) {
@@ -115,11 +115,11 @@ var AppPage = (function($) {
 	}
 
 	function set_install_btn_to_upgrading(appVersion, igbVersion) {
-		setup_install_btn('btn-warning', 'icon-cy-install-upgrade', 'Upgrading...',appVersion, igbVersion);
+		setup_install_btn('btn-warning', 'icon-install-upgrade', 'Upgrading...',appVersion, igbVersion);
     }
 
 	function set_install_btn_to_upgrade(app_name, app_symbolicName, appVersion, igbVersion) {
-		setup_install_btn('btn-warning', 'icon-cy-install-upgrade', 'Upgrade',appVersion, igbVersion,
+		setup_install_btn('btn-warning', 'icon-install-upgrade', 'Upgrade',appVersion, igbVersion,
             function() {
                 set_install_btn_to_upgrading(appVersion, igbVersion);
                 install_app(app_symbolicName,"update", function(app_status, status) {
@@ -135,7 +135,7 @@ var AppPage = (function($) {
 	}
 
 	function set_install_btn_to_installed(appVersion, igbVersion) {
-		setup_install_btn('btn-success', 'icon-cy-install-installed', 'Installed', appVersion, igbVersion);
+		setup_install_btn('btn-success', 'icon-install-installed', 'Installed', appVersion, igbVersion);
 	}
 
 	function setup_install(app_name, app_symbolicName) {
@@ -157,8 +157,8 @@ var AppPage = (function($) {
 		});
 	}
 
-	function setup_cy_2x_download_popover(plugins_dir_img) {
-		$('.cy-app-2x-download-popover').popover({
+	function setup_twox_download_popover(plugins_dir_img) {
+		$('.app-twox-download-popover').popover({
 			'title': 'How to Install',
 			'html': true,
 			'content': '<p>Download to your <strong>plugins</strong> folder.</p><p align="center"><img style="margin-top: 1em;" src="' + plugins_dir_img + '"></p>',
@@ -240,7 +240,7 @@ var AppPage = (function($) {
 
 
     function setup_details() {
-        MarkdownUtil.format($('#cy-app-details-md'));
+        MarkdownUtil.format($('#app-details-md'));
     }
     
     /*
@@ -250,7 +250,7 @@ var AppPage = (function($) {
     */
     
     function setup_release_notes() {
-        $('.cy-app-release-notes').each(function() {
+        $('.app-release-notes').each(function() {
             MarkdownUtil.format($(this));
         });
         
@@ -265,7 +265,7 @@ var AppPage = (function($) {
     
     return {
 	'setup_install': setup_install,
-	'setup_cy_2x_download_popover': setup_cy_2x_download_popover,
+	'setup_twox_download_popover': setup_twox_download_popover,
         'setup_stars': setup_stars,
         'setup_details': setup_details,
         'setup_release_notes': setup_release_notes,

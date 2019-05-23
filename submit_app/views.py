@@ -83,7 +83,7 @@ def confirm_submission(request, id):
         pending.pom_xml_file.close()
     return html_response('confirm.html', {'pending': pending, 'pom_attrs': pom_attrs}, request)
 
-def _create_pending(submitter, fullname, version, cy_works_with, app_dependencies, release_file):
+def _create_pending(submitter, fullname, version, works_with, app_dependencies, release_file):
     name = fullname_to_name(fullname)
     app = get_object_or_none(App, name = name)
     if app:
@@ -96,7 +96,7 @@ def _create_pending(submitter, fullname, version, cy_works_with, app_dependencie
     pending = AppPending.objects.create(submitter      = submitter,
                                         fullname       = fullname,
                                         version        = version,
-                                        cy_works_with  = cy_works_with)
+                                        works_with  = works_with)
     for dependency in app_dependencies:
         pending.dependencies.add(dependency)
     pending.release_file.save(basename(release_file.name), release_file)
@@ -310,21 +310,21 @@ def _update_app_page(request_post):
     if details:
         app.details = details
 
-    cy2x_plugin_download = request_post.get('cy2x_plugin_download')
-    if cy2x_plugin_download:
-        app.cy_2x_plugin_download = cy2x_plugin_download
+    twox_plugin_download = request_post.get('twox_plugin_download')
+    if twox_plugin_download:
+        app.twox_plugin_download = twox_plugin_download
 
-    cy2x_plugin_version = request_post.get('cy2x_plugin_version')
-    if cy2x_plugin_download:
-        app.cy_2x_plugin_version = cy2x_plugin_version
+    twox_plugin_version = request_post.get('twox_plugin_version')
+    if twox_plugin_download:
+        app.twox_plugin_version = twox_plugin_version
 
-    cy_versions = request_post.get('cy_versions')
-    if cy2x_plugin_download:
-        app.cy_2x_versions = cy_versions
+    versions = request_post.get('versions')
+    if twox_plugin_download:
+        app.twox_versions = versions
 
     release_date = request_post.get('release_date')
-    if cy2x_plugin_download:
-        app.cy_2x_plugin_release_date = _parse_iso_date(release_date)
+    if twox_plugin_download:
+        app.twox_plugin_release_date = _parse_iso_date(release_date)
 
     author_count = request_post.get('author_count')
     if author_count:
@@ -340,22 +340,22 @@ def _update_app_page(request_post):
     app.save()
     return json_response(True)
 
-_Cy2xPluginsActions = {
+_twoxPluginsActions = {
     'plugins_xml': _forward_plugins_xml,
     'app_info': _app_info,
     'update': _update_app_page,
 }
 
 @login_required
-def cy2x_plugins(request):
+def twox_plugins(request):
     if not request.user.is_staff:
         return HttpResponseForbidden()
     if request.method == 'POST':
         action = request.POST.get('action')
         if not action:
             return HttpResponseBadRequest('action must be specified')
-        if not action in _Cy2xPluginsActions:
-            return HttpResponseBadRequest('invalid action--must be: %s' % ', '.join(_Cy2xPluginsActions.keys()))
-        return _Cy2xPluginsActions[action](request.POST)
+        if not action in _twoxPluginsActions:
+            return HttpResponseBadRequest('invalid action--must be: %s' % ', '.join(_twoxPluginsActions.keys()))
+        return _twoxPluginsActions[action](request.POST)
     else:
-        return html_response('cy2x_plugins.html', {}, request)
+        return html_response('twox_plugins.html', {}, request)

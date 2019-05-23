@@ -36,11 +36,11 @@ def dom_to_std_obj(dom_obj):
                 authors.append((name, None))
         result['authors'] = authors
 
-    cy_versions = list()
-    cy_versions_dom = dom_obj.getElementsByTagName('cytoscapeVersions')[0]
-    for cy_version_dom in cy_versions_dom.childNodes:
-        cy_versions.append(cy_version_dom.childNodes[0].nodeValue)
-    result['cy-versions'] = cy_versions
+    versions = list()
+    versions_dom = dom_obj.getElementsByTagName('cytoscapeVersions')[0]
+    for version_dom in versions_dom.childNodes:
+        versions.append(version_dom.childNodes[0].nodeValue)
+    result['versions'] = versions
 
     result['download'] = dom_obj.getElementsByTagName('url')[0].childNodes[0].nodeValue
 
@@ -98,10 +98,10 @@ class Command(BaseCommand):
                     author, _ = Author.objects.get_or_create(name = name, institution = institution)
                     author_order = OrderedAuthor.objects.create(app = app, author = author, author_order = author_order)
 
-            app.cy_2x_plugin_download = plugin['download']
-            app.cy_2x_plugin_version = plugin['version']
-            app.cy_2x_plugin_release_date = _parse_iso_date(plugin['release-date'])
-            app.cy_2x_versions = ', '.join(plugin['cy-versions'])
+            app.twox_plugin_download = plugin['download']
+            app.twox_plugin_version = plugin['version']
+            app.twox_plugin_release_date = _parse_iso_date(plugin['release-date'])
+            app.twox_versions = ', '.join(plugin['versions'])
             app.save()
 
             print 'done.'

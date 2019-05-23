@@ -419,10 +419,10 @@ def _delete_release(app, request):
 	app.update_has_releases()
 
 _AppEditActions = {
-	'save_cy_2x_plugin_download':     _mk_basic_field_saver('cy_2x_plugin_download'),
-	'save_cy_2x_plugin_version':      _mk_basic_field_saver('cy_2x_plugin_version'),
-	'save_cy_2x_plugin_release_date': _mk_basic_field_saver('cy_2x_plugin_release_date', func=_parse_iso_date),
-	'save_cy_2x_versions':            _mk_basic_field_saver('cy_2x_versions'),
+	'save_twox_plugin_download':     _mk_basic_field_saver('twox_plugin_download'),
+	'save_twox_plugin_version':      _mk_basic_field_saver('twox_plugin_version'),
+	'save_twox_plugin_release_date': _mk_basic_field_saver('twox_plugin_release_date', func=_parse_iso_date),
+	'save_twox_versions':            _mk_basic_field_saver('twox_versions'),
 	'save_description':   _mk_basic_field_saver('description'),
 	'save_license_text':  _mk_basic_field_saver('license_text'),
 	'save_license_confirm':  _mk_basic_field_saver('license_confirm', func = lambda s: s.lower() == 'true'),

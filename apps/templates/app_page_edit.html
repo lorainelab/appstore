@@ -20,7 +20,7 @@
 {# app header #}
 <div class="row" style="margin-bottom: 3em;">
   <div class="span1" style="line-height: 74px;">
-    <img id="cy-app-icon" src="{{ app.icon_url }}" rel="tooltip" title="Click here to choose another icon">
+    <img id="app-icon" src="{{ app.icon_url }}" rel="tooltip" title="Click here to choose another icon">
   </div>
   <div class="span7">
     <h2 id="app-title">
@@ -28,7 +28,7 @@
         {{ app.fullname }}
       </span>
     </h2>
-    <input class="span7" id="cy-app-description" type="text" placeholder="Enter a short description of your app here" value="{% if app.description %}{{ app.description|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}">
+    <input class="span7" id="app-description" type="text" placeholder="Enter a short description of your app here" value="{% if app.description %}{{ app.description|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}">
   </div>
 </div>
 {# end app header #}
@@ -37,29 +37,29 @@
   {# tabs #}
   <div class="span8">
     {# tab titles #}
-    <ul id="cy-app-info-tabs" class="nav nav-tabs">
-      <li class="active"><a href="#cy-app-details-tab" data-toggle="tab"><b>Details</b></a></li>
+    <ul id="app-info-tabs" class="nav nav-tabs">
+      <li class="active"><a href="#app-details-tab" data-toggle="tab"><b>Details</b></a></li>
       {% if app.has_releases %}
-      <li><a href="#cy-app-releases-tab" data-toggle="tab"><b>Release History</b></a></li>
+      <li><a href="#app-releases-tab" data-toggle="tab"><b>Release History</b></a></li>
       {% endif %}
     </ul>
     {# end tab titles #}
 
     {# tab content #}
-    <div id="cy-app-info-content" class="tab-content">
+    <div id="app-info-content" class="tab-content">
       {# details tab #}
-      <div class="tab-pane active" id="cy-app-details-tab">
+      <div class="tab-pane active" id="app-details-tab">
         {# categories #}
         <div class="row"><div class="span8"><h6 class="muted">CATEGORIES</h6></div></div>
                     
         <div class="row">
-          <div class="span8" id="cy-app-tags-list">
+          <div class="span8" id="app-tags-list">
           </div>
         </div>
 
         <div class="row">
           <div class="span3">
-            <button id="cy-app-tag-add-btn" class="btn btn-small">
+            <button id="app-tag-add-btn" class="btn btn-small">
               <i class="icon-plus"></i> Add
             </button>
           </div>
@@ -72,16 +72,16 @@
         <div class="row"><div class="span8"><h6 class="muted">SCREENSHOTS</h6></div></div>
                     
         <div class="row">
-          <div class="span8" id="cy-app-screenshots">
+          <div class="span8" id="app-screenshots">
           </div>
         </div>
 
         <div class="row">
           <div class="span4">
-            <button id="cy-app-screenshot-add-btn" class="btn btn-small">
+            <button id="app-screenshot-add-btn" class="btn btn-small">
               <i class="icon-plus"></i> Add
             </button>
-            <button id="cy-app-screenshot-delete-btn" class="btn btn-small disabled">
+            <button id="app-screenshot-delete-btn" class="btn btn-small disabled">
               <i class="icon-trash"></i> Delete
             </button>
           </div>
@@ -95,7 +95,7 @@
 
         <div class="row">
           <div class="span8">
-            <textarea id="cy-app-details" class="span8" rows="15">{% if app.details %}{{ app.details }}{% endif %}</textarea>
+            <textarea id="app-details" class="span8" rows="15">{% if app.details %}{{ app.details }}{% endif %}</textarea>
           </div>
         </div>
 
@@ -103,7 +103,7 @@
 
         <div class="row">
           <div class="span8">
-            <div id="cy-app-details-preview"></div>
+            <div id="app-details-preview"></div>
           </div>
         </div>
         {# end app details #}
@@ -115,14 +115,14 @@
 
         <div class="row">
           <div class="span8">
-            <table class="table table-bordered table-striped" id="cy-app-authors">
+            <table class="table table-bordered table-striped" id="app-authors">
               <thead>
                 <th>Name</th>
                 <th>Institution (Optional)</th>
                 <th></th>
               </thead>
             </table>
-            <button class="btn btn-small" id="cy-app-author-add"><i class="icon-plus"></i> Add</button>
+            <button class="btn btn-small" id="app-author-add"><i class="icon-plus"></i> Add</button>
           </div>
         </div>
         {# end authors #}
@@ -131,15 +131,15 @@
 
       {# releases tab #}
       {% if app.has_releases %}
-      <div class="tab-pane" id="cy-app-releases-tab">
+      <div class="tab-pane" id="app-releases-tab">
         <div class="row">
           <div class="span7">
             {% for release in app.releases %}
-            <div class="cy-release" release_id="{{ release.id }}">
+            <div class="release" release_id="{{ release.id }}">
               <h4>
                 {{ release.version }}
                 <small><abbr class="timeago" title="{{ release.created_iso }}"></abbr></small>
-                <button class="btn btn-small {% if release.dependents.count %}disabled{% endif %} cy-release-delete"><i class="icon icon-trash"></i> Delete</button>
+                <button class="btn btn-small {% if release.dependents.count %}disabled{% endif %} release-delete"><i class="icon icon-trash"></i> Delete</button>
               </h4>
               <p>
                 <strong>Works with IGB</strong>
@@ -169,9 +169,9 @@
               </p>
               {% endif %}
               <p><strong>Release Notes</strong></p>
-              <textarea class="cy-release-notes" rows="5">{% if release.notes %}{{ release.notes }}{% endif %}</textarea>
+              <textarea class="release-notes" rows="5">{% if release.notes %}{{ release.notes }}{% endif %}</textarea>
               <h6 class="muted">PREVIEW</h6>
-              <div class="cy-release-notes-preview"></div>
+              <div class="release-notes-preview"></div>
               <hr>
             </div>
             {% endfor %}
@@ -199,69 +199,69 @@
       <h6 class="muted panel-title">Editors</h6>
       <ul class="nav nav-list" id="editors-list">
       </ul>
-      <button id="cy-app-editor-add" class="btn btn-small"><i class="icon-plus"></i> Add</button>
-      <button id="cy-app-editor-delete" class="btn btn-small disabled"><i class="icon-trash"></i> Delete</button>
+      <button id="app-editor-add" class="btn btn-small"><i class="icon-plus"></i> Add</button>
+      <button id="app-editor-delete" class="btn btn-small disabled"><i class="icon-trash"></i> Delete</button>
     </div>
     {# end editors #}
         
     {# 2.x #}
-    <div class="well cy-right-panel">
+    <div class="well right-panel">
       <h6 class="muted panel-title">Cytoscape 2.x Plugin</h6>
                 
-      <fieldset class="control-group" id="cy-2x-plugin-download">
+      <fieldset class="control-group" id="twox-plugin-download">
         <label>Download Link:</label>
-        <input type="text" value="{% if app.cy_2x_plugin_download %}{{ app.cy_2x_plugin_download }}{% endif %}">
+        <input type="text" value="{% if app.twox_plugin_download %}{{ app.twox_plugin_download }}{% endif %}">
       </fieldset>
-      <fieldset class="control-group" id="cy-2x-plugin-version" validate_regexp="^\d+\.\d+(\.\d+)?(-.+)?$">
+      <fieldset class="control-group" id="twox-plugin-version" validate_regexp="^\d+\.\d+(\.\d+)?(-.+)?$">
         <label>Version:</label>
-        <input type="text" value="{% if app.cy_2x_plugin_version %}{{ app.cy_2x_plugin_version }}{% endif %}">
+        <input type="text" value="{% if app.twox_plugin_version %}{{ app.twox_plugin_version }}{% endif %}">
         <span class="help-block">Examples: <em>2.0</em>, <em>4.32</em>, <em>2.0.3-beta</em></span>
       </fieldset>
-      <fieldset class="control-group" id="cy-2x-plugin-release-date" validate_regexp="^\d{4}-\d{2}-\d{2}$">
+      <fieldset class="control-group" id="twox-plugin-release-date" validate_regexp="^\d{4}-\d{2}-\d{2}$">
         <label>Release Date:</label>
-        <input type="text" value="{% if app.cy_2x_plugin_release_date %}{{ app.cy_2x_plugin_release_date.isoformat }}{% endif %}">
+        <input type="text" value="{% if app.twox_plugin_release_date %}{{ app.twox_plugin_release_date.isoformat }}{% endif %}">
         <span class="help-block">Format: <em>yyyy-mm-dd</em></span>
       </fieldset>
-      <fieldset class="control-group" id="cy-2x-versions" validate_regexp="^((\s*,\s*)?\d+(\.\d+)+)*$">
+      <fieldset class="control-group" id="twox-versions" validate_regexp="^((\s*,\s*)?\d+(\.\d+)+)*$">
         <label>Supported versions of Cytoscape 2.x:</label>
-        <input type="text" value="{% if app.cy_2x_versions %}{{ app.cy_2x_versions }}{% endif %}">
+        <input type="text" value="{% if app.twox_versions %}{{ app.twox_versions }}{% endif %}">
         <span class="help-block">Example: <em>2.4, 2.7, 2.8.1</em></span>
       </fieldset>
     </div>
     {# end 2.x #}
 
     {# resources #}
-    <div class="well cy-right-panel">
+    <div class="well right-panel">
       <h6 class="muted panel-title">Resources</h6>
 
-      <fieldset class="control-group" id="cy-app-license-text">
+      <fieldset class="control-group" id="app-license-text">
         <label>License:</label>
         <input type="text" placeholder="License URL (http://...)" value="{% if app.license_text %}{{ app.license_text }}{% endif %}">
         <input type="checkbox" {% if app.license_confirm %}checked{% endif %}> Require confirmation
       </fieldset>
-      <fieldset class="control-group" id="cy-app-website">
+      <fieldset class="control-group" id="app-website">
         <label><i class="icon-home"></i> Website:</label>
         <input type="text"  value="{% if app.website %}{{ app.website }}{% endif %}">
       </fieldset>
-      <fieldset class="control-group" id="cy-app-tutorial">
+      <fieldset class="control-group" id="app-tutorial">
         <label><i class="icon-book"></i> Tutorial:</label>
         <input type="text" value="{% if app.tutorial %}{{ app.tutorial }}{% endif %}">
       </fieldset>
-      <fieldset class="control-group" id="cy-app-citation" validate_regexp="^\d+$">
+      <fieldset class="control-group" id="app-citation" validate_regexp="^\d+$">
         <label><i class="icon-heart"></i> Citation:</label>
         <input type="text" placeholder="PubMed ID" value="{% if app.citation %}{{ app.citation }}{% endif %}">
         <span class="help-block">Example: <em>23595664</em></span>
       </fieldset>
-      <fieldset class="control-group" id="cy-app-coderepo">
+      <fieldset class="control-group" id="app-coderepo">
         <label><i class="icon-list-alt"></i> Code Repository:</label>
         <input type="text" value="{% if app.coderepo %}{{ app.coderepo }}{% endif %}">
       </fieldset>
-      <fieldset class="control-group" id="cy-app-automation">
+      <fieldset class="control-group" id="app-automation">
 	  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <label><i class="fa fa-gear fa-spin" style="color:black"></i> Automation Support:</label>
         <input type="text" value="{% if 'www' in app.automation %}{{ app.automation }}{% endif %}">
       </fieldset>
-      <fieldset class="control-group" id="cy-app-contact">
+      <fieldset class="control-group" id="app-contact">
         <label><i class="icon-envelope"></i> Contact Email:</label>
         <input type="text" value="{% if app.contact %}{{ app.contact }}{% endif %}">
       </fieldset>
@@ -273,11 +273,11 @@
     
 {# file choosers #}
 <div style="visibility: hidden;">
-  <input type="file" name="files[]" id="cy-app-icon-file-chooser">
+  <input type="file" name="files[]" id="app-icon-file-chooser">
 </div>
 
 <div style="visibility: hidden;">
-  <input type="file" name="files[]" id="cy-app-screenshot-file-chooser" multiple>
+  <input type="file" name="files[]" id="app-screenshot-file-chooser" multiple>
 </div>
 {# end file choosers #}
 
@@ -308,7 +308,7 @@
 {# end save dialog #}
 
 {# messages popup #}
-<script type="text/html" id="cy-msg-tmpl">
+<script type="text/html" id="msg-tmpl">
 <div class="alert alert-${ type }">
   <a class="close">&times;</a>
   ${ msg }
@@ -317,27 +317,27 @@
 {# end messages popup #}
 
 {# tag template #}
-<script type="text/html" id="cy-tag-tmpl">
-<span class="cy-app-tag">
-  <span class="cy-app-tag-name">${ tag }</span>
-  <span class="cy-app-tag-remove">&times;</span>
+<script type="text/html" id="tag-tmpl">
+<span class="app-tag">
+  <span class="app-tag-name">${ tag }</span>
+  <span class="app-tag-remove">&times;</span>
 </span>
 </script>
 {# end tag template #}
     
 {# author row template #}
-<script type="text/html" id="cy-author-row-tmpl">
-<tr class="cy-author-row">
-  <td><input class="cy-app-author-name" type="text" value="${ name }"</td>
-  <td><input class="cy-app-author-institution" type="text" value="${ institution }"</td>
+<script type="text/html" id="author-row-tmpl">
+<tr class="author-row">
+  <td><input class="app-author-name" type="text" value="${ name }"</td>
+  <td><input class="app-author-institution" type="text" value="${ institution }"</td>
   <td><button class="btn btn-small"><i class="icon-trash"></i> Delete</button></td>
 </tr>
 </script>
 {# end author row template #}
     
 {# add tag dialog template #}
-<script type="text/html" id="cy-tag-add-popover-html">
-<div id="cy-tag-add-popover">
+<script type="text/html" id="tag-add-popover-html">
+<div id="tag-add-popover">
   <ul class="unstyled">
     {% for tag in all_tags %}
     <li><a>{{ tag }}</a></li>
@@ -355,8 +355,8 @@
 {# end add tag dialog template #}
 
 {# add editor dialog template #}
-<script type="text/html" id="cy-editor-add-popover-html">
-<div id="cy-editor-add-popover">
+<script type="text/html" id="editor-add-popover-html">
+<div id="editor-add-popover">
   <div class="alert alert-error">
     Email is invalid.
   </div>
