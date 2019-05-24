@@ -1,7 +1,7 @@
 {% load static %}
 {% load app_buttons %}
 
-  <div class="row" style="margin-bottom: 4em;" id="apps-with-releases">
+  <div class="row" style="margin-bottom: 0em;" id="apps-with-releases">
     <div class="span8">
       <table style="margin-bottom: 1em;">
         <tr>
@@ -18,12 +18,12 @@
 	  </td> 
         </tr>
       </table>
-    </div>
+    </div >
       {% if apps_with_releases %}
             {% app_buttons apps_with_releases %}
       {% endif %}
       {% if apps_without_releases %}
-            <div class="row">
+            <div class="row span12">
             {% app_buttons apps_without_releases %}
             </div>
       {% endif %}

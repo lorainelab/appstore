@@ -24,6 +24,15 @@
           <td align="left">
             <h5>{{ app.fullname }}</h5>
           </td>
+          <td valign="baseline">
+            <div class="stars">
+              <i class="stars-empty icon-stars-empty"></i>
+              <i class="stars-full icon-stars-filled" style="width: {{ app.stars_percentage }}%"></i>
+              <span class="votes">
+                  ({{ app.votes }}){% if app.has_releases %}&nbsp;&nbsp;{{ app.downloads }} downloads {% endif %}
+              </span>
+            </div>
+          </td>
         </tr>
         <tr valign="top">
           <td valign="top">
@@ -48,6 +57,15 @@
           <td align="left">
             <h5>{{ app.fullname }}</h5>
           </td>
+          <td valign="baseline">
+            <div class="stars">
+              <i class="stars-empty icon-stars-empty"></i>
+              <i class="stars-full icon-stars-filled" style="width: {{ app.stars_percentage }}%"></i>
+              <span class="votes">
+                  ({{ app.votes }}){% if app.has_releases %}&nbsp;&nbsp;{{ app.downloads }} downloads {% endif %}
+              </span>
+            </div>
+          </td>
         </tr>
         <tr valign="top">
           <td>
@@ -56,18 +74,6 @@
                 {{ app.description }}
               {% endif %}
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td></td>
-          <td valign="baseline">
-            <div class="stars">
-              <i class="stars-empty icon-stars-empty"></i>
-              <i class="stars-full icon-stars-filled" style="width: {{ app.stars_percentage }}%"></i>
-            </div>
-            <span class="votes">
-              ({{ app.votes }}){% if app.has_releases %}&nbsp;&nbsp;{{ app.downloads }} downloads {% endif %}
-            </span>
           </td>
         </tr>
       </table>
