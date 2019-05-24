@@ -20,8 +20,7 @@
     background-color: whiteSmoke;
     border-radius: 0.3em;
     -moz-border-radius: 0.3em;
-
-    padding: 0.9em;
+    padding: 1em;
     margin-bottom: 0.8em;
     width: 93.5%;
 }
@@ -34,13 +33,11 @@
 .app_button .full
 {
     display: none;
-
     position: absolute;
     top: 0;
     left: 0;
     z-index: 10;
-
-    box-shadow: 0 0 1.7em rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0.5em rgba(0, 0, 0, 0.4);
     border: solid 1px rgba(0, 0, 0, 0.2);
 }
 
@@ -84,14 +81,16 @@
     margin-right: 0.9em;
 }
 
-.app_button .full .stars {
+.app_button .full .stars,.app_button .partial .stars
+ {
     position: relative;
-    width: 85px;
+    width: 100px;
     white-space: nowrap;
 
 }
 
-.app_button .full .stars .stars-empty {
+.app_button .full .stars .stars-empty,.app_button .partial .stars .stars-empty
+{
     position: absolute;
     top: 0;
     left: 0;
@@ -99,7 +98,8 @@
     z-index: 101;
 }
 
-.app_button .full .stars .stars-full {
+.app_button .full .stars .stars-full,.app_button .partial .stars .stars-full
+{
     position: absolute;
     top: 0;
     left: 0;
@@ -107,13 +107,11 @@
     overflow: hidden;
 }
 
-.app_button .full .votes
+.app_button .full .votes,.app_button .partial .votes
 {
     position: relative;
     top: -0.1em;
     left: 90px;
-    font-size: 0.8em;
-    color: black;
 }
 
 .app_button .sticker
@@ -130,4 +128,9 @@
 .app_button:hover .sticker
 {
     z-index: 11;
+}
+.span5{
+    width:450px;
+    max-width:450px;
+    min-width:450px;
 }
