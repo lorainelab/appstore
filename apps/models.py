@@ -101,6 +101,9 @@ class App(models.Model):
             return True
         return user in self.editors.all()
 
+    def __str__(self):
+        return self.fullname
+
     @property
     def stars_percentage(self):
         return 100 * self.stars / self.votes / 5 if self.votes != 0 else 0
