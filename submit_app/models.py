@@ -27,6 +27,10 @@ class AppPending(models.Model):
     javadocs_jar_file = models.FileField(upload_to='pending_releases', blank=True, null=True)
     pom_xml_file      = models.FileField(upload_to='pending_releases', blank=True, null=True)
 
+    def __str__(self):
+        return self.fullname
+
+
     def can_confirm(self, user):
         if user.is_staff or user.is_superuser:
             return True
