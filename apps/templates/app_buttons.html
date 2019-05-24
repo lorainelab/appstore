@@ -2,13 +2,13 @@
 
 {% for app in apps %}
   {% if forloop.counter|divisibleby:2 %}
-    <div class="span4" id="right">
+    <div class="span5" id="right">
       {% app_button app forloop.counter %}
     </div>
   {% endif %}
 
   {% if not forloop.counter|divisibleby:2 %}
-    <div class="span4" id="left">
+    <div class="span5" id="left">
       {% app_button app forloop.counter %}
     </div>
   {% endif %}
