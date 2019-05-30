@@ -62,11 +62,13 @@
         </ul>
         <ul class="nav nav-list" id="not-top-tags">
           {% for tag in not_top_tags %}
-            <li {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
-            <a href="{% url 'tag_page' tag.name %}"><h5>
-              <span class="title">{{ tag.fullname }}</span>
-              <span class="count">({{ tag.count }})</span>
-            </h5></a></li>
+            {% if tag.count > 0 %}
+              <li {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
+              <a href="{% url 'tag_page' tag.name %}"><h5>
+                <span class="title">{{ tag.fullname }}</span>
+                <span class="count">({{ tag.count }})</span>
+              </h5></a></li>
+            {% endif %}
           {% endfor %}
         </ul>
       </div>
