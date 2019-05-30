@@ -49,7 +49,7 @@
       <div id="tag-list">
         <ul class="nav nav-list" id="top-tags">
           {% for tag in top_tags %}
-            {% if tag.count != 0 %}
+            {% if tag.count > 0 %}
               <li {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
               <a href="{% url 'tag_page' tag.name %}"><h5>
                 <span class="title">{{ tag.fullname }}</span>
