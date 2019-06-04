@@ -4,54 +4,30 @@
 {% load app_buttons %}
 
 {% block main %}
-
-
-    <form method="get" action=".">
-<!--
-       {% if query %}
-            <h3>Results</h3>
-	    <h4>Apps</h4>
-
-	    {% for result in page.object_list %}
-	    <p>
-                    <a href="http://testappstore.bioviz.org/apps/{{ result.object.name}}">{{ result.object.name }}</a>
-                </p>
-            {% empty %}
-                <p>No results found.</p>
-            {% endfor %}
-
-	    {% for result in page.object_list %}
-	    <p>  <h6> {{result.object}} </h6> </p>
-	    {% endfor %}
--->
-
-	      <div class="row"><div class="span8"><h3>Apps</h3></div></div>
+<form method="get" action=".">
+  <div class="row"><div class="span8"><h3>Apps</h3></div></div>
 	{% if page.object_list %}
-    {% list_of_apps_search page.object_list True %}
-	{% endif %}
+  {% list_of_apps_search page.object_list True %}
 
-	    <h3>Authors</h3>
-	                {% for result in page.object_list %}
-			<ul>{% for author in result.object.authors.all %}
-			<li><a href="http://testappstore.bioviz.org/apps/with_author/{{author.name}}">{{ author.name }} ({{ author.institution }})</a></li>
-		    {% endfor %}
-		    </ul>
-            {% empty %}
-                <p></p>
+<h3>Authors</h3>
+	{% for result in page.object_list %}
+	    <ul>{% for author in result.object.authors.all %}
+	    <li><a href="{% url 'author_page' author.name %}">{{ author.name }} ({{ author.institution }})</a></li>
+	{% endfor %}
+  </ul>
+  {% empty %}
+  <p></p>
+	{% endfor %}
 
-			{% endfor %}
 <h3>Tags</h3>
-{% for result in page.object_list %}
-<ul>   {% for tag in result.object.tags.all %}
-			<li>	<a href="http://testappstore.bioviz.org/apps/with_tag/{{tag.name}}">{{ tag.name }}</a> </li>
-					{% endfor %}
-                </ul>
-
-            {% empty %}
-                <p></p>
-
-            {% endfor %}
-
+  {% for result in page.object_list %}
+       <ul>   {% for tag in result.object.tags.all %}
+	     <li>	<a href="{% url 'tag_page' tag.name %}">{{ tag.name }}</a> </li>
+	{% endfor %}
+        </ul>
+  {% empty %}
+  <p></p>
+  {% endfor %}
 <!--
             {% if page.has_previous or page.has_next %}
                 <div>
