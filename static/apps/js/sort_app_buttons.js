@@ -72,8 +72,6 @@ var SortAppButtons = (function() {
             If all the buttons have 0 attribute value then no sorting is done.
         */
         if( buttons.includes(undefined) && buttons.length == zero_value_buttons.length || buttons.length == 0 ){
-            buttons = [];
-            buttons = $.merge(buttons,zero_value_buttons);
             return;
         }
 
