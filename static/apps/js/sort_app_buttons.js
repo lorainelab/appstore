@@ -62,7 +62,8 @@ var SortAppButtons = (function() {
 
         zero_value_buttons = [];
         $.each(buttons, function(index, button) {
-            if(button[0]['attributes'][attr_name].value == "0") {
+            button_value = button[0]['attributes'][attr_name].value;
+            if(button_value == "0" || button_value == "") {
                 delete buttons[index];
                 zero_value_buttons.push(button);
             }
