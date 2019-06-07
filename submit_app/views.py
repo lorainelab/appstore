@@ -26,8 +26,8 @@ def submit_app(request):
         f = request.FILES.get('file')
         if f:
             try:
-                fullname, version, works_with, app_dependencies, has_export_pkg = process_jar(f, expect_app_name)
-                pending = _create_pending(request.user, fullname, version, works_with, app_dependencies, f)
+                fullname,symbolicname, version, works_with, app_dependencies, has_export_pkg = process_jar(f, expect_app_name)
+                pending = _create_pending(request.user, fullname, symbolicname, version, works_with, app_dependencies, f)
                 _send_email_for_pending(pending)
                 _send_email_for_pending_user(pending)
                 version_pattern ="^[0-9].[0-9].[0-9]+"
@@ -83,7 +83,7 @@ def confirm_submission(request, id):
         pending.pom_xml_file.close()
     return html_response('confirm.html', {'pending': pending, 'pom_attrs': pom_attrs}, request)
 
-def _create_pending(submitter, fullname, version, works_with, app_dependencies, release_file):
+def _create_pending(submitter, fullname, symbolicname, version, works_with, app_dependencies, release_file):
     name = fullname_to_name(fullname)
     app = get_object_or_none(App, name = name)
     if app:
@@ -94,6 +94,7 @@ def _create_pending(submitter, fullname, version, works_with, app_dependencies, 
             raise ValueError('cannot be accepted because the app %s already has a release with version %s. You can delete this version by going to the Release History tab in the app edit page' % (app.fullname, version))
 
     pending = AppPending.objects.create(submitter      = submitter,
+                                        symbolicname = symbolicname,
                                         fullname       = fullname,
                                         version        = version,
                                         works_with  = works_with)
@@ -205,6 +206,7 @@ def _pending_app_accept(pending, request):
     # we always create a new app, because only new apps require accepting
     app = App.objects.create(fullname = pending.fullname, name = name)
     app.active = True
+    app.symbolicname = pending.symbolicname
     app.editors.add(pending.submitter)
     app.save()
 
