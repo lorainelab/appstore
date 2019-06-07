@@ -21,6 +21,10 @@ def process_jar(jar_file, expect_app_name):
     is_osgi_bundle = True if manifest.get('Bundle-SymbolicName') else False
     parser_func = _parse_osgi_bundle if is_osgi_bundle else _parse_simple_app
     symbolicname = manifest.get('Bundle-SymbolicName')[0]
+    manifest_version = manifest.get('Manifest-Version')[0]
+    import_packages = manifest.get('Import-Package')[0]
+    details = manifest.get('Bundle-Description')[0]
+    lastmodified = manifest.get('Bnd-LastModified')[0]
     app_name, app_ver, app_works_with, app_dependencies, has_export_pkg = parser_func(manifest)
 
     app_name = smart_text(app_name, errors='replace')
@@ -29,14 +33,17 @@ def process_jar(jar_file, expect_app_name):
     app_ver = smart_text(app_ver, errors='replace')
     app_works_with = smart_text(app_works_with, errors='replace')
     symbolicname = smart_text(symbolicname, errors='replace')
-
+    #manifest_version = smart_text(manifest_version, errors='replace')
+    #import_packages = smart_text(import_packages, errors='replace')
+    #details = smart_text(details, errors='replace')
+    #lastmodified = smart_text(lastmodified, errors='replace')
     try:
         app_dependencies = list(_app_dependencies_to_releases(app_dependencies))
     except ValueError as e:
         (msg, ) = e.args
         raise ValueError('has a problem with its manifest for entry <tt>IGB-App-Dependencies</tt>: ' + msg)
 
-    return (app_name, symbolicname, app_ver, app_works_with, app_dependencies, has_export_pkg)
+    return (app_name, symbolicname, manifest_version, import_packages, details, lastmodified, app_ver, app_works_with, app_dependencies, has_export_pkg)
 
 def _app_dependencies_to_releases(app_dependencies):
     for dependency in app_dependencies:

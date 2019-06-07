@@ -60,6 +60,10 @@ class App(models.Model):
     symbolicname = models.CharField(max_length=127, unique=True)
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
+    import_packages = models.TextField(blank=True, null=True)
+    manifest_version = models.CharField(max_length=31)
+    lastmodified = models.CharField(max_length=127)
+    version       = models.CharField(max_length=31)
     tags         = models.ManyToManyField(Tag, blank=True)
 
     icon         = models.ImageField(blank=True, null=True)
