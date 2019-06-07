@@ -9,9 +9,9 @@
   onClick="window.location='{% url 'app_page' app.name %}';">
 
   {% if app.has_releases %}
-    <i class="cy3-sticker" style="background-image: url('{% get_static_prefix %}apps/img/cy3_sticker.png');"></i>
+    <i class="sticker" style="background-image: url('{% get_static_prefix %}apps/img/sticker.png');"></i>
   {% endif %}
-  
+
   <a href="{% url 'app_page' app.name %}">
     <div class="partial">
       <table border="0" width="100%">
@@ -23,6 +23,15 @@
           </td>
           <td align="left">
             <h5>{{ app.fullname }}</h5>
+          </td>
+          <td valign="baseline">
+            <div class="stars">
+              <i class="stars-empty icon-stars-empty"></i>
+              <i class="stars-full icon-stars-filled" style="width: {{ app.stars_percentage }}%"></i>
+              <span class="votes">
+                  ({{ app.votes }}){% if app.has_releases %}&nbsp;&nbsp;{{ app.downloads }} downloads {% endif %}
+              </span>
+            </div>
           </td>
         </tr>
         <tr valign="top">
@@ -36,7 +45,7 @@
         </tr>
       </table>
     </div>
-    
+
     <div class="full">
       <table border="0" width="100%">
         <tr valign="top">
@@ -48,6 +57,15 @@
           <td align="left">
             <h5>{{ app.fullname }}</h5>
           </td>
+          <td valign="baseline">
+            <div class="stars">
+              <i class="stars-empty icon-stars-empty"></i>
+              <i class="stars-full icon-stars-filled" style="width: {{ app.stars_percentage }}%"></i>
+              <span class="votes">
+                  ({{ app.votes }}){% if app.has_releases %}&nbsp;&nbsp;{{ app.downloads }} downloads {% endif %}
+              </span>
+            </div>
+          </td>
         </tr>
         <tr valign="top">
           <td>
@@ -56,18 +74,6 @@
                 {{ app.description }}
               {% endif %}
             </div>
-          </td>
-        </tr>
-        <tr>
-          <td></td>
-          <td valign="baseline">
-            <div class="stars">
-              <i class="stars-empty icon-stars-empty"></i>
-              <i class="stars-full icon-stars-filled" style="width: {{ app.stars_percentage }}%"></i>
-            </div>
-            <span class="votes">
-              ({{ app.votes }}){% if app.has_releases %}&nbsp;&nbsp;{{ app.downloads }} downloads {% endif %}
-            </span>
           </td>
         </tr>
       </table>

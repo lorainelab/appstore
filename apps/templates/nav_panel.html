@@ -14,21 +14,11 @@
 
 {% block content %}
 <div class="row">
-  <div class="span4" id="nav-panel">
+  <div class="span3" id="nav-panel">
     <div class="well">
       <div id="title">
         <table width="100%">
-          <tr>
-            <td>
-              <h4 style="margin: 0">
-                {% ifequal navbar_selected_link "all" %} 
-                  All Apps
-                {% else %}
-                  <a href="{% url 'all_apps' %}">All Apps</a>
-                {% endifequal %}
-              </h4>
-            </td>
-          </tr>
+
           <tr>
             <td><h3>Categories</h3></td>
             <td>
@@ -40,28 +30,45 @@
               </div>
             </td>
           </tr>
+          <tr>
+            <td>
+              <h4 style="margin: 0">
+                {% ifequal navbar_selected_link "all" %}
+                  All Apps
+                {% else %}
+                  <a href="{% url 'all_apps' %}">All Apps</a>
+                {% endifequal %}
+              </h4>
+               <ul class="nav nav-list"><li class="divider"></li></ul>
+            </td>
+
+          </tr>
         </table>
       </div>
 	  
       <div id="tag-list">
         <ul class="nav nav-list" id="top-tags">
           {% for tag in top_tags %}
-            <li {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
-            <a href="{% url 'tag_page' tag.name %}"><h5>
-              <span class="title">{{ tag.fullname }}</span>
-              <span class="count">({{ tag.count }})</span>
-            </h5></a></li>
+            {% if tag.count > 0 %}
+              <li {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
+              <a href="{% url 'tag_page' tag.name %}"><h5>
+                <span class="title">{{ tag.fullname }}</span>
+                <span>({{ tag.count }})</span>
+              </h5></a></li>
+            {% endif %}
           {% endfor %}
           <li class="divider"></li>
           <p><button class="btn btn-small" id="more-button"></button></p>
         </ul>
         <ul class="nav nav-list" id="not-top-tags">
           {% for tag in not_top_tags %}
-            <li {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
-            <a href="{% url 'tag_page' tag.name %}"><h5>
-              <span class="title">{{ tag.fullname }}</span>
-              <span class="count">({{ tag.count }})</span>
-            </h5></a></li>
+            {% if tag.count > 0 %}
+              <li {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
+              <a href="{% url 'tag_page' tag.name %}"><h5>
+                <span class="title">{{ tag.fullname }}</span>
+                <span class="count">({{ tag.count }})</span>
+              </h5></a></li>
+            {% endif %}
           {% endfor %}
         </ul>
       </div>

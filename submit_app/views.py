@@ -26,8 +26,8 @@ def submit_app(request):
         f = request.FILES.get('file')
         if f:
             try:
-                fullname, version, works_with, app_dependencies, has_export_pkg = process_jar(f, expect_app_name)
-                pending = _create_pending(request.user, fullname, version, works_with, app_dependencies, f)
+                fullname,symbolicname, manifest_version, import_packages, details, lastmodified, version, works_with, app_dependencies, has_export_pkg = process_jar(f, expect_app_name)
+                pending = _create_pending(request.user, fullname, symbolicname, manifest_version, import_packages, details, lastmodified, version, works_with, app_dependencies, f)
                 _send_email_for_pending(pending)
                 _send_email_for_pending_user(pending)
                 version_pattern ="^[0-9].[0-9].[0-9]+"
@@ -83,7 +83,7 @@ def confirm_submission(request, id):
         pending.pom_xml_file.close()
     return html_response('confirm.html', {'pending': pending, 'pom_attrs': pom_attrs}, request)
 
-def _create_pending(submitter, fullname, version, works_with, app_dependencies, release_file):
+def _create_pending(submitter, fullname, symbolicname, manifest_version, import_packages, details, lastmodified, version, works_with, app_dependencies, release_file):
     name = fullname_to_name(fullname)
     app = get_object_or_none(App, name = name)
     if app:
@@ -94,6 +94,11 @@ def _create_pending(submitter, fullname, version, works_with, app_dependencies, 
             raise ValueError('cannot be accepted because the app %s already has a release with version %s. You can delete this version by going to the Release History tab in the app edit page' % (app.fullname, version))
 
     pending = AppPending.objects.create(submitter      = submitter,
+                                        symbolicname = symbolicname,
+                                        manifest_version = manifest_version,
+                                        import_packages = import_packages,
+                                        details = details,
+                                        lastmodified = lastmodified,
                                         fullname       = fullname,
                                         version        = version,
                                         works_with  = works_with)
@@ -111,7 +116,7 @@ The following app has been submitted:
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
 """.format(id = pending.id, fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('IGB App Store - App Submitted', msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+    #send_mail('IGB App Store - App Submitted', msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 def _send_email_for_pending_user(pending):
     msg = u"""
@@ -121,7 +126,7 @@ The following app has been submitted:
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
 """.format(fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('IGB App Store - Submission Done!', msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
+    #send_mail('IGB App Store - Submission Done!', msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 def _verify_javadocs_jar(file):
     error_msg = None
@@ -190,7 +195,7 @@ the top-right.
 
 - IGB App Store Team
 """.format(app_url = app_url, author_email = to_email, server_url = server_url)
-    send_mail(subject, msg, from_email, (to_email,))
+    #send_mail(subject, msg, from_email, (to_email,))
 
 def _get_server_url(request):
     name = request.META['SERVER_NAME']
@@ -205,6 +210,11 @@ def _pending_app_accept(pending, request):
     # we always create a new app, because only new apps require accepting
     app = App.objects.create(fullname = pending.fullname, name = name)
     app.active = True
+    app.symbolicname = pending.symbolicname
+    app.manifest_version =pending.manifest_version,
+    app.import_packages = pending.import_packages,
+    app.details = pending.details,
+    app.lastmodified = pending.lastmodified,
     app.editors.add(pending.submitter)
     app.save()
 
