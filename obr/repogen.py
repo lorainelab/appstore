@@ -1,0 +1,152 @@
+#
+# Author: Sameer Shanbhag
+# Email: sshanbh1@uncc.edu
+#
+
+from django.conf import settings
+from xml.etree import ElementTree as ET
+import re
+import os
+import datetime
+from submit_app.models import AppPending
+
+
+def xml_writer(elem):
+    """
+    Write to XML string for the Element.
+    """
+    tree = ET.ElementTree(elem)
+    tree.write(open(settings.MEDIA_ROOT + '/pending_releases/repository.xml', 'wb'))
+
+
+def split(word):
+    """
+        Split the String in to characters for processing
+    """
+    return [char for char in word]
+
+
+def get_timestamp(time):
+    """
+    Returns the UNIX Timestamp
+    :param time: Data Time
+    :return: UNIX timestamp
+    """
+    timestamp = time
+    dt_object = datetime.datetime.fromtimestamp(int(timestamp[0:10]))
+    date = dt_object.strftime('%Y.%m.%d.%I.%M.%S') + ('.' + (str(dt_object.microsecond))[:3])
+    return (str(date)).replace(".", "", 5)
+
+
+def custom_split(char_array):
+    """
+    Custom Splitting the String to Get Import Statements
+    :param char_array: List of Characters
+    :return: List of Import Statements
+    """
+    custom_list = []
+    temp = ''
+    for i in range(0, len(char_array)):
+        if i == 0:
+            temp += char_array[i]
+        elif i == len(char_array) - 1:
+            temp += char_array[i]
+            custom_list.append(temp)
+            temp = ''
+        else:
+            if char_array[i] == ',':
+                if char_array[i - 1].isdigit() and char_array[i + 1].isdigit():
+                    temp += char_array[i]
+                else:
+                    custom_list.append(temp)
+                    temp = ''
+            else:
+                temp += char_array[i]
+    return custom_list
+
+
+def generate_xml(dict_ver):
+    """
+    :param dict_ver: Object of Pending App
+    :return: Nothing | Generates the XML at a given location
+    """
+    if os.path.exists(settings.MEDIA_ROOT + '/pending_releases/repository.xml'):
+        elemt = ET.parse(settings.MEDIA_ROOT + '/pending_releases/repository.xml')
+        root = elemt.getroot()
+        repository = root
+    else:
+        repository = ET.Element('repository')
+        repository.set('lastmodified', get_timestamp(dict_ver.lastmodified))
+
+    resource = ET.SubElement(repository, 'resource')
+    resource.set('id', dict_ver.symbolicname + '\\' + dict_ver.version)
+    resource.set('symbolicname', dict_ver.symbolicname)
+    resource.set('presentationname', dict_ver.fullname)
+    resource.set('uri',  + dict_ver.symbolicname + '-' + dict_ver.version + '.jar')
+    resource.set('version', dict_ver.version)
+
+    description = ET.SubElement(resource, 'description')
+    description.text = dict_ver.description
+
+    # size = SubElement(resource, 'size')
+    # size.text = 'Bundle-Size'
+
+    capability = ET.SubElement(resource, 'capability')
+    capability.set('name', 'bundle')
+
+    p = ET.SubElement(capability, 'p')
+    p.set('n', 'symbolicname')
+    p.set('v', dict_ver.symbolicname,)
+
+    p = ET.SubElement(capability, 'p')
+    p.set('n', 'presentationname')
+    p.set('v', dict_ver.fullname)
+
+    p = ET.SubElement(capability, 'p')
+    p.set('n', 'version')
+    p.set('v', dict_ver.version)
+
+    p = ET.SubElement(capability, 'p')
+    p.set('n', 'manifestversion')
+    p.set('v', dict_ver.manifest_version)
+
+    regex = r'version=\"\[(.*)\)'
+
+    get_ist = custom_split(split(dict_ver.import_packages))
+
+    for i in get_ist:
+        require = ET.SubElement(resource, 'require')
+        require.set('name', 'package')
+        if i.count('version') > 0:
+            temp = i.split(';')
+            search_obj = re.search(regex, temp[1])
+            version = search_obj.group(1).split(',')
+            require.set('filter', '(&(package=' + temp[0] + ')' + '(version>=' + version[0] + ')(!(version>=' +
+                        version[1] + ')))')
+        else:
+            require.set('filter', '(&(package=' + i + '))')
+        require.set('extend', 'false')
+        require.set('multiple', 'false')
+        require.set('optional', 'false')
+        require.text = 'Import package ' + i
+    xml_writer(repository)
+
+
+def main():
+    try:
+        all_entries = AppPending.objects.all()
+        for entry in all_entries:
+            generate_xml(entry)
+        return True
+    except IOError:
+        print("Exception occurred while generating XML")
+        return False
+
+"""
+Just for Development
+"""
+#
+# if __name__ == '__main__':
+#     all_entries = AppPending.objects.all()
+#     print(all_entries[0])
+#
