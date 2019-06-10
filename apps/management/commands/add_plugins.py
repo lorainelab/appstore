@@ -98,10 +98,7 @@ class Command(BaseCommand):
                     author, _ = Author.objects.get_or_create(name = name, institution = institution)
                     author_order = OrderedAuthor.objects.create(app = app, author = author, author_order = author_order)
 
-            app.twox_plugin_download = plugin['download']
-            app.twox_plugin_version = plugin['version']
-            app.twox_plugin_release_date = _parse_iso_date(plugin['release-date'])
-            app.twox_versions = ', '.join(plugin['versions'])
+
             app.save()
 
             print 'done.'

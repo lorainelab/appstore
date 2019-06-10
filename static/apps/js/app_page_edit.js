@@ -105,10 +105,6 @@ var AppPageEdit = (function($)
             };
         }
 
-        field_change($('#twox-plugin-download input'), field_modified('twox-plugin-download'));
-        field_change($('#twox-plugin-version input'), field_modified('twox-plugin-version'));
-        field_change($('#twox-plugin-release-date input'), field_modified('twox-plugin-release-date'));
-        field_change($('#twox-versions input'), field_modified('twox-versions'));
         field_change($('#app-description'), field_modified('description'));
         field_change($('#app-license-text input[type=text]'), field_modified('license_text'));
         $('#app-license-text input[type=checkbox]').click(field_modified('license_confirm'));
@@ -662,10 +658,6 @@ var AppPageEdit = (function($)
       }
     */
     var SaveActionsToAjax = {
-        'twox-plugin-download': mk_field_save_action('Saving 2.x plugin download link', 'save_twox_plugin_download', 'twox_plugin_download', $('#twox-plugin-download input')),
-        'twox-plugin-version': mk_field_save_action('Saving 2.x plugin version', 'save_twox_plugin_version', 'twox_plugin_version', $('#twox-plugin-version input')),
-        'twox-plugin-release-date': mk_field_save_action('Saving 2.x plugin release date', 'save_twox_plugin_release_date', 'twox_plugin_release_date', $('#twox-plugin-release-date input')),
-        'twox-versions': mk_field_save_action('Saving supported Cytoscape 2.x versions', 'save_twox_versions', 'twox_versions', $('#twox-versions input')),
         'description': mk_field_save_action('Saving description', 'save_description', 'description', $('#app-description')),
         'license_text': mk_field_save_action('Saving license URL', 'save_license_text', 'license_text', $('#app-license-text input[type=text]')),
         'license_confirm': function() {

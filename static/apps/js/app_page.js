@@ -157,15 +157,6 @@ var AppPage = (function($) {
 		});
 	}
 
-	function setup_twox_download_popover(plugins_dir_img) {
-		$('.app-twox-download-popover').popover({
-			'title': 'How to Install',
-			'html': true,
-			'content': '<p>Download to your <strong>plugins</strong> folder.</p><p align="center"><img style="margin-top: 1em;" src="' + plugins_dir_img + '"></p>',
-			'placement': 'bottom',
-            'trigger': 'hover',
-		});
-	}
 	
     /*
      ================================================================
@@ -265,7 +256,7 @@ var AppPage = (function($) {
     
     return {
 	'setup_install': setup_install,
-	'setup_twox_download_popover': setup_twox_download_popover,
+	// 'setup_twox_download_popover': setup_twox_download_popover,
         'setup_stars': setup_stars,
         'setup_details': setup_details,
         'setup_release_notes': setup_release_notes,
