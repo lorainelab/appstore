@@ -312,22 +312,6 @@ def _update_app_page(request_post):
     if details:
         app.details = details
 
-    twox_plugin_download = request_post.get('twox_plugin_download')
-    if twox_plugin_download:
-        app.twox_plugin_download = twox_plugin_download
-
-    twox_plugin_version = request_post.get('twox_plugin_version')
-    if twox_plugin_download:
-        app.twox_plugin_version = twox_plugin_version
-
-    versions = request_post.get('versions')
-    if twox_plugin_download:
-        app.twox_versions = versions
-
-    release_date = request_post.get('release_date')
-    if twox_plugin_download:
-        app.twox_plugin_release_date = _parse_iso_date(release_date)
-
     author_count = request_post.get('author_count')
     if author_count:
         author_count = int(author_count)
@@ -342,22 +326,3 @@ def _update_app_page(request_post):
     app.save()
     return json_response(True)
 
-_twoxPluginsActions = {
-    'plugins_xml': _forward_plugins_xml,
-    'app_info': _app_info,
-    'update': _update_app_page,
-}
-
-@login_required
-def twox_plugins(request):
-    if not request.user.is_staff:
-        return HttpResponseForbidden()
-    if request.method == 'POST':
-        action = request.POST.get('action')
-        if not action:
-            return HttpResponseBadRequest('action must be specified')
-        if not action in _twoxPluginsActions:
-            return HttpResponseBadRequest('invalid action--must be: %s' % ', '.join(_twoxPluginsActions.keys()))
-        return _twoxPluginsActions[action](request.POST)
-    else:
-        return html_response('twox_plugins.html', {}, request)

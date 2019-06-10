@@ -204,31 +204,6 @@
     </div>
     {# end editors #}
 
-    {# 2.x #}
-    <div class="well right-panel">
-      <h6 class="muted panel-title">IGB 2.x Plugin</h6>
-
-      <fieldset class="control-group" id="twox-plugin-download">
-        <label>Download Link:</label>
-        <input type="text" value="{% if app.twox_plugin_download %}{{ app.twox_plugin_download }}{% endif %}">
-      </fieldset>
-      <fieldset class="control-group" id="twox-plugin-version" validate_regexp="^\d+\.\d+(\.\d+)?(-.+)?$">
-        <label>Version:</label>
-        <input type="text" value="{% if app.twox_plugin_version %}{{ app.twox_plugin_version }}{% endif %}">
-        <span class="help-block">Examples: <em>2.0</em>, <em>4.32</em>, <em>2.0.3-beta</em></span>
-      </fieldset>
-      <fieldset class="control-group" id="twox-plugin-release-date" validate_regexp="^\d{4}-\d{2}-\d{2}$">
-        <label>Release Date:</label>
-        <input type="text" value="{% if app.twox_plugin_release_date %}{{ app.twox_plugin_release_date.isoformat }}{% endif %}">
-        <span class="help-block">Format: <em>yyyy-mm-dd</em></span>
-      </fieldset>
-      <fieldset class="control-group" id="twox-versions" validate_regexp="^((\s*,\s*)?\d+(\.\d+)+)*$">
-        <label>Supported versions of IGB 2.x:</label>
-        <input type="text" value="{% if app.twox_versions %}{{ app.twox_versions }}{% endif %}">
-        <span class="help-block">Example: <em>2.4, 2.7, 2.8.1</em></span>
-      </fieldset>
-    </div>
-    {# end 2.x #}
 
     {# resources #}
     <div class="well right-panel">
