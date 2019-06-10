@@ -78,7 +78,6 @@
               <ul class="dropdown-menu">
                 {% if user.is_staff %}
                   <li><a href="{% url 'pending-apps' %}">Pending Apps</a></li>
-                  <li><a href="{% url 'twox-plugins' %}">2.x Plugins Management</a></li>
                 {% endif %}
                 <li><a href="{% url 'logout' %}?next={{ request.get_full_path|escape }}">Sign out</a></li>
               </ul>
