@@ -33,4 +33,3 @@ venv
 .DS_Store
 *bak[0-9]*
 db.sqlite3
-/appsstore/settings.py
