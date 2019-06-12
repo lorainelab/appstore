@@ -1,20 +1,21 @@
 from django.http import HttpResponse
-from django.conf import settings
-import os
 from . import repogen
+from xml.etree import ElementTree as ET
 
 
-def serve_file(request):
-    os.remove(settings.MEDIA_ROOT + '/pending_releases/repository.xml')
-    get_status = repogen.main()
-    if get_status:
-        filepath = '/pending_releases/repository.xml'
-        with open(settings.MEDIA_ROOT + filepath, 'r') as fp:
-            data = fp.read()
-        response = HttpResponse(content_type="text/xml")
-        # response['Content-Disposition'] = 'attachment; filename=%s' % filename # force browser to download file
-        response.write(data)
-    else:
-        response = HttpResponse(content_type="text/raw")
-        response.write("Repository XML Failed to generate")
+def serve_file_pending(request):
+    data = repogen.main('pending')
+    response = HttpResponse(content_type="text/xml")
+    # Use the below line for serving the file as attachment (Begin Direct Download)
+    # response['Content-Disposition'] = 'attachment; filename=%s' % filename # force browser to download file
+    response.write(ET.tostring(data, encoding='utf8', method='xml'))
+    return response
+
+
+def serve_file_released(request):
+    data = repogen.main('released')
+    response = HttpResponse(content_type="text/xml")
+    # Use the below line for serving the file as attachment (Begin Direct Download)
+    # response['Content-Disposition'] = 'attachment; filename=%s' % filename # force browser to download file
+    response.write(ET.tostring(data, encoding='utf8', method='xml'))
     return response
