@@ -71,11 +71,6 @@ class App(models.Model):
     authors      = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
     editors      = models.ManyToManyField(User, blank=True)
 
-    twox_plugin_download     = models.URLField(blank=True, null=True)
-    twox_plugin_version      = models.CharField(max_length=31, blank=True, null=True)
-    twox_plugin_release_date = models.DateField(blank=True, null=True)
-    twox_versions            = models.CharField(max_length=31, blank=True, null=True)
-
     latest_release_date       = models.DateField(blank=True, null=True)
     has_releases              = models.BooleanField(default=False)
 
@@ -94,7 +89,6 @@ class App(models.Model):
     downloads    = models.PositiveIntegerField(default=0)
 
     featured = models.BooleanField(default=False)
-    competition_winner_dec_2012 = models.BooleanField(default=False)
 
     active = models.BooleanField(default=False)
 

@@ -101,16 +101,11 @@ logger = logging.getLogger("app_page.html") %}
 		{# End Citations #}
 		<span class="app-usage-info-divider"></span>
 
-		{# badges #}
-		{% if app.has_releases %}
-		<img src="{% get_static_prefix %}apps/img/sticker.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is available for IGB.">
-		{% endif %}
+<!--		{# badges #}-->
+<!--		{% if app.has_releases %}-->
+<!--		<img src="{% get_static_prefix %}apps/img/sticker.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is available for IGB.">-->
+<!--		{% endif %}-->
 
-		{% if app.competition_winner_dec_2012 %}
-		<a href="http://nrnb.org/competitions.html" target="_blank">
-			<img src="{% get_static_prefix %}apps/img/trophy.png" class="has-tooltip" data-toggle="tooltip" data-title="This app won the December 2012 App Competition.">
-		</a>
-		{% endif %}
 
 		{% if app.coderepo %}
 		<a href="{{ app.coderepo }}" target="_blank">
@@ -290,27 +285,6 @@ logger = logging.getLogger("app_page.html") %}
 
 		{# end 3.0 download panel #}
 
-		{# 2.x download panel #}
-
-		<!--<div class="well">
-			<h6 class="panel-title muted">IGB</h6>
-			{% if app.has_releases %}
-			<p><strong>Version</strong> <a class="app-twox-download-popover" href="{{ app.twox_plugin_download }}">{{ app.twox_plugin_version }}</a></p>
-			{% else %}
-			<button class="btn btn-large btn-primary btn-block app-twox-download-popover" id="app-install-btn" onClick="window.location.href='{{ app.twox_plugin_download|escapejs }}'" >
-				<i class="icon-install-download"></i>
-				<h4>Install</h4>
-			</button>
-			<p><strong>Version</strong> {{ app.twox_plugin_version }}</p>
-			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>{% endif %}
-			{% endif %}
-			{% if app.twox_plugin_release_date %}<p><strong>Released</strong> {{ app.twox_plugin_release_date|date:'j M Y' }}</p>{% endif %}
-			{% if app.twox_versions %}<p><strong>Works with</strong> <a href="http://www.bioviz.org" target="_blank">IGB {{ app.twox_versions }}</a></p>{% endif %}
-
-		</div>
--->
-		{# end 2.x download panel #}
-
 		{# app resources #}
 		<div class="alert">
 			<ul class="nav nav-list">
@@ -430,7 +404,6 @@ logger = logging.getLogger("app_page.html") %}
 $('.has-tooltip').tooltip();
 AppPage.setup_install("{{ app.name|escapejs }}",
 	"{{ app.symbolicname|escapejs }}");
-AppPage.setup_twox_download_popover('{% get_static_prefix %}apps/img/plugins_dir.png');
 
 {% if app.details %}
 AppPage.setup_details();
