@@ -26,18 +26,6 @@ def split(word):
     return [char for char in word]
 
 
-def get_timestamp(time):
-    """
-    Returns the UNIX Timestamp
-    :param time: Data Time
-    :return: UNIX timestamp
-    """
-    timestamp = time
-    dt_object = datetime.datetime.fromtimestamp(int(timestamp[0:10]))
-    date = dt_object.strftime('%Y.%m.%d.%I.%M.%S') + ('.' + (str(dt_object.microsecond))[:3])
-    return (str(date)).replace(".", "", 5)
-
-
 def custom_split(char_array):
     """
     Custom Splitting the String to Get Import Statements
@@ -88,15 +76,13 @@ def generate_xml(dict_ver, tree):
     :param dict_ver: Object of Pending App
     :return: Nothing | Generates the XML at a given location
     """
-    # packages = generate_xml_from_obr(dict_ver)
-
     if tree:
         elemt = ET.parse(tree)
         root = elemt.getroot()
         repository = root
     else:
         repository = ET.Element('repository')
-        repository.set('lastmodified', get_timestamp(dict_ver.lastmodified))
+        repository.set('lastmodified', dict_ver.lastmodified)
 
     resource = ET.SubElement(repository, 'resource')
     resource.set('id', dict_ver.symbolicname + '\\' + dict_ver.version)
@@ -144,7 +130,7 @@ def generate_xml(dict_ver, tree):
 
             version = search_obj.group(1).split(',')
             require.set('filter', '(&(package=' + temp[0] + ')' + '(version>=' + version[0] + ')(!(version>=' +
-                        version[1] + '))))')
+                        version[1] + ')))')
         else:
             require.set('filter', '(&(package=' + i + '))')
         require.set('extend', 'false')
@@ -160,6 +146,11 @@ def main(status):
     else:
         all_entries = App.objects.all()
     tree = ""
-    for entry in all_entries:
-        tree = generate_xml(entry, tree)
-    return tree
+    if len(all_entries) > 0:
+        for entry in all_entries:
+            tree = generate_xml(entry, tree)
+        return tree
+    else:
+        repository = ET.Element('repository')
+        resource = ET.SubElement(repository, 'resource')
+        return repository
