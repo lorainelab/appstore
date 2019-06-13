@@ -76,10 +76,10 @@ def generate_xml(dict_ver, tree):
     :param dict_ver: Object of Pending App
     :return: Nothing | Generates the XML at a given location
     """
-    if tree:
-        elemt = ET.parse(tree)
-        root = elemt.getroot()
-        repository = root
+    if tree != "":
+        tree = ET.tostring(tree, encoding='unicode')
+        elemt = ET.fromstring(tree)
+        repository = elemt
     else:
         repository = ET.Element('repository')
         repository.set('lastmodified', dict_ver.lastmodified)
@@ -88,7 +88,7 @@ def generate_xml(dict_ver, tree):
     resource.set('id', dict_ver.symbolicname + '\\' + dict_ver.version)
     resource.set('symbolicname', dict_ver.symbolicname)
     resource.set('presentationname', dict_ver.fullname)
-    resource.set('uri', dict_ver.symbolicname + '-' + dict_ver.version + '.jar')
+    resource.set('uri', 'http://localhost:8000/media/pending_releases/' + dict_ver.symbolicname + '-' + dict_ver.version + '.jar')
     resource.set('version', dict_ver.version)
 
     description = ET.SubElement(resource, 'description')
@@ -137,6 +137,7 @@ def generate_xml(dict_ver, tree):
         require.set('multiple', 'false')
         require.set('optional', 'false')
         require.text = 'Import package ' + i
+    # return ET.tostring(repository, encoding='unicode')
     return repository
 
 
@@ -145,7 +146,9 @@ def main(status):
         all_entries = AppPending.objects.all()
     else:
         all_entries = App.objects.all()
+
     tree = ""
+
     if len(all_entries) > 0:
         for entry in all_entries:
             tree = generate_xml(entry, tree)

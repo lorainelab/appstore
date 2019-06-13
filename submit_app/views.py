@@ -211,10 +211,11 @@ def _pending_app_accept(pending, request):
     app = App.objects.create(fullname = pending.fullname, name = name)
     app.active = True
     app.symbolicname = pending.symbolicname
-    app.manifest_version =pending.manifest_version,
-    app.import_packages = pending.import_packages,
-    app.details = pending.details,
-    app.lastmodified = pending.lastmodified,
+    app.manifest_version =pending.manifest_version
+    app.import_packages = pending.import_packages
+    app.details = pending.details
+    app.version = pending.version
+    app.lastmodified = pending.lastmodified
     app.editors.add(pending.submitter)
     app.save()
 
