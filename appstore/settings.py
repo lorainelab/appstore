@@ -36,7 +36,6 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework',
     'whoosh',
     'haystack',
     'social_django',
@@ -47,7 +46,6 @@ INSTALLED_APPS = [
     'help.apps.HelpConfig',
     'backend.apps.BackendConfig',
     'download.apps.DownloadConfig',
-    'obr',
 ]
 
 MIDDLEWARE = [
@@ -131,12 +129,12 @@ DATABASES = {
 
 #EMAIL
 # used for the from: field in emails
-CONTACT_EMAILS = ['sameershanbhag123@gmail.com']
+CONTACT_EMAILS = ['AdminEmail@gmail.com']
 EMAIL_USE_TLS       = True
 EMAIL_HOST          = 'smtp.gmail.com'
-EMAIL_HOST_USER     = 'sameershanbhag123'
-EMAIL_ADDR          = EMAIL_HOST_USER + '@gmail.com'
-EMAIL_HOST_PASSWORD = 'Chimera@17'
+EMAIL_HOST_USER     = 'your gmail id'
+EMAIL_ADDR          = EMAIL_HOST_USER  + '@gmail.com'
+EMAIL_HOST_PASSWORD = 'yourpassword'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
