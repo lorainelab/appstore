@@ -63,7 +63,7 @@ class App(models.Model):
     import_packages = models.TextField(blank=True, null=True)
     manifest_version = models.CharField(max_length=31)
     lastmodified = models.CharField(max_length=127)
-    version       = models.CharField(max_length=31)
+    version       = models.TextField(blank=False)
     tags         = models.ManyToManyField(Tag, blank=True)
 
     icon         = models.ImageField(blank=True, null=True)
