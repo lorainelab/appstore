@@ -6,7 +6,6 @@
 from django.conf import settings
 from xml.etree import ElementTree as ET
 import re
-import datetime
 from submit_app.models import AppPending
 from apps.models import App
 
