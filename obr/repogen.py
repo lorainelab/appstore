@@ -6,6 +6,7 @@
 from django.conf import settings
 from xml.etree import ElementTree as ET
 import re
+import base64
 from submit_app.models import AppPending
 from apps.models import App
 
@@ -102,8 +103,9 @@ def generate_xml(dict_ver, tree, state):
     resource.set('version', dict_ver.version)
 
     description = ET.SubElement(resource, 'description')
-    description.text = dict_ver.details
-
+    temp = dict_ver.details.encode('utf-8')
+    description.text = base64.b64encode(temp).decode('utf-8')
+    # print(base64.b64encode(dict_ver.details.decode('utf-8')))
     # size = SubElement(resource, 'size')
     # size.text = 'Bundle-Size'
 
@@ -135,12 +137,14 @@ def generate_xml(dict_ver, tree, state):
         require.set('name', 'package')
         if i.count('version') > 0:
             temp = i.split(';')
-
-            search_obj = re.search(regex, temp[1])
-
-            version = search_obj.group(1).split(',')
-            require.set('filter', '(&(package=' + temp[0] + ')' + '(version>=' + version[0] + ')(!(version>=' +
-                        version[1] + ')))')
+            for item in temp[1:]:
+                search_obj = re.search(regex, item)
+                if search_obj is None:
+                    pass
+                else:
+                    version = search_obj.group(1).split(',')
+                    require.set('filter', '(&(package=' + temp[0] + ')' + '(version>=' + version[0] + ')(!(version>=' +
+                                version[1] + ')))')
         else:
             require.set('filter', '(&(package=' + i + '))')
         require.set('extend', 'false')
