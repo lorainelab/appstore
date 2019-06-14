@@ -126,7 +126,7 @@ The following app has been submitted:
     Name: {fullname}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
-""".format(fullname = pending.jar_details['fullname'], version = pending.jar_details['version'], submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
+""".format(fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
     send_mail('IGB App Store - Submission Done!', msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 def _verify_javadocs_jar(file):
