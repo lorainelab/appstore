@@ -74,9 +74,11 @@ def get_fullname(input):
     input = input.replace(' ', '')
     return input
 
+
 def generate_xml(dict_ver, tree, state):
     """
-    :param tree:
+    :param state: Pending or Released ?
+    :param tree: Element Object
     :param dict_ver: Object of Pending App
     :return: Nothing | Generates the XML at a given location
     """
