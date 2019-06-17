@@ -2,6 +2,7 @@ from zipfile import ZipFile
 from os.path import basename
 from urllib.request import urlopen
 import re
+import base64
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, HttpResponseForbidden
@@ -98,7 +99,7 @@ def _create_pending(submitter, jar_details, release_file):
                                         symbolicname = jar_details['symbolicname'],
                                         manifest_version = jar_details['manifest_version'],
                                         import_packages = jar_details['import_packages'],
-                                        details = jar_details['details'],
+                                        details = base64.b64decode(jar_details['details']).decode('utf-8'),
                                         lastmodified = jar_details['lastmodified'],
                                         fullname       = jar_details['fullname'],
                                         version        = jar_details['version'],
@@ -126,7 +127,7 @@ The following app has been submitted:
     Name: {fullname}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
-""".format(fullname = pending.jar_details['fullname'], version = pending.jar_details['version'], submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
+""".format(fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
     send_mail('IGB App Store - Submission Done!', msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 def _verify_javadocs_jar(file):
