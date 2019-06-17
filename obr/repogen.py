@@ -6,7 +6,7 @@
 from django.conf import settings
 from xml.etree import ElementTree as ET
 import re
-import datetime
+import base64
 from submit_app.models import AppPending
 from apps.models import App
 
@@ -70,9 +70,16 @@ def generate_xml_from_obr(dict_ver):
     return packages
 
 
-def generate_xml(dict_ver, tree):
+def get_fullname(input):
+    input = input.lower()
+    input = input.replace(' ', '')
+    return input
+
+
+def generate_xml(dict_ver, tree, state):
     """
-    :param tree:
+    :param state: Pending or Released ?
+    :param tree: Element Object
     :param dict_ver: Object of Pending App
     :return: Nothing | Generates the XML at a given location
     """
@@ -88,12 +95,17 @@ def generate_xml(dict_ver, tree):
     resource.set('id', dict_ver.symbolicname + '\\' + dict_ver.version)
     resource.set('symbolicname', dict_ver.symbolicname)
     resource.set('presentationname', dict_ver.fullname)
-    resource.set('uri', 'http://localhost:8000/media/pending_releases/' + dict_ver.symbolicname + '-' + dict_ver.version + '.jar')
+    if state == 'pending':
+        resource.set('uri', '/media/pending_releases/' + dict_ver.symbolicname + '-' + dict_ver.version + '.jar')
+    else:
+        resource.set('uri', '/media/' + get_fullname(dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.version +
+                     '/' + dict_ver.symbolicname + '-' + dict_ver.version + '.jar')
     resource.set('version', dict_ver.version)
 
     description = ET.SubElement(resource, 'description')
-    description.text = dict_ver.details
-
+    temp = dict_ver.details.encode('utf-8')
+    description.text = base64.b64encode(temp).decode('utf-8')
+    # print(base64.b64encode(dict_ver.details.decode('utf-8')))
     # size = SubElement(resource, 'size')
     # size.text = 'Bundle-Size'
 
@@ -125,12 +137,14 @@ def generate_xml(dict_ver, tree):
         require.set('name', 'package')
         if i.count('version') > 0:
             temp = i.split(';')
-
-            search_obj = re.search(regex, temp[1])
-
-            version = search_obj.group(1).split(',')
-            require.set('filter', '(&(package=' + temp[0] + ')' + '(version>=' + version[0] + ')(!(version>=' +
-                        version[1] + ')))')
+            for item in temp[1:]:
+                search_obj = re.search(regex, item)
+                if search_obj is None:
+                    pass
+                else:
+                    version = search_obj.group(1).split(',')
+                    require.set('filter', '(&(package=' + temp[0] + ')' + '(version>=' + version[0] + ')(!(version>=' +
+                                version[1] + ')))')
         else:
             require.set('filter', '(&(package=' + i + '))')
         require.set('extend', 'false')
@@ -151,7 +165,7 @@ def main(status):
 
     if len(all_entries) > 0:
         for entry in all_entries:
-            tree = generate_xml(entry, tree)
+            tree = generate_xml(entry, tree, status)
         return tree
     else:
         repository = ET.Element('repository')
