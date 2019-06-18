@@ -19,6 +19,11 @@ except ImportError:
 class AppPending(models.Model):
     submitter     = models.ForeignKey(User,on_delete=models.CASCADE)
     fullname      = models.CharField(max_length=127)
+    symbolicname      = models.CharField(max_length=127)
+    manifest_version = models.CharField(max_length=31)
+    details = models.TextField(blank=True, null=True)
+    import_packages = models.TextField(blank=True, null=True)
+    lastmodified = models.CharField(max_length=127)
     version       = models.CharField(max_length=31)
     works_with = models.CharField(max_length=31)
     created       = models.DateTimeField(auto_now_add=True)
