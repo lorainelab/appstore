@@ -130,12 +130,12 @@ DATABASES = {
 
 #EMAIL
 # used for the from: field in emails
-CONTACT_EMAILS = ['kulkarniprutha28@gmail.com']
+CONTACT_EMAILS = ['AdminEmail@gmail.com']
 EMAIL_USE_TLS       = True
 EMAIL_HOST          = 'smtp.gmail.com'
-EMAIL_HOST_USER     = 'kulkarniprutha28'
+EMAIL_HOST_USER     = 'your gmail id'
 EMAIL_ADDR          = EMAIL_HOST_USER  + '@gmail.com'
-EMAIL_HOST_PASSWORD = 'Priyanka28!'
+EMAIL_HOST_PASSWORD = 'yourpassword'
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
