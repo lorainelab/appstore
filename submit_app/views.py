@@ -2,6 +2,7 @@ from zipfile import ZipFile
 from os.path import basename
 from urllib.request import urlopen
 import re
+import base64
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, HttpResponseForbidden
@@ -26,15 +27,16 @@ def submit_app(request):
         f = request.FILES.get('file')
         if f:
             try:
-                fullname,symbolicname, version, works_with, app_dependencies, has_export_pkg = process_jar(f, expect_app_name)
-                pending = _create_pending(request.user, fullname, symbolicname, version, works_with, app_dependencies, f)
+                jar_details = process_jar(f, expect_app_name)
+                pending = _create_pending(request.user, jar_details, f)
                 _send_email_for_pending(pending)
                 _send_email_for_pending_user(pending)
                 version_pattern ="^[0-9].[0-9].[0-9]+"
                 version_pattern = re.compile(version_pattern)
-                if (bool(version_pattern.match(version))!=True):
-                    raise ValueError("The version is not in proper pattern. It should have 3 order version numbering (e.g: x.y.z)")
-                if has_export_pkg:
+                if not bool(version_pattern.match(jar_details['version'])):
+                    raise ValueError("The version is not in proper pattern. It should have 3 order version numbering "
+                                     "(e.g: x.y.z)")
+                if jar_details['has_export_pkg']:
                     return HttpResponseRedirect(reverse('submit-api', args=[pending.id]))
                 else:
                     return HttpResponseRedirect(reverse('confirm-submission', args=[pending.id]))
@@ -83,22 +85,26 @@ def confirm_submission(request, id):
         pending.pom_xml_file.close()
     return html_response('confirm.html', {'pending': pending, 'pom_attrs': pom_attrs}, request)
 
-def _create_pending(submitter, fullname, symbolicname, version, works_with, app_dependencies, release_file):
-    name = fullname_to_name(fullname)
+def _create_pending(submitter, jar_details, release_file):
+    name = fullname_to_name(jar_details['fullname'])
     app = get_object_or_none(App, name = name)
     if app:
         if not app.is_editor(submitter):
             raise ValueError('cannot be accepted because you are not an editor')
-        release = get_object_or_none(Release, app = app, version = version)
+        release = get_object_or_none(Release, app = app, version = jar_details['version'])
         if release and release.active:
             raise ValueError('cannot be accepted because the app %s already has a release with version %s. You can delete this version by going to the Release History tab in the app edit page' % (app.fullname, version))
 
     pending = AppPending.objects.create(submitter      = submitter,
-                                        symbolicname = symbolicname,
-                                        fullname       = fullname,
-                                        version        = version,
-                                        works_with  = works_with)
-    for dependency in app_dependencies:
+                                        symbolicname = jar_details['symbolicname'],
+                                        manifest_version = jar_details['manifest_version'],
+                                        import_packages = jar_details['import_packages'],
+                                        details = base64.b64decode(jar_details['details']).decode('utf-8'),
+                                        lastmodified = jar_details['lastmodified'],
+                                        fullname       = jar_details['fullname'],
+                                        version        = jar_details['version'],
+                                        works_with  = jar_details['works_with'])
+    for dependency in jar_details['app_dependencies']:
         pending.dependencies.add(dependency)
     pending.release_file.save(basename(release_file.name), release_file)
     pending.save()
@@ -207,6 +213,11 @@ def _pending_app_accept(pending, request):
     app = App.objects.create(fullname = pending.fullname, name = name)
     app.active = True
     app.symbolicname = pending.symbolicname
+    app.manifest_version =pending.manifest_version
+    app.import_packages = pending.import_packages
+    app.details = pending.details
+    app.version = pending.version
+    app.lastmodified = pending.lastmodified
     app.editors.add(pending.submitter)
     app.save()
 
