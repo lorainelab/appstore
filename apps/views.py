@@ -11,6 +11,7 @@ from util.view_util import json_response, html_response, obj_to_dict, get_object
 from util.img_util import scale_img
 from util.id_util import fullname_to_name
 from apps.models import Tag, App, Author, OrderedAuthor, Screenshot, Release
+from django.core.paginator import Paginator
 # Returns a unicode string encoded in a cookie
 import logging
 logger = logging.getLogger(__name__)
@@ -85,12 +86,23 @@ def _flush_tag_caches():
 class _DefaultConfig:
 	num_of_top_apps = 6
 
-def apps_default(request):
-	latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')[:_DefaultConfig.num_of_top_apps]
-	downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()[:_DefaultConfig.num_of_top_apps]
+def apps_default(request, page = 1):
+	latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')
+	downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()
+	#latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')[:_DefaultConfig.num_of_top_apps]
+	#downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()[:_DefaultConfig.num_of_top_apps]
+	apps_on_each_pg = 6
+	paginator = Paginator(downloaded_apps, apps_on_each_pg)
+	#page = request.GET.get('page')
+	try:
+		downloaded_app = paginator.get_page(page)
+	except PageNotAnInteger:
+		downloaded_app = paginator.page(1)
+	except EmptyPage:
+		downloaded_app = paginator.page(paginator.num_pages)
 	c = {
 		'latest_apps': latest_apps,
-		'downloaded_apps': downloaded_apps,
+		'downloaded_apps_pg': downloaded_app,
 		'go_back_to': 'home',
 	}
 	# c.update(_nav_panel_context(request)) # This is another way to fix categories to display in homepage #Remove for loop in html_response method added in view_util.py.

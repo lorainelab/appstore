@@ -2,9 +2,33 @@
 {% load app_buttons %}
 
 {% block main %}
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
   <style type="text/css">
     h2 { margin-bottom: 0.5em; }
     .span4 { margin-bottom: 1em; }
+    .pagination{
+      text-align: center;
+      float: bottom;
+      margin-top: 30em;
+      font-size: 1.4em;
+    }
+    .pagination-action, .pagination-number{
+      border: 2px solid;
+      border-color: #AAAEB1;
+      display: inline-block;
+      line-height: 1.2;
+      font-size: 1em;
+      padding: 0.5em 0.8em;
+      color: #287ECC;
+      border-radius: 5px;
+      transition: background-color .3s;
+    }
+    .pagination a.active{
+      background-color: #287ECC;
+      color: white;
+      border: 1px solid #AAAEB1;
+    }
+    .pagination a:hover:not(.active) {background-color: #ddd;}
   </style>
   <div class="row span12">
     <div class="span12" style="text-align: right;">
@@ -19,12 +43,38 @@
 <!--  </div>-->
 
   <div class="row span12"><div class="span12"><h2>Community Favorites</h2></div></div>
-  <div class="row span12">{% app_buttons downloaded_apps %}</div>
+  <div class="row span12">{% app_buttons downloaded_apps_pg %}</div>
   <div class="row span12">
     <div class="span12" style="text-align: right;">
       <a href="{% url 'all_apps'%}#downloads">more community favorites &raquo;</a>
     </div>
   </div>
+
+  <div class="pagination">
+     <ul>
+     {% if downloaded_apps_pg.has_previous %}
+     <li>
+       <a href="/community_fav/{{ downloaded_apps_pg.previous_page_number }}" class="pagination-action">
+         <i class="fas fa-angle-double-left"></i>
+       </a>
+     </li>
+     {% endif %}
+     {% for num in downloaded_apps_pg.paginator.page_range %}
+       {% if downloaded_apps_pg.number == num %}
+         <li><a href="#" class="pagination-number active">{{ num }}</a></li>
+       {% elif num > downloaded_apps_pg.number|add:'-3' and num < downloaded_apps_pg.number|add:'3' %}
+         <li><a href="/community_fav/{{ num }}" class="pagination-number">{{ num }}</a></li>
+       {% endif %}
+     {% endfor %}
+     {% if downloaded_apps_pg.has_next %}
+     <li>
+       <a href="/community_fav/{{ downloaded_apps_pg.next_page_number }}" class="pagination-action">
+         <i class="fas fa-angle-double-right"></i>
+       </a>
+     </li>
+     {% endif %}
+     </ul>
+   </div>
 
   <a style="display: none;" href="/media/fu.txt">fu skript kiddiez</a>
 {% endblock %}
