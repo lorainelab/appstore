@@ -32,5 +32,6 @@ urlpatterns = [
     path(r'help/',       include('help.urls')),
     path(r'backend/',    include('backend.urls')),
     path(r'obr/', include('obr.urls')),
+    path(r'community_fav/<int:page>/', views.apps_default),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 # see https://docs.djangoproject.com/en/2.1/howto/static-files/
