@@ -23,6 +23,7 @@
     padding: 1em;
     margin-bottom: 0.8em;
     width: 93.5%;
+    min-height: 90px;
 }
 
 .app_button .partial
