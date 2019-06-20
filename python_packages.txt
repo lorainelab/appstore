@@ -3,4 +3,9 @@ whoosh
 social-auth-app-django
 django-haystack
 Pillow
+django-storages
 geoip2
+boto3
+wheel
+mysqlclient
+
