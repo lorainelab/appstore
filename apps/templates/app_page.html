@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% load static %}
+{% load markdown %}
+{% load timestamp_converter %}
 {% load i18n %}
-{%import logging
+{% import logging
 
 # Get an instance of a logger
 logger = logging.getLogger("app_page.html") %}
@@ -9,147 +11,129 @@ logger = logging.getLogger("app_page.html") %}
 {% block more_head %}
 <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_page.css" />
 <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_stars.css" />
-<script type="text/javascript" src="{% get_static_prefix %}common/lib/js/jquery.timeago.js"></script>
-<script type="text/javascript" src="{% get_static_prefix %}common/lib/js/Markdown.Converter.js"></script>
-<script type="text/javascript" src="{% get_static_prefix %}common/lib/js/Markdown.Sanitizer.js"></script>
-<script type="text/javascript" src="{% get_static_prefix %}common/js/setup_ajax_for_csrf.js"></script>
-<script type="text/javascript" src="{% get_static_prefix %}common/js/markdown_util.js"></script>
 {% endblock %}
 
 {% block title %}- {{ app.fullname }}{% endblock %}
 
 {% block content %}
+
 {% csrf_token %}
 
-{# "Go back to" link #}
+{# Go back to link #}
 {% if go_back_to_title %}
-<div class="row">
-	<div class="span8" style="margin-bottom: 2em;">
-		<a href="{{ go_back_to_url }}">&larr; Go back to {% autoescape off %}{{ go_back_to_title }}{% endautoescape %}</a>
-	</div>
+<div class="col-md-12">
+	<a href="{{ go_back_to_url }}">&larr; Go back to {% autoescape off %}{{ go_back_to_title }}{% endautoescape %}</a>
 </div>
 {% endif %}
-
+<br />
+<br />
 {# App header #}
-<div class="row">
-	{# App icon #}
-	<div class="span1" style="line-height: 64px;">
-		<img style="vertical-align: middle;" src="{{ app.icon_url }}"/>
-	</div>
-	{# App name and description #}
-	<div class="span7">
-		<h2 id="app-name">
-			{{ app.fullname }}
-		</h2>
-		{% if app.description %}<b>{{ app.description }}</b>{% endif %}
-	</div>
-
-	{# Editor menu #}
-	{% if is_editor %}
-	<div class="span3 offset1">
-		<div class="btn-group pull-right">
-			<a class="btn btn-warning dropdown-toggle" data-toggle="dropdown" href="#">
-				<i class="icon-pencil icon-white"></i>
-				Editor Actions
-				<span class="caret"></span>
+<div class="col-md-12">
+	{# App Name and Icon #}
+	<div class="row">
+		<div class="col-md-2 img-div" style="background-image: url('{{app.icon_url}}');background-size: contain;"></div>
+		<div class="col-md-8">
+			{# App Name and description #}
+			<h2 class="app-name" id="app-name">
+				{{ app.fullname }}
+			</h2>
+			{% if app.description %}<b>{{ app.description }}</b>{% endif %}
+			<br />
+			{# Ratings #}
+			<span class="get-app-stars">{{ app.stars_percentage }}</span>
+			<x-star-rating></x-star-rating>
+			<br />
+			<span id="rating-count">Votes : {{ app.votes | escapejs }}</span>
+			{# End Ratings #}
+			{# Downloads #}
+			{% if app.has_releases %}
+			<span class="app-usage-info-divider"></span>
+			<a href="{% url 'app_stats' app.name %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
+				{{ app.downloads }} Downloads
 			</a>
-			<ul class="dropdown-menu pull-right">
-				<li><a href="{% url 'app_page_edit' app.name %}">Edit this page</a></li>
-				<li><a href="{% url 'submit-app' %}?expect_app_name={{ app.fullname }}">Submit a 3.0 app release</a></li>
-				<li class="divider"></li>
-				<li><a data-toggle="modal" href="#delete_ratings_modal">Delete all ratings</a></li>
-			</ul>
-		</div>
-	</div>
-	{% endif %}
-	{# End editor menu #}
-</div>
-{# End app header #}
+			{% endif %}
+			{# End Downloads #}
 
+			{# Helpdesk #}
+			<span> | </span>
+			<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
+			{# End Helpdesk #}
+		</div>
+		<div class="col-md-2">
+			{# Editor menu #}
+			{% if is_editor %}
+			<div class="btn-group pull-right">
+				<a class="btn btn-warning dropdown-toggle" data-toggle="dropdown" href="#">
+					<i class="icon-pencil icon-white"></i>
+					Editor Actions
+					<span class="caret"></span>
+				</a>
+				<div class="dropdown-menu">
+					<a class="dropdown-item" href="{% url 'app_page_edit' app.name %}">Edit this page</a>
+					<a class="dropdown-item" href="{% url 'submit-app' %}?expect_app_name={{ app.fullname }}">Submit a 3.0 app release</a>
+					<div class="dropdown-divider"></div>
+					<a class="dropdown-item" data-toggle="modal" href="#delete_ratings_modal">Delete all ratings</a>
+				</div>
+			</div>
+			{% endif %}
+			{# End editor menu #}
+		</div>
+		{# End app header #}
+	</div>
+</div>
+
+<br />
 {# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
-<div class="row">
-	<div class="span12" id="app-usage-info">
-		{# Ratings #}
-		<div class="rating-stars" data-placement="bottom" data-title="Rate this app! <a class='close' style='margin-left: 0.5em;'>&times;</a>" data-html="true">
-			<i class="rating-stars-empty icon-stars-empty"></i>
-			<i class="rating-stars-filled icon-stars-filled" style="width: {{ app.stars_percentage|escapejs }}%;"></i>
-			<span class="rating-spacer"></span>
-		</div>
-		<span id="rating-count">({{ app.votes|escapejs }})</span>
-		{# End Ratings #}
+{% if app.citation or  app.coderepo or app.automation %}
 
-		{# Downloads #}
-		{% if app.has_releases %}
-		<span class="app-usage-info-divider"></span>
-		<a href="{% url 'app_stats' app.name %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
-			{{ app.downloads }} downloads
-		</a>
-		{% endif %}
-		{# End Downloads #}
+<div class="col-md-12" id="app-usage-info">
+	{# Citations #}
+	{% if app.citation %}
+	<span> | </span>
+	<a href="https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed_citedin&from_uid={{ app.citation }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search PubMed for articles citing this app.">{% trans "  citations" %}</a>
 
-		{# Helpdesk #}
-		<a> | </a>
-		<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">helpdesk</a>
-		{# End Helpdesk #}
+	{% endif %}
+	{# End Citations #}
+	<span class="app-usage-info-divider"></span>
 
-		{# Citations #}
-		{% if app.citation %}
-		<a> | </a>
-		<a href="https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed_citedin&from_uid={{ app.citation }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search PubMed for articles citing this app.">{% trans "  citations" %}</a>
-
-		{% endif %}
-		{# End Citations #}
-		<span class="app-usage-info-divider"></span>
-
-<!--		{# badges #}-->
-<!--		{% if app.has_releases %}-->
-<!--		<img src="{% get_static_prefix %}apps/img/sticker.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is available for IGB.">-->
-<!--		{% endif %}-->
-
-
-		{% if app.coderepo %}
-		<a href="{{ app.coderepo }}" target="_blank">
-			<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
-		</a>
-		{% endif %}
-		{% if 'www' in app.automation %}
-		<a href="https://{{ app.automation }}" target="_blank">
-			<img src="{% get_static_prefix %}apps/img/automation.png" class="has-tooltip" data-toggle="tooltip" data-title="This app supports automation.">
-		</a>
-		{% endif %}
-		{# end badges #}
-	</div>
+	{% if app.coderepo %}
+	<a href="{{ app.coderepo }}" target="_blank">
+		<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
+	</a>
+	{% endif %}
+	{% if 'www' in app.automation %}
+	<a href="https://{{ app.automation }}" target="_blank">
+		<img src="{% get_static_prefix %}apps/img/automation.png" class="has-tooltip" data-toggle="tooltip" data-title="This app supports automation.">
+	</a>
+	{% endif %}
+	{# end badges #}
 </div>
+
+{% endif %}
 {# End app usage info #}
 
 {# Main app page content #}
-<div class="row">
-	<div class="span8">
-		{# Tabs #}
-		<ul id="app-info-tabs" class="nav nav-tabs">
-			<li class="active">
-				<a href="#app-details-tab" data-toggle="tab">
-					<b>Details</b>
-				</a>
+<div class="row custom-margin">
+	<div class="col-md-9">
+		<!-- Nav tabs -->
+		<ul class="nav nav-tabs" id="myTab" role="tablist">
+			<li class="nav-item">
+				<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">Details</a>
 			</li>
 			{% if app.has_releases %}
-			<li>
-				<a href="#app-releases-tab" data-toggle="tab">
-					<b>Release History</b>
-				</a>
+			<li class="nav-item">
+				<a class="nav-link" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
 			</li>
 			{% endif %}
 		</ul>
-		{# End Tabs #}
-
-		{# Tab content #}
+		<!-- Tab panes -->
 		<div class="tab-content">
-			{# Details tab #}
-			<div class="tab-pane active" id="app-details-tab">
+			<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab">
 				{# Categories #}
 				{% if app.tags.all %}
+				<br />
 				<div class="row">
-					<div class="span8">
+					<div class="col-md-12">
 						Categories:
 						{% for tag in app.tags.all %}
 						<a class="link" href="{% url 'tag_page' tag.name %}">{{ tag.fullname }}</a>{% if not forloop.last %}, {% endif %}
@@ -159,10 +143,12 @@ logger = logging.getLogger("app_page.html") %}
 				{% endif %}
 				{# End Categories #}
 
+				<br />
+
 				{# Screenshots #}
 				{% if app.screenshot_set.all %}
 				<div class="row">
-					<div class="span8" id="app-screenshots">
+					<div class="col-md-12" id="app-screenshots">
 						{% for screenshot in app.screenshot_set.all %}
 						<a href="{{ screenshot.screenshot.url }}" target="_blank">
 							<img src="{{ screenshot.thumbnail.url }}"/>
@@ -173,48 +159,27 @@ logger = logging.getLogger("app_page.html") %}
 				{% endif %}
 				{# End Screenshots #}
 
+				<br />
+
 				{# Details #}
 				{% if decoded_details %}
 				<div class="row">
-					<div class="span8" id="app-details-md">{{ decoded_details }}</div>
+					<div class="col-md-12 app-details-custom" id="app-details-md">{{ decoded_details | markdown_parser | safe }}</div>
 				</div>
 				{% endif %}
 				{# End Details #}
-
-				{# Authors #}
-				{% if app.authors.all %}
-				<div class="row">
-					<div class="span8">
-						Authors:
-						<ul>
-							{% for author in app.ordered_authors %}
-							<li>
-								<a href="{% url 'author_page' author.name %}">
-									{{ author.name }} {% if author.institution %} ({{ author.institution }}){% endif %}
-								</a>
-							</li>
-							{% endfor %}
-						</ul>
-					</div>
-				</div>
-				{% endif %}
-				{# End Authors #}
 			</div>
-			{# End Details tab #}
-
-			{# Releases tab #}
-			{% if app.has_releases %}
-			<div class="tab-pane" id="app-releases-tab">
-				{% for release in app.releases %}
+		<div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
+			{% for release in app.releases %}
 				<div class="row">
-					<div class="span8">
+					<div class="col-md-12">
 						{# Release version #}
 						<h4>
 							<!-- Removed release.version argument -->
 							<a href="{% url 'release_download' app.name %}">
 								{{ release.version }}
 							</a>
-							<small><abbr class="timeago" title="{{ release.created_iso }}"></abbr></small>
+							<small><abbr class="timeago"> {{ release.created_iso | human_readable_time }} </abbr></small>
 						</h4>
 						{# End Release version #}
 
@@ -261,45 +226,41 @@ logger = logging.getLogger("app_page.html") %}
 				</div>
 				{% endfor %} {# end looping thru each release #}
 			</div>
-			{% endif %}
-			{# End Releases tab #}
 		</div>
 	</div>
-	{# End Tab content #}
-
 	{# Right-hand panels #}
-	<div class="span3 offset1">
-
+	<div class="col-md-3">
 		{# 3.0 download panel #}
-		<div class="well" id="app_status_block">
+		<div class="box-release-info" id="app_status_block">
 			<h6 class="panel-title muted">IGB</h6>
 			<button class="btn btn-large btn-block" id="app-install-btn">
 				<i></i> {# <-- download button icon will go here #}
 				<h4></h4> {# <-- download button text will go here #}
 			</button>
 			<p id="app_version"></p>
-			{% if app.license_text %}<p><strong>License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a></p>Download Stats{% endif %}
-			<p><strong>Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a></p>
-			<p><strong>Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a></p>
+			{% if app.license_text %}
+			<strong class="custom-font">License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a>
+			{% endif %}
+			<strong class="custom-font">Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a>
+			<strong class="custom-font">Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a>
 		</div>
 
 		{# end 3.0 download panel #}
 
 		{# app resources #}
-		<div class="alert">
+		<div class="alert alert-warning box-resource">
 			<ul class="nav nav-list">
 			<!li class="nav-header">
-
-			<h5>		<!i class="fa fa-circle-o-notch fa-spin" style="font-size:16px"><!/i>&ensp; RESOURCES</font> </h5>
+			<h5><i class="fa fa-circle-o-notch fa-spin" style="font-size:16px"></i>&ensp; RESOURCES</font> </h5>
 			<!/li>
 
 				<li><a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
-					<i class="icon-question-sign"></i>
+					<i class="fa fa-question-circle"></i>
 					Ask a question
 				</a></li>
 
 				<li><a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank">
-					<i class="icon-comment"></i>
+					<i class="fa fa-comments"></i>
 					Search helpdesk
 				</a></li>
 				<li class="divider"></li>
@@ -350,21 +311,27 @@ logger = logging.getLogger("app_page.html") %}
 {# end main app page content #}
 
 {# Delete all ratings modal dialog #}
-<div class="modal hide fade in" id="delete_ratings_modal">
-	<div class="modal-header">
-		<a class="close" data-dismiss="modal">&times;</a>
-		<h3>Delete All Ratings</h3>
-	</div>
-	<div class="modal-body">
-		Are you sure you want to delete all of your app's ratings?
-	</div>
-	<div class="modal-footer">
-		<form target="" method="post" style="margin: 0;">
-			{% csrf_token %}
-			<input type="hidden" name="action" value="ratings_delete_all">
-			<a href="#" class="btn" data-dismiss="modal">Cancel</a>
-			<input type="submit" class="btn btn-danger" value="Yes, I'm Sure">
-		</form>
+<div class="modal fade" role="dialog" id="delete_ratings_modal">
+	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete All Ratings</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to delete all of your app's ratings?</p>
+			</div>
+			<div class="modal-footer">
+				<form target="" method="post" style="margin: 0;">
+					{% csrf_token %}
+					<input type="hidden" name="action" value="ratings_delete_all">
+					<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+					<input type="submit" class="btn btn-danger" value="Yes, I'm Sure">
+				</form>
+			</div>
+		</div>
 	</div>
 </div>
 {# End modal dialog #}
@@ -387,30 +354,18 @@ logger = logging.getLogger("app_page.html") %}
 {% endif %}
 {# End license modal dialog #}
 
-{# Vote popover content #}
-<script type="text/html" id="rate-popover-content">
-<div class="rating-stars">
-	<i class="rating-stars-empty icon-stars-empty"></i>
-	<i class="rating-stars-filled icon-stars-filled" style="width: 100%;"></i>
-	<span class="rating-spacer"></span>
-</div>
-<button class="btn btn-mini" id="rate-btn">Rate it <span id="rating">5</span> star(s)</button>
-</script>
-{# End vote popover content #}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
 <script type="text/javascript" src="{% get_static_prefix %}apps/js/app_page.js"></script>
 
 <script type="text/javascript">
-$('.has-tooltip').tooltip();
-AppPage.setup_install("{{ app.name|escapejs }}",
-	"{{ app.symbolicname|escapejs }}");
+	AppPage.setup_install("{{ app.name | escapejs }}", "{{ app.symbolicname | escapejs }}");
 
-{% if app.details %}
-AppPage.setup_details();
-{% endif %}
 
-AppPage.setup_stars();
+	{% if app.details %}
+	AppPage.setup_details();
+	{% endif %}
 
-AppPage.setup_release_notes();
+	AppPage.setup_release_notes();
 </script>
 {% endblock %}

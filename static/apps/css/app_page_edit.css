@@ -2,6 +2,15 @@
 	margin: 0;
 }
 
+.box-release-info i {
+    color:black;
+}
+
+.app-name-edit {
+    font-size: 1.5em;
+    margin: 0.2em 0;
+}
+
 .panel-title {
 	margin: 0;
 	text-transform: uppercase;
@@ -11,8 +20,12 @@
 	margin-bottom: 1.2em;
 }
 
-#save-actions a {
-	width: 35%;
+#save-actions button {
+	width: 49%;
+}
+
+.box-release-info button {
+    width: 48%;
 }
 
 #app-icon {
@@ -79,10 +92,6 @@
 	border: 2px dashed #aaa;
 	padding: 1em;
 	position: relative;
-}
-
-.right-panel input {
-	width: 94%;
 }
 
 .right-panel .help-block {

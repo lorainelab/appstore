@@ -4,41 +4,38 @@
 {% load app_buttons %}
 
 {% block main %}
-<form method="get" action=".">
-  <div class="row"><div class="span8"><h3>Apps</h3></div></div>
-	{% if page.object_list %}
-  {% list_of_apps_search page.object_list True %}
+<form class="form-group" method="get" action=".">
+    <div class="col-md-9">
+        <h3>Apps</h3>
+    </div>
+    {% if page.object_list %}
+    {% list_of_apps_search page.object_list True %}
 
-<h3>Authors</h3>
-	{% for result in page.object_list %}
-	    <ul>{% for author in result.object.authors.all %}
-	    <li><a href="{% url 'author_page' author.name %}">{{ author.name }} ({{ author.institution }})</a></li>
-	{% endfor %}
-  </ul>
-  {% empty %}
-  <p></p>
-	{% endfor %}
+    <h3>Authors</h3>
+    {% for result in page.object_list %}
+    <ul>{% for author in result.object.authors.all %}
+        <li>
+            <a href="{% url 'author_page' author.name %}">{{ author.name }} ({{ author.institution }})</a>
+        </li>
+    {% endfor %}
+    </ul>
 
-<h3>Tags</h3>
-  {% for result in page.object_list %}
-       <ul>   {% for tag in result.object.tags.all %}
-	     <li>	<a href="{% url 'tag_page' tag.name %}">{{ tag.name }}</a> </li>
-	{% endfor %}
-        </ul>
-  {% empty %}
-  <p></p>
-  {% endfor %}
-<!--
-            {% if page.has_previous or page.has_next %}
-                <div>
-                    {% if page.has_previous %}<a href="?q={{ query }}&amp;page={{ page.previous_page_number }}">{% endif %}&laquo; Previous{% if page.has_previous %}</a>{% endif %}
-                    |
-                    {% if page.has_next %}<a href="?q={{ query }}&amp;page={{ page.next_page_number }}">{% endif %}Next &raquo;{% if page.has_next %}</a>{% endif %}
-                </div>
-            {% endif %}
-        {% else %}
-            {# Show some example queries to run, maybe query syntax, something else? #}
-        {% endif %}
--->
-    </form>
+    {% empty %}
+    <p></p>
+    {% endfor %}
+
+    <h3>Tags</h3>
+    {% for result in page.object_list %}
+    <ul>
+        {% for tag in result.object.tags.all %}
+        <li>
+            <a href="{% url 'tag_page' tag.name %}">{{ tag.name }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+    {% empty %}
+    <p></p>
+    {% endfor %}
+    {% endif %}
+</form>
 {% endblock %}

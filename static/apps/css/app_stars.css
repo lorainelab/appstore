@@ -11,3 +11,7 @@
 .icon-stars-filled {
     background-position: 0 -20px;
 }
+
+.get-app-stars {
+    display: none;
+}
