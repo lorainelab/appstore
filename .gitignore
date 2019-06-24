@@ -3,6 +3,7 @@
 *.tgz
 *.swp
 *.swo
+/appstore/settings.ini
 /apps/migrations
 /download/migrations
 /submit_app/migrations

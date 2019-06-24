@@ -10,22 +10,23 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.1/ref/settings/
 """
 from os.path import join as filejoin
+from decouple import config, Csv, UndefinedValueError
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '0=nr+#^=rj#m5^e61v*0g@%pc%)!pb0^3x$h#zdf1yn!21x1$s'
+SECRET_KEY = config('SECRET_KEY',default="XXXX")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG=config('DEBUG',default=True)
 
-ALLOWED_HOSTS = []
+# add allowed hosts here
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='localhost')
 
 # Application definition
 
@@ -47,7 +48,29 @@ INSTALLED_APPS = [
     'help.apps.HelpConfig',
     'backend.apps.BackendConfig',
     'download.apps.DownloadConfig',
+    'storages',
 ]
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+	'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            # must be write-able by web server user
+            'filename': os.path.join(BASE_DIR, 'debug.log'),
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+	},
+    },
+}
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -58,25 +81,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
-
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'DEBUG',
-            'propagate': True,
-        },
-    },
-}
 
 ROOT_URLCONF = 'appstore.urls'
 
@@ -105,10 +109,12 @@ AUTHENTICATION_BACKENDS = (
  'django.contrib.auth.backends.ModelBackend', # This is to ensure that we are able to login into Django admin
 )
 
-
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY ='1021453897231-47d8do1k3ashh6e7vr8fq15lht3up3b7.apps.googleusercontent.com'  #Paste CLient Key that we generate in google console
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = 'OfM4FsAIqTiWQmQo8R6OiRlJ' #Paste Secret Key that we generate in google console
-
+# these will probably break eventually
+# the callback is localhost
+localhost_key='1021453897231-47d8do1k3ashh6e7vr8fq15lht3up3b7.apps.googleusercontent.com'
+localhost_secret='OfM4FsAIqTiWQmQo8R6OiRlJ'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=config('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY',default=localhost_key)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET',default=localhost_secret)
 
 LOGIN_URL = '/users/login?next=/'
 
@@ -117,25 +123,27 @@ LOGOUT_REDIRECT_URL = '/'
 
 WSGI_APPLICATION = 'appstore.wsgi.application'
 
-
-# Database
-# https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
+# Use in-built django sqllite3 database as default
+# django.db.backends.mysql in production
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': config('DB_ENGINE',default='django.db.backends.sqlite3'),
+        'NAME': config('DB_NAME',default=os.path.join(BASE_DIR, 'db.sqlite3')),
+        'USER': config('DB_USER',default="XXXX"),
+        'PASSWORD': config('DB_PASSWORD',default="XXXX"), # django user, not rds admin user
+        'HOST': config('DB_HOST',default="XXXX"),
+        'PORT': '3306',
     }
 }
 
 #EMAIL
 # used for the from: field in emails
-CONTACT_EMAILS = ['AdminEmail@gmail.com']
+CONTACT_EMAILS = config('CONTACT_EMAILS', cast=Csv(),default="XXXX")
 EMAIL_USE_TLS       = True
 EMAIL_HOST          = 'smtp.gmail.com'
-EMAIL_HOST_USER     = 'your gmail id'
-EMAIL_ADDR          = EMAIL_HOST_USER  + '@gmail.com'
-EMAIL_HOST_PASSWORD = 'yourpassword'
+EMAIL_HOST_USER     = config('EMAIL_HOST_USER',default="XXXX")
+EMAIL_ADDR = config('EMAIL_ADDR',default=None)
+EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD',default="XXXX")
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_PORT = 587
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
@@ -173,16 +181,39 @@ USE_L10N = True
 USE_TZ = True
 
 
+# If using AWS S3, a bucket name should be defined in the configuration
+# file.
+USE_S3=False
+try:
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME')
+    USE_S3=True
+except UndefinedValueError:
+    MEDIA_URL = '/media/'
+
+if USE_S3:
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
+    AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    AWS_S3_OBJECT_PARAMETERS = {
+        'CacheControl': 'max-age=86400',
+    }
+    AWS_LOCATION = 'media'
+    MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
+    DEFAULT_FILE_STORAGE = 'appstore.storage_backends.MediaStorage'
+
+MEDIA_ROOT = os.path.join(BASE_DIR, "media")
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
-MEDIA_URL = '/media/'
+
 
 # site specific settings
 # needed for /help/about
