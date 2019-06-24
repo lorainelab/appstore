@@ -1,7 +1,7 @@
 (function() {
     $.ajaxSetup({
             beforeSend: function(xhr, settings) {
-                    xhr.setRequestHeader('X-CSRFToken', $.cookie('csrftoken'));
+                    xhr.setRequestHeader('X-CSRFToken', Cookies('csrftoken'));
             }
     });
 })();

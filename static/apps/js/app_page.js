@@ -1,3 +1,10 @@
+var myDefaultWhiteList = $.fn.tooltip.Constructor.Default.whiteList
+
+// To allow table elements
+myDefaultWhiteList.input = []
+myDefaultWhiteList.button = []
+myDefaultWhiteList.style = []
+
 var AppPage = (function($) {
 	/*
      ================================================================
@@ -6,7 +13,7 @@ var AppPage = (function($) {
 	*/
 
     var AppManagerURL = 'http://127.0.0.1:7090/manageApp';
-	function get_app_info(app_symbolicName,callback) {
+	function get_app_info(app_symbolicName, callback) {
 
          formData = {
             "symbolicName" : app_symbolicName,
@@ -73,7 +80,7 @@ var AppPage = (function($) {
             install_btn.removeClass('disabled');
 		if (func) {
             var license_modal = $('#license_modal');
-            if (license_modal.size() !== 0) {
+            if (license_modal.length !== 0) {
                 license_modal.find('.btn-primary').click(function() {
                     license_modal.modal('hide');
                     func();
@@ -107,7 +114,7 @@ var AppPage = (function($) {
                         Msgs.add_msg(app_name + ' has been installed! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
-                        Msgs.add_msg('Could not install &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'error');
+                        Msgs.add_msg('Could not install &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
                         set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion);
                     }
                 });
@@ -127,7 +134,7 @@ var AppPage = (function($) {
                         Msgs.add_msg(app_name + ' has been updated! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
-                        Msgs.add_msg('Could not update &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'error');
+                        Msgs.add_msg('Could not update &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
                         set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion);
                     }
                 });
@@ -219,9 +226,12 @@ var AppPage = (function($) {
         var stars_empty_tag = $('#app-usage-info .rating-stars-empty');
         var stars_full_tag  = $('#app-usage-info .rating-stars-filled');
         stars_tag.popover({
-            'trigger': 'manual',
-            'content': $('#rate-popover-content').html()
-        }).click(function() {
+            'container' : 'body',
+            'html': true,
+            'content': $('#rate-popover-content').html(),
+            'trigger': 'manual'
+        });
+        stars_tag.click(function() {
             stars_tag.popover('toggle');
             setup_rate_popover($(this));
         });
@@ -231,7 +241,7 @@ var AppPage = (function($) {
 
 
     function setup_details() {
-        MarkdownUtil.format($('#app-details-md'));
+        $('#app-details-md');
     }
     
     /*
@@ -242,10 +252,10 @@ var AppPage = (function($) {
     
     function setup_release_notes() {
         $('.app-release-notes').each(function() {
-            MarkdownUtil.format($(this));
+            $(this).text;
         });
         
-        $('.timeago').timeago();
+        $('.timeago').text;
     }
     
     /*
@@ -255,8 +265,8 @@ var AppPage = (function($) {
     */
     
     return {
-	'setup_install': setup_install,
-	// 'setup_twox_download_popover': setup_twox_download_popover,
+	    'setup_install': setup_install,
+//      'setup_twox_download_popover': setup_twox_download_popover,
         'setup_stars': setup_stars,
         'setup_details': setup_details,
         'setup_release_notes': setup_release_notes,
