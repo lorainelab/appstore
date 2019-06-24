@@ -36,7 +36,8 @@ def _xapian_search(query_str, limit = None, only_matching_ids = False):
         q = qp.parse_query(query_str, qp.FLAG_PARTIAL | qp.FLAG_PHRASE)
         enquire.set_query(q)
         matches = enquire.get_mset(0, limit if limit else db.get_doccount())
-        if not len(matches): continue
+        if not len(matches):
+            continue
 
         matched_obj_ids = (match.document.get_data() for match in matches)
         if only_matching_ids:
@@ -45,7 +46,8 @@ def _xapian_search(query_str, limit = None, only_matching_ids = False):
             matched_objs = list()
         for matched_obj_id in matched_obj_ids:
             matched_obj = get_object_or_none(model, **{model.search_key: matched_obj_id})
-        if not matched_obj: continue
+        if not matched_obj:
+            continue
         matched_objs.append(matched_obj)
         if matched_objs:
             all_results[model.__name__] = matched_objs
@@ -56,7 +58,7 @@ def removespace(query):
     for i in range(len(query)):
         if query[i]==' ':
             continue
-        final_query+=query[i]
+        final_query += query[i]
     return final_query
 
 def search(request):

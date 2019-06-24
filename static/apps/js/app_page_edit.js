@@ -1,3 +1,10 @@
+var myDefaultWhiteList = $.fn.tooltip.Constructor.Default.whiteList
+
+// To allow table elements
+myDefaultWhiteList.input = []
+myDefaultWhiteList.button = []
+myDefaultWhiteList.style = []
+
 var AppPageEdit = (function($)
 {
     var SaveActions = new Object();
@@ -55,12 +62,12 @@ var AppPageEdit = (function($)
             var files = e.target.files;
             for (var i = 0, file; file = files[i]; i++) {
                 if (file.size > max_file_size_b ) {
-                    Msgs.add_msg('<strong>' + file.name + '</strong> is greater than 2 Mb.',  'error');
+                    Msgs.add_msg('<strong>' + file.name + '</strong> is greater than 2 Mb.',  'danger');
                     continue;
                 }
 
                 if ($.inArray(file.type, supported_image_types) === -1) {
-                    Msgs.add_msg('<strong>' + file.name + '</strong> is not a recognized image file. The image type must be: ' + supported_image_names, 'error');
+                    Msgs.add_msg('<strong>' + file.name + '</strong> is not a recognized image file. The image type must be: ' + supported_image_names, 'danger');
                     continue;
                 }
 
@@ -112,7 +119,7 @@ var AppPageEdit = (function($)
         field_change($('#app-tutorial'), field_modified('tutorial'));
         field_change($('#app-citation'), field_modified('citation'));
         field_change($('#app-coderepo'), field_modified('coderepo'));
-	field_change($('#app-automation'), field_modified('automation'));
+	    field_change($('#app-automation'), field_modified('automation'));
         field_change($('#app-contact'), field_modified('contact'));
     }
 
@@ -132,7 +139,7 @@ var AppPageEdit = (function($)
 
         app_icon_tag.click(function() {
             icon_file_chooser_tag.click();
-        }).load(function() {
+        }).on(function() {
             resize_icon_img($(this), max_dim_px);
         });
     }
@@ -210,7 +217,7 @@ var AppPageEdit = (function($)
         var add_btn = $('#tag-add-popover button');
         var add_field = $('#tag-add-popover input');
         field_change(add_field, function() {
-            if ($(this).val().length)
+            if (true)
                 add_btn.removeClass('disabled');
             else
                 add_btn.addClass('disabled');
@@ -226,7 +233,8 @@ var AppPageEdit = (function($)
 
     function setup_add_tag_btn() {
         add_tag_btn.popover({
-            'title': 'Select a Tag to Add <a class="close">&times;</a>',
+            'container' : 'body',
+            'title': 'Select a Tag to Add',
             'html': true,
             'content': $('#tag-add-popover-html').html(),
             'placement': 'bottom',
@@ -300,7 +308,7 @@ var AppPageEdit = (function($)
 
         setup_image_chooser(screenshot_file_chooser, function(file, img_url) {
             var screenshot_img = add_screenshot(img_url);
-            screenshot_img.load(function() {
+            screenshot_img.on(function() {
                 scale_thumbnail($(this), max_height_px);
             });
 
@@ -341,7 +349,6 @@ var AppPageEdit = (function($)
        =============================== */
 
     function setup_details() {
-        MarkdownUtil.setup_preview($('#app-details'), $('#app-details-preview'));
         field_change($('#app-details'), function() {
             if (SaveActions['details']) return;
             SaveActions['details'] = true;
@@ -412,7 +419,7 @@ var AppPageEdit = (function($)
                             toggle_add_editor();
                             editors_modified();
                         } else {
-                            $('.popover-content .alert').slideDown('fast');
+                            $('div').removeClass('hide');
                         }
                    });
         });
@@ -423,6 +430,7 @@ var AppPageEdit = (function($)
         add_editor_btn.popover({
             'title': 'Add an Editor <a class="close">&times;</a>',
             'html': true,
+            'container' : 'body',
             'content': $('#editor-add-popover-html').html(),
             'placement': 'bottom',
             'trigger': 'manual'
@@ -851,7 +859,7 @@ var AppPageEdit = (function($)
         });
 
         if (!all_valid)
-            Msgs.add_msg('Whoops! Please fix the fields in red. Once you\'re done, click Save again.', 'error', 'save');
+            Msgs.add_msg('Whoops! Please fix the fields in red. Once you\'re done, click Save again.', 'danger', 'save');
         return all_valid;
     }
 

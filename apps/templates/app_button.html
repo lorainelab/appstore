@@ -1,73 +1,72 @@
 {% load static %}
-
-<div class="app_button"
-  order_index="{{ order_index }}"
-  fullname="{{ app.fullname }}"
-  votes="{{ app.votes }}"
-  downloads="{{ app.downloads }}"
-  latest_release_date="{{ app.latest_release_date.isoformat }}"
-  onClick="window.location='{% url 'app_page' app.name %}';">
-
-
-  <a href="{% url 'app_page' app.name %}">
-    <div class="partial">
-      <table border="0" width="100%">
-        <tr valign="top">
-          <td width="64" rowspan="2">
-            <div class="app_icon">
-              <img src="{{ app.icon_url }}"/>
+<div class="box-part app_button"
+        order_index="{{ order_index }}"
+        fullname="{{ app.fullname }}"
+        votes="{{ app.votes }}"
+        downloads="{{ app.downloads }}"
+        latest_release_date="{{ app.latest_release_date.isoformat }}"
+        onClick="window.location='{% url 'app_page' app.name %}';">
+    <div class="row">
+        <div class="col-md-3">
+            <img src="{{ app.icon_url }}" class="custom-img">
+        </div>
+    <!--<i class="fa" aria-hidden="true"></i>-->
+    <!--<div class="title"> text -->
+        <div class="col-md-9">
+            <div class="row">
+                <div class="col-md-7">
+                    <h5 data-toggle="tooltip" data-title="{{ app.fullname }}">{{ app.fullname | truncatechars:21 }}</h5>
+                </div>
+                <div class="col-md-5">
+                    <div class="rating-stars" data-placement="bottom" data-toggle="popover" data-title="Rate this app! <a class='close' style='margin-left: 0.5em;'>×</a>" data-html="true" data-original-title="" title="">
+                        {% if app.stars_percentage < 20 %}
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        {% endif %}
+                        {% if app.stars_percentage > 20 and app.stars_percentage < 40 %}
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        {% endif %}
+                        {% if app.stars_percentage > 40 and app.stars_percentage < 50 %}
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        {% endif %}
+                        {% if app.stars_percentage > 60 and app.stars_percentage < 80 %}
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-o"></i>
+                        <i class="fa fa-star-o"></i>
+                        {% endif %}
+                        {% if app.stars_percentage > 80 and app.stars_percentage < 90 %}
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star-o"></i>
+                        {% endif %}
+                        {% if app.stars_percentage > 90 %}
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        <i class="fa fa-star"></i>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <span>{{ app.description }}</span>
+                </div>
             </div>
-          </td>
-          <td align="left">
-            <h5>{{ app.fullname }}</h5>
-          </td>
-          <td valign="baseline">
-            <div class="stars">
-              <i class="stars-empty icon-stars-empty"></i>
-              <i class="stars-full icon-stars-filled" style="width: {{ app.stars_percentage }}%"></i>
-            </div>
-          </td>
-        </tr>
-        <tr valign="top">
-          <td valign="top">
-            <div class="description">
-              {% if app.description %}
-                {{ app.description }}
-              {% endif %}
-            </div>
-          </td>
-        </tr>
-      </table>
+        </div>
     </div>
-
-    <div class="full">
-      <table border="0" width="100%">
-        <tr valign="top">
-          <td width="64" rowspan="2">
-            <div class="app_icon">
-              <img src="{{ app.icon_url }}"/>
-            </div>
-          </td>
-          <td align="left">
-            <h5>{{ app.fullname }}</h5>
-          </td>
-          <td valign="baseline">
-            <div class="stars">
-              <i class="stars-empty icon-stars-empty"></i>
-              <i class="stars-full icon-stars-filled" style="width: {{ app.stars_percentage }}%"></i>
-            </div>
-          </td>
-        </tr>
-        <tr valign="top">
-          <td>
-            <div class="description">
-              {% if app.description %}
-                {{ app.description }}
-              {% endif %}
-            </div>
-          </td>
-        </tr>
-      </table>
-    </div>
-  </a>
 </div>

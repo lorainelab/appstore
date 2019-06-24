@@ -1,130 +1,138 @@
 {% load static %}
-
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
-
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-  <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-  <script type="text/javascript" src="{% get_static_prefix %}common/lib/bootstrap/js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="{% get_static_prefix %}common/lib/js/jquery.cookie.js"></script>
-  
-  <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}common/lib/bootstrap/css/bootstrap.min.css"/>
-  <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}common/css/base.css"/>
-  
-  {% block more_head %}{% endblock %}
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <meta name="description" content="">
+        <meta name="author" content="Sameer Shanbhag">
+        <link rel="shortcut icon" type="image/ico" href="{% get_static_prefix %}common/img/favicon.ico"/>
+        {% block more_head %}{% endblock %}
+        <title>IGB App Store {% block title %}{% endblock %}</title>
 
-  <title>IGB App Store {% block title %}{% endblock %}</title>
+        <!-- Bootstrap core CSS -->
+        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <script type="text/javascript" src="{% get_static_prefix %}apps/js/jquery.tablednd.js"></script>
+        <script type="text/javascript" src="{% get_static_prefix %}common/lib/js/jquery.tmpl.min.js"></script>
+        <script type="text/javascript" src="{% get_static_prefix %}common/js/msgs.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+        <script type="text/javascript" src="{% get_static_prefix %}common/js/setup_ajax_for_csrf.js"></script>
 
-  {# Google Analytics Snippet #}
-  <script type="text/javascript">
-    var _gaq = _gaq || [];
-    _gaq.push(['_setAccount', 'UA-155159-10']);
-    _gaq.push(['_trackPageview']);
+        <style>
+        .bd-placeholder-img {
+            font-size: 1.125rem;
+            text-anchor: middle;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        @media (min-width: 768px) {
+            .bd-placeholder-img-lg {
+                font-size: 3.5rem;
+            }
+        }
 
-    (function() {
-      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-    })();
-  </script>
-  {# End of Google Analytics Snippet #}
-</head>
+        @media (min-width: 1200px) {
+          .container {
+            width: 1000px;
+          }
+        }
 
-<body style="padding-top: 0;">
-  {# Navigation bar #}
-  <div class="navbar navbar-inverse navbar-static-top">
-    <div class="navbar-inner">
-      <div class="container">
-        {%comment%}
-              Showing Brand name and logo
-
-              The variables brand.name and brand.logo_img are coming from a utils.constants.py
-              file, which is included in settings.py as a TEMPLATE_CONTEXT_PROCESSORS
-
-        {%endcomment%}
-        <a class= "brand" href="{% url 'default-page' %}">
-          <img class="appstore-brand-logo"
-               src="{%if brand and brand.logo_img%}
+        </style>
+    <!-- Custom styles for this template -->
+    <link href="{% get_static_prefix %}apps/css/base.css" rel="stylesheet">
+    </head>
+    <body>
+        {# Navigation bar #}
+        <div class="d-flex flex-column flex-md-row align-items-center p-3 px-md-4 mb-3 bg-white border-bottom shadow-sm">
+                <img class="appstore-brand-logo"
+                      src="{%if brand and brand.logo_img%}
                       {% get_static_prefix %}{{brand.logo_img}}
-                    {%else%}
-                     {% get_static_prefix %}common/img/logo.png
-                    {%endif%}
-                    ">
-        {%if brand and brand.name%}
-          <span class="appstore-brand-name">
-            {{ brand.name }}
-          </span>
-        {%endif%}
-          <span class="appstore-name">
-            App Store
-          </span>
-        </a>
-        <ul class="nav pull-right appstore-navbar-item">
-          <!--{# Search field #}-->
-          <li>
-            <form action="{% url 'haystack_search' %}" method="get" class="navbar-search pull-right">
-              <input type="text" name="q" value="{{ search_query }}" class="search-query" placeholder="Search the App Store">
-            </form>
-          </li>
-          {# User menu #}
-          {% if user.is_authenticated %}
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                {{ user.username }} <b class="caret"></b>
-              </a>
-              <ul class="dropdown-menu">
-                {% if user.is_staff %}
-                  <li><a href="{% url 'pending-apps' %}">Pending Apps</a></li>
+                      {%else%}
+                      {% get_static_prefix %}common/img/logo.png
+                      {%endif%}
+                      ">
+            <h4 class="my-0 mr-md-auto font-weight-bold"><a href="/" style="color:black; text-decoration:none;"> Integrated Genome Browser | Appstore </a></h4>
+                <nav class="my-2 my-md-0 mr-md-3">
+                    <div class="pull-right">
+                        <form class="navbar-form" role="search" action="{% url 'haystack_search' %}" method="get">
+                            <div class="input-group">
+                                <input type="text" class="form-control" placeholder="Search Apps..." name="q" value="{{ search_query }}">
+                                <div class="input-group-btn">
+                                    <button class="btn btn-default" type="submit"><i class="glyphicon glyphicon-search"></i></button>
+                                </div>
+                            </div>
+                        </form>
+                     </div>
+                </nav>
+                {# User menu #}
+                {% if user.is_authenticated %}
+                <div class="btn-group">
+                    <button type="button" class="btn btn-info dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    {{ user.username }}
+                    </button>
+                    <div class="dropdown-menu">
+                        {% if user.is_staff %}
+                        <a class="dropdown-item" href="{% url 'pending-apps' %}">Pending Apps</a>
+                        {% endif %}
+                        <a class="dropdown-item" href="{% url 'logout' %}?next={{ request.get_full_path|escape }}"> Sign out</a>
+                    </div>
+                </div>
+                {% else %}
+                    <a class="btn btn-outline-primary" href="{% url 'login' %}?next={{ request.get_full_path|escape }}">Sign In</a>
                 {% endif %}
-                <li><a href="{% url 'logout' %}?next={{ request.get_full_path|escape }}">Sign out</a></li>
-              </ul>
-            </li>
-          {% else %}
-            <li {% ifequal navbar_selected 'signin' %}class="active"{% endifequal %}><a href="{% url 'login' %}?next={{ request.get_full_path|escape }}">Sign In</a></li>
-          {% endif %}
-        </ul>
-      </div>
-    </div>
-  </div>
+        </div>
+        {# Content Area for Base Template | all the extended code will visible here  #}
+        <div class="container" style="margin-top: 20px;">
+            <div class="row">
+                <div class="col-md-2"></div>
+                <div class="col-md-8" id="alerts"></div>
+                <div class="col-md-2"></div>
+            </div>
+            <!-- Example row of columns -->
+            <div class="row">
+                {# Content #}
+                    {% block content %}{% endblock %}
+                {# Footer #}
+            </div>
+            <footer class="pt-4 my-md-5 pt-md-5 border-top">
+                <div class="row">
+                    <div class="col-12 col-md">
+                        <span>&copy; Integrated Genome Browser 2015</span>
+                        <br />
+                        <a class="text-muted custom-link" href="{% url 'about' %}">About</a> &bull;
+                        <a class="text-muted custom-link" href="{% url 'contact' %}">Contact</a> &bull;
+                        <a class="text-muted custom-link" href="{% url 'wall_of_apps' %}">Wall of Apps</a>
+                    </div>
+                </div>
+            </footer>
+        </div> <!-- /container -->
 
-  <div class="container" style="padding-top: 2em;">
-    {# Alert boxes at the top #}
-    <div class="row"><div class="span6 offset3" id="alerts"></div></div>
-    <script src="{% get_static_prefix %}common/js/msgs.js"></script>
-    
-    {# Content #}
-    {% block content %}{% endblock %}
+        <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+        <script src="{% get_static_prefix %}common/js/msgs.js"></script>
+        <script type="text/javascript" src="{% get_static_prefix %}apps/js/star_rating.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.6.2/marked.min.js"></script>
 
-    {# Footer #}
-    <hr style="margin-top: 6em;">
-    <footer style="text-align: center;">
-      {% ifnotequal footer_selected 'about' %}<a href="{% url 'about' %}">{% endifnotequal %}About{% ifnotequal footer_selected 'about' %}</a>{% endifnotequal %}
-      &bull;
-      {% ifnotequal footer_selected 'contact' %}<a href="{% url 'contact' %}">{% endifnotequal %}Contact Us{% ifnotequal footer_selected 'contact' %}</a>{% endifnotequal %}
-
-      <span class="footer-divider"></span>
-
-      <a href="{% url 'wall_of_apps' %}">Wall of Apps</a>
-      
-      <!--   <a href="{% url 'all_stats' %}">All Stats</a> -->
-    </footer>
-  </div>
-
-  {# Check browser version #}
-  <script type="text/javascript" src="{% get_static_prefix %}common/js/check_browser_version.js"></script>
-
-  {# Support for "Go back to..." links at the top #}
-  <script type="text/javascript">
-    $(window).on('pageshow', function() {
-      {% if go_back_to %}
-        $.cookie('go_back_to_title', '{{ go_back_to }}',  {'path': '/'});
-        $.cookie('go_back_to_url',   '{{ request.get_full_path }}', {'path': '/'});
-      {% endif %}
-    });
-  </script>
-</body>
+        {# Support for "Go back to..." links at the top #}
+        <script type="text/javascript">
+            $(function () {
+              $('[data-toggle="tooltip"]').tooltip()
+            })
+            $(document).ready(function(){
+                $('[data-toggle="popover"]').popover();
+            });
+            $(window).on('pageshow', function() {
+            {% if go_back_to %}
+                Cookies('go_back_to_title', '{{ go_back_to }}',  {'path': '/'});
+                Cookies('go_back_to_url',   '{{ request.get_full_path }}', {'path': '/'});
+            {% endif %}
+            });
+        </script>
+    </body>
 </html>
-

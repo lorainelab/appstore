@@ -1,15 +1,15 @@
 {% load app_buttons %}
 
 {% for app in apps %}
-  {% if forloop.counter|divisibleby:2 %}
-    <div class="span5" id="right">
-      {% app_button app forloop.counter %}
-    </div>
-  {% endif %}
+    {% if forloop.counter|divisibleby:2 %}
+        <div class="col-md-6" id="right">
+        {% app_button app forloop.counter %}
+        </div>
+    {% endif %}
 
-  {% if not forloop.counter|divisibleby:2 %}
-    <div class="span5" id="left">
-      {% app_button app forloop.counter %}
-    </div>
-  {% endif %}
+    {% if not forloop.counter|divisibleby:2 %}
+        <div class="col-md-6" id="left">
+        {% app_button app forloop.counter %}
+        </div>
+    {% endif %}
 {% endfor %}
