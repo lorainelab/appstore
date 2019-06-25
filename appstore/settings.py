@@ -59,7 +59,7 @@ LOGGING = {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             # must be write-able by web server user
-            'filename': os.path.join(BASE_DIR, 'debug.log'),
+            'filename': config('DJANGO_LOG_FILE',default=os.path.join(BASE_DIR, 'debug.log')),
         },
     },
     'loggers': {
