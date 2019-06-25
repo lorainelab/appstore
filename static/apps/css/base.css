@@ -181,6 +181,10 @@ h4 a:active {
     box-shadow: inset 0 1px 1px rgba(0,0,0,0.05);
 }
 
+.require .box-edit-info {
+    margin-top: 5%;
+}
+
 .box-resource {
     margin-top: 20%;
     margin-bottom: 20px;
@@ -213,7 +217,7 @@ h4 a:active {
     text-align: center;
 }
 
-Custom Star Element */
+/*Custom Star Element */
 
 x-star-rating {
     font-family: 'Ionicons';
