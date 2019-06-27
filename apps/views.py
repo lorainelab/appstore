@@ -182,6 +182,23 @@ def _app_ratings_delete_all(app, user, post):
 	app.votes = 0
 	app.save()
 
+
+def _installed_count(app, user, post):
+	"""
+	:param app: Current App
+	:param user: Current User (Not Required by the Function but required by the model)
+	:param post: Dictionary containing Action and Status Keys
+	:return: True (Dummy Response | Can be change if another use case)
+	"""
+	state = post.get('status')
+	if state == "Installed":
+		app.downloads += 1
+		app.save()
+	else:
+		app.downloads -= 1
+		app.save()
+	return json_response('True')
+
 # -- General app stuff
 
 def _latest_release(app):
@@ -203,7 +220,9 @@ def _mk_app_page(app, user, request, decoded_details):
 _AppActions = {
 	'rate':                _app_rate,
 	'ratings_delete_all':  _app_ratings_delete_all,
+	'installed_count': _installed_count,
 }
+
 
 def app_page(request, app_name):
 	app = get_object_or_404(App, active = True, name = app_name)

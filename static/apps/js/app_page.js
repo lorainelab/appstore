@@ -57,6 +57,13 @@ var AppPage = (function($) {
           });
     }
 
+    /* Increases the download counter for a particular app when installed */
+    function set_download_count(status) {
+         $.post('', {'action': 'installed_count', 'status': status}, function(data) {
+                // Can Write a Logic here if we change it in later phases
+            });
+    }
+
 	var install_btn = $('#app-install-btn');
 	var igb_version = $('#igb_version');
 	var app_version = $('#app_version');
@@ -112,6 +119,7 @@ var AppPage = (function($) {
                 install_app(app_symbolicName, "install", function(app_status, status) {
                     if (status == "200" && app_status.status == "INSTALLED") {
                         Msgs.add_msg(app_name + ' has been installed! Go to IGB to use it.', 'success');
+                        set_download_count('Installed');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
                         Msgs.add_msg('Could not install &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
