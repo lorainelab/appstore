@@ -31,42 +31,35 @@
                     {% endif %}
                      <div class="col-md-12">
                         <div class="rating-stars stars" data-placement="bottom">
-                            {% if app.stars_percentage < 20 %}
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            <i class="fa fa-star-o"></i>
-                            {% endif %}
-                            {% if app.stars_percentage > 20 and app.stars_percentage < 40 %}
+                            {% if app.stars_percentage > 0 and app.stars_percentage < 20 %}
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star-o"></i>
                             <i class="fa fa-star-o"></i>
                             <i class="fa fa-star-o"></i>
                             <i class="fa fa-star-o"></i>
                             {% endif %}
-                            {% if app.stars_percentage > 40 and app.stars_percentage < 50 %}
+                            {% if app.stars_percentage >= 20 and app.stars_percentage < 40 %}
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star-o"></i>
                             <i class="fa fa-star-o"></i>
                             <i class="fa fa-star-o"></i>
                             {% endif %}
-                            {% if app.stars_percentage > 60 and app.stars_percentage < 80 %}
+                            {% if app.stars_percentage >= 40 and app.stars_percentage < 60 %}
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star-o"></i>
                             <i class="fa fa-star-o"></i>
                             {% endif %}
-                            {% if app.stars_percentage > 80 and app.stars_percentage < 90 %}
+                            {% if app.stars_percentage >= 60 and app.stars_percentage < 80 %}
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star-o"></i>
                             {% endif %}
-                            {% if app.stars_percentage > 90 %}
+                            {% if app.stars_percentage >= 80 %}
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>
                             <i class="fa fa-star"></i>

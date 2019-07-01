@@ -71,7 +71,6 @@ logger = logging.getLogger("app_page.html") %}
 					</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="{% url 'app_page_edit' app.name %}">Edit this page</a>
-						<a class="dropdown-item" href="{% url 'submit-app' %}?expect_app_name={{ app.fullname }}">Submit a 3.0 app release</a>
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" data-toggle="modal" href="#delete_ratings_modal">Delete all ratings</a>
 					</div>
@@ -175,13 +174,13 @@ logger = logging.getLogger("app_page.html") %}
 				<div class="row">
 					<div class="col-md-12">
 						{# Release version #}
-						<h4>
-							<!-- Removed release.version argument -->
-							<a href="{% url 'release_download' app.name %}">
-								{{ release.version }}
-							</a>
-							<small><abbr class="timeago"> {{ release.created_iso }} </abbr></small>
-						</h4>
+						<br />
+						<h5>
+							Current Version :
+							<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+							{{ release.version }}
+						</h5>
+						<p><strong>Release Date : </strong> {{ release.created_iso|date:"r" }}</p>
 						{# End Release version #}
 
 						{# Works with #}
