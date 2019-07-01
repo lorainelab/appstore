@@ -93,7 +93,7 @@ def _create_pending(submitter, jar_details, release_file):
             raise ValueError('cannot be accepted because you are not an editor')
         release = get_object_or_none(Release, app = app, version = jar_details['version'])
         if release and release.active:
-            raise ValueError('cannot be accepted because the app %s already has a release with version %s. You can delete this version by going to the Release History tab in the app edit page' % (app.fullname, version))
+            raise ValueError('cannot be accepted because the app %s already has a release with version %s. You can delete this version by going to the Release History tab in the app edit page' % (app.fullname, jar_details['version']))
 
     pending = AppPending.objects.create(submitter      = submitter,
                                         symbolicname = jar_details['symbolicname'],

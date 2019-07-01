@@ -95,11 +95,11 @@ h4 a:active {
 }
 
 .box-part{
-    background-color: #f5f5f5;
+    background-color: whiteSmoke;
     border-radius:10px;
     padding:10px 5px;
-    margin:5px 0px;
-    height: 95px;
+    margin:10px 0px;
+    height: 100px;
     cursor: pointer;
     overflow: hidden;
 }
@@ -131,7 +131,7 @@ h4 a:active {
 }
 
 .desc-spaced {
-    margin-top : 5px;
+    margin-top : 0px;
 }
 
 .desc-box {
