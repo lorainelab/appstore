@@ -51,8 +51,6 @@ class StarRating extends HTMLElement {
 
         this.addEventListener('mouseout', () => {
             this.value = this.value;
-            console.log(this.value);
-            console.log(getcurrent);
         });
 
         this.addEventListener('click', e => {
