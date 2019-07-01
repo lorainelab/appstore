@@ -158,6 +158,11 @@ h4 a:active {
 }
 
 .app-name {
+    font-size: 1.5em;
+    margin: .75em 0
+}
+
+.app-name-pending {
     font-size: 1em;
     margin: .75em 0
 }
