@@ -179,7 +179,7 @@ logger = logging.getLogger("app_page.html") %}
 							<a href="{% url 'release_download' app.name %}">
 								{{ release.version }}
 							</a>
-							<small><abbr class="timeago"> {{ release.created_iso | human_readable_time }} </abbr></small>
+							<small><abbr class="timeago"> {{ release.created_iso }} </abbr></small>
 						</h4>
 						{# End Release version #}
 

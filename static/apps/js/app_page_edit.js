@@ -518,7 +518,6 @@ var AppPageEdit = (function($)
        =============================== */
 
     function setup_release_notes() {
-        $('.timeago').timeago();
 
         $('.release').each(function() {
             var release_div = $(this);

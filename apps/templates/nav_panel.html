@@ -2,49 +2,50 @@
 {% load static %}
 
 {% block content %}
-<div class="col-lg-3">
-    <div class="navigation-panel">
-        <h2>
-            <strong>Categories</strong>
-        </h2>
-        <div>
-            <ul class="navigation-list">
-                <li style="margin-bottom:15px;">
-                    {% ifequal navbar_selected_link "all" %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="navigation-panel">
+            <h3>
+                <strong>Categories</strong>
+            </h3>
+            <div>
+                <ul class="navigation-list">
+                    <li style="margin-bottom:15px;">
+                        {% ifequal navbar_selected_link "all" %}
+                            <a href="{% url 'all_apps' %}">
+                                <span class="title active">All Apps</span>
+                            </a>
+                        {% else %}
                         <a href="{% url 'all_apps' %}">
-                            <span class="title active">All Apps</span>
+                            <span class="title">All Apps</span>
                         </a>
-                    {% else %}
-                    <a href="{% url 'all_apps' %}">
-                        <span class="title">All Apps</span>
-                    </a>
-                    {% endifequal %}
-                </li>
-                {% for tag in top_tags %}
-                    {% if tag.count > 0 %}
-                <li>
-                    <!--<span {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>-->
-                        <a href="{% url 'tag_page' tag.name %}">
-                            <span class="title">{{ tag.fullname }}</span>
-                            <span class="count">({{ tag.count }})</span>
-                        </a>
-                    </span>
-                </li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-            <button class="btn btn-info btn-md more-btn" id="more-button">More</button>
-        </div>
-        <div id="tag-cloud">
-          {% for tag in all_tags %}
-          <a {% ifequal tag.name selected_tag_name %} class="tag-cloud-active" {% endifequal %} style="font-size: {{ tag.font_size_em }}em" href="{% url 'tag_page' tag.name %}">{{tag.fullname}}</a>
-          {% endfor %}
+                        {% endifequal %}
+                    </li>
+                    {% for tag in top_tags %}
+                        {% if tag.count > 0 %}
+                    <li>
+                        <!--<span {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>-->
+                            <a href="{% url 'tag_page' tag.name %}">
+                                <span class="title">{{ tag.fullname }}</span>
+                                <span class="count">({{ tag.count }})</span>
+                            </a>
+                        </span>
+                    </li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                <button class="btn btn-info btn-md more-btn" id="more-button">More</button>
+            </div>
+            <div id="tag-cloud">
+              {% for tag in all_tags %}
+              <a {% ifequal tag.name selected_tag_name %} class="tag-cloud-active" {% endifequal %} style="font-size: {{ tag.font_size_em }}em" href="{% url 'tag_page' tag.name %}">{{tag.fullname}}</a>
+              {% endfor %}
+            </div>
         </div>
     </div>
+    <div class="col-md-9">
+        {% block main %}{% endblock %}
+    </div>
 </div>
-<div class="col-md-9">
-    {% block main %}{% endblock %}
-</div>
-
 <script type="text/javascript" src="{% get_static_prefix %}apps/js/nav_panel.js"></script>
 {% endblock %}

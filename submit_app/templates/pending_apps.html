@@ -25,7 +25,7 @@
         </thead>
         {% for pending_app in pending_apps %}
             <tr pending_id="{{ pending_app.id }}">
-                <td>
+                <td class="app-name">
                     <b>{{ pending_app.fullname }}</b>
                 </td>
                 <td class="app-version">

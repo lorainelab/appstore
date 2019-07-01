@@ -31,7 +31,7 @@ var PendingApps = (function() {
                 do_action('accept', '&ldquo;%s&rdquo; has been accepted.', 'success')
             });
             $(this).find('.decline').click(function() {
-                do_action('decline', '&ldquo;%s&rdquo; has been declined.', 'error')
+                do_action('decline', '&ldquo;%s&rdquo; has been declined.', 'danger')
             });
         });
     }
