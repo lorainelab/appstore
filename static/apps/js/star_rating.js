@@ -68,16 +68,24 @@ class StarRating extends HTMLElement {
         });
 
         var getcurrent = $('.get-app-stars').text()
+        console.log(getcurrent);
 
-        if(getcurrent < 20) {
+        if (getcurrent == 0){
+            // pass
+        } else if(getcurrent > 0 && getcurrent < 20) {
+            this.value = 1;
             this.highlight(0);
-        } else if(getcurrent > 20 && getcurrent < 40) {
+        } else if(getcurrent >= 20 && getcurrent < 40) {
+            this.value = 2;
             this.highlight(1);
-        } else if(getcurrent > 40 && getcurrent < 60) {
+        } else if(getcurrent >= 40 && getcurrent < 60) {
+            this.value = 3;
             this.highlight(2);
-        } else if(getcurrent > 60 && getcurrent < 80) {
+        } else if(getcurrent >= 60 && getcurrent < 80) {
+            this.value = 4;
             this.highlight(3);
         } else {
+            this.value = 5;
             this.highlight(4);
         }
     }

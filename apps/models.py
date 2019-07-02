@@ -173,7 +173,7 @@ class Release(models.Model):
 
     @property
     def created_iso(self):
-        return self.created.isoformat()
+        return self.created
 
     @property
     def release_file_url(self):

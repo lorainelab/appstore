@@ -13,6 +13,7 @@
 
 {% block content %}
 {# app header #}
+<div class="row">
     <div class="col-md-9">
         {# App Name and Icon #}
         <div class="row">
@@ -30,10 +31,11 @@
     {# End app header #}
         </div>
     </div>
-    <div class="col-md-2">
+    <div class="col-md-3">
     {# end app header #}
     </div>
-
+</div>
+<div class="row">
     {# tabs #}
     <div class="col-md-9 margin-top">
         <!-- Nav tabs -->
@@ -135,7 +137,7 @@
                         {# Release version #}
                         <h4>
                             {{ release.version }}
-                            <small><abbr class="timeago"> {{ release.created_iso | human_readable_time }} </abbr></small>
+                            <small><abbr class="timeago"> {{ release.created_iso }} </abbr></small>
                             <button class="btn btn-light {% if release.dependents.count %}disabled{% endif %} release-delete"><i class="fa fa-trash"></i> Delete</button>
                         </h4>
                         {# End Release version #}
@@ -248,7 +250,7 @@
         {# end resources #}
     </div>
     {# end right panels #}
-
+</div>
     {# file choosers #}
     <div style="visibility: hidden;">
         <input type="file" name="files[]" id="app-icon-file-chooser">
@@ -312,6 +314,23 @@
         </span>
     </script>
     {# end tag template #}
+
+
+    {# Handel Tab Keypress in Text Area#}
+    <script>
+        var textareas = document.getElementsByTagName('textarea');
+        var count = textareas.length;
+        for(var i=0;i<count;i++){
+            textareas[i].onkeydown = function(e){
+                if(e.keyCode==9 || e.which==9){
+                    e.preventDefault();
+                    var s = this.selectionStart;
+                    this.value = this.value.substring(0,this.selectionStart) + "\t" + this.value.substring(this.selectionEnd);
+                    this.selectionEnd = s+1;
+                }
+            }
+        }
+    </script>
 
     {# author row template #}
     <script type="text/html" id="author-row-tmpl">
@@ -417,25 +436,25 @@
         AppPageEdit.setup_save_btn();
     </script>
 
-{# Supports Markdown in Application Edit Page #}
-<script>
-    $(document).ready(function(){
-        var content = $('#app-details').val()
-        $('#content-markdown').html(marked(content));
-    })
-    $('#app-details').bind('input propertychange', function() {
-        $('#content-markdown').html(marked(this.value));
-    });
-</script>
-<script>
-    $(document).ready(function(){
-        var releasedContent = $('#release-notes').val()
-        if (releasedContent) {
-            $('#release-markdown').html(marked(releasedContent));
-        }
-    })
-    $('#release-notes').bind('input propertychange', function() {
-        $('#release-markdown').html(marked(this.value));
-    });
-</script>
+    {# Supports Markdown in Application Edit Page #}
+    <script>
+        $(document).ready(function(){
+            var content = $('#app-details').val()
+            $('#content-markdown').html(marked(content));
+        })
+        $('#app-details').bind('input propertychange', function() {
+            $('#content-markdown').html(marked(this.value));
+        });
+    </script>
+    <script>
+        $(document).ready(function(){
+            var releasedContent = $('#release-notes').val()
+            if (releasedContent) {
+                $('#release-markdown').html(marked(releasedContent));
+            }
+        })
+        $('#release-notes').bind('input propertychange', function() {
+            $('#release-markdown').html(marked(this.value));
+        });
+    </script>
 {% endblock %}

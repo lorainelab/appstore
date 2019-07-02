@@ -21,97 +21,97 @@ logger = logging.getLogger("app_page.html") %}
 
 {# Go back to link #}
 {% if go_back_to_title %}
-<div class="col-md-12">
-	<a href="{{ go_back_to_url }}">&larr; Go back to {% autoescape off %}{{ go_back_to_title }}{% endautoescape %}</a>
-</div>
-{% endif %}
-<br />
-<br />
-{# App header #}
-<div class="col-md-12">
-	{# App Name and Icon #}
-	<div class="row">
-		<div class="col-md-2 img-div" style="background-image: url('{{app.icon_url}}');background-size: contain;"></div>
-		<div class="col-md-8">
-			{# App Name and description #}
-			<h2 class="app-name" id="app-name">
-				{{ app.fullname }}
-			</h2>
-			{% if app.description %}<b>{{ app.description }}</b>{% endif %}
-			<br />
-			{# Ratings #}
-			<span class="get-app-stars">{{ app.stars_percentage }}</span>
-			<x-star-rating></x-star-rating>
-			<br />
-			<span id="rating-count">Votes : {{ app.votes | escapejs }}</span>
-			{# End Ratings #}
-			{# Downloads #}
-			{% if app.has_releases %}
-			<span class="app-usage-info-divider"></span>
-			<a href="{% url 'app_stats' app.name %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
-				{{ app.downloads }} Downloads
-			</a>
-			{% endif %}
-			{# End Downloads #}
-
-			{# Helpdesk #}
-			<span> | </span>
-			<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
-			{# End Helpdesk #}
-		</div>
-		<div class="col-md-2">
-			{# Editor menu #}
-			{% if is_editor %}
-			<div class="btn-group pull-right">
-				<a class="btn btn-warning dropdown-toggle" data-toggle="dropdown" href="#">
-					<i class="icon-pencil icon-white"></i>
-					Editor Actions
-					<span class="caret"></span>
-				</a>
-				<div class="dropdown-menu">
-					<a class="dropdown-item" href="{% url 'app_page_edit' app.name %}">Edit this page</a>
-					<a class="dropdown-item" href="{% url 'submit-app' %}?expect_app_name={{ app.fullname }}">Submit a 3.0 app release</a>
-					<div class="dropdown-divider"></div>
-					<a class="dropdown-item" data-toggle="modal" href="#delete_ratings_modal">Delete all ratings</a>
-				</div>
-			</div>
-			{% endif %}
-			{# End editor menu #}
-		</div>
-		{# End app header #}
+<div class="row">
+	<div class="col-md-12">
+		<a href="{{ go_back_to_url }}">&larr; Go back to {% autoescape off %}{{ go_back_to_title }}{% endautoescape %}</a>
 	</div>
+	{% endif %}
+	<br />
+	<br />
+	{# App header #}
+	<div class="col-md-12">
+		{# App Name and Icon #}
+		<div class="row">
+			<div class="col-md-2 img-div" style="background-image: url('{{app.icon_url}}');background-size: contain;"></div>
+			<div class="col-md-8">
+				{# App Name and description #}
+				<h2 class="app-name" id="app-name">
+					{{ app.fullname }}
+				</h2>
+				{% if app.description %}<b>{{ app.description }}</b>{% endif %}
+				<br />
+				{# Ratings #}
+				<span class="get-app-stars">{{ app.stars_percentage }}</span>
+				<x-star-rating></x-star-rating>
+				<br />
+				<span id="rating-count">Votes : {{ app.votes | escapejs }}</span>
+				{# End Ratings #}
+				{# Downloads #}
+				{% if app.has_releases %}
+				<span class="app-usage-info-divider"></span>
+				<a href="{% url 'app_stats' app.name %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
+					{{ app.downloads }} Downloads
+				</a>
+				{% endif %}
+				{# End Downloads #}
+
+				{# Helpdesk #}
+				<span> | </span>
+				<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
+				{# End Helpdesk #}
+			</div>
+			<div class="col-md-2">
+				{# Editor menu #}
+				{% if is_editor %}
+				<div class="btn-group pull-right">
+					<a class="btn btn-warning dropdown-toggle" data-toggle="dropdown" href="#">
+						<i class="icon-pencil icon-white"></i>
+						Editor Actions
+						<span class="caret"></span>
+					</a>
+					<div class="dropdown-menu">
+						<a class="dropdown-item" href="{% url 'app_page_edit' app.name %}">Edit this page</a>
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" data-toggle="modal" href="#delete_ratings_modal">Delete all ratings</a>
+					</div>
+				</div>
+				{% endif %}
+				{# End editor menu #}
+			</div>
+			{# End app header #}
+		</div>
+	</div>
+
+	<br />
+	{# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
+	{% if app.citation or  app.coderepo or app.automation %}
+
+	<div class="col-md-12" id="app-usage-info">
+		{# Citations #}
+		{% if app.citation %}
+		<span> | </span>
+		<a href="https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed_citedin&from_uid={{ app.citation }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search PubMed for articles citing this app.">{% trans "  citations" %}</a>
+
+		{% endif %}
+		{# End Citations #}
+		<span class="app-usage-info-divider"></span>
+
+		{% if app.coderepo %}
+		<a href="{{ app.coderepo }}" target="_blank">
+			<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
+		</a>
+		{% endif %}
+		{% if 'www' in app.automation %}
+		<a href="https://{{ app.automation }}" target="_blank">
+			<img src="{% get_static_prefix %}apps/img/automation.png" class="has-tooltip" data-toggle="tooltip" data-title="This app supports automation.">
+		</a>
+		{% endif %}
+		{# end badges #}
+	</div>
+
+	{% endif %}
+	{# End app usage info #}
 </div>
-
-<br />
-{# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
-{% if app.citation or  app.coderepo or app.automation %}
-
-<div class="col-md-12" id="app-usage-info">
-	{# Citations #}
-	{% if app.citation %}
-	<span> | </span>
-	<a href="https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed_citedin&from_uid={{ app.citation }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search PubMed for articles citing this app.">{% trans "  citations" %}</a>
-
-	{% endif %}
-	{# End Citations #}
-	<span class="app-usage-info-divider"></span>
-
-	{% if app.coderepo %}
-	<a href="{{ app.coderepo }}" target="_blank">
-		<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
-	</a>
-	{% endif %}
-	{% if 'www' in app.automation %}
-	<a href="https://{{ app.automation }}" target="_blank">
-		<img src="{% get_static_prefix %}apps/img/automation.png" class="has-tooltip" data-toggle="tooltip" data-title="This app supports automation.">
-	</a>
-	{% endif %}
-	{# end badges #}
-</div>
-
-{% endif %}
-{# End app usage info #}
-
 {# Main app page content #}
 <div class="row custom-margin">
 	<div class="col-md-9">
@@ -174,13 +174,13 @@ logger = logging.getLogger("app_page.html") %}
 				<div class="row">
 					<div class="col-md-12">
 						{# Release version #}
-						<h4>
-							<!-- Removed release.version argument -->
-							<a href="{% url 'release_download' app.name %}">
-								{{ release.version }}
-							</a>
-							<small><abbr class="timeago"> {{ release.created_iso | human_readable_time }} </abbr></small>
-						</h4>
+						<br />
+						<h5>
+							Current Version :
+							<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+							{{ release.version }}
+						</h5>
+						<p><strong>Release Date : </strong> {{ release.created_iso|date:"r" }}</p>
 						{# End Release version #}
 
 						{# Works with #}
