@@ -246,28 +246,33 @@ logger = logging.getLogger("app_page.html") %}
 		{# app resources #}
 		<div class="alert alert-warning box-resource">
 			<ul class="nav nav-list">
-			<!li class="nav-header">
 			<h5><i class="fa fa-circle-o-notch fa-spin" style="font-size:16px"></i>&ensp; RESOURCES</font> </h5>
-			<!/li>
 
 				<li><a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
 					<i class="fa fa-question-circle"></i>
 					Ask a question
 				</a></li>
 
-				<li><a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank">
-					<i class="fa fa-comments"></i>
-					Search helpdesk
-				</a></li>
+				<li>
+					<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank">
+						<i class="fa fa-comments"></i>
+						Search helpdesk
+					</a>
+				</li>
+
 				{% if app.website %}
-				<li><a href="{{ app.website }}" target="_blank">
-					<i class="fa fa-home"></i> Website
-				</a></li>
+				<li>
+					<a href="{{ app.website }}" target="_blank" style="padding-right:50px;">
+						<i class="fa fa-home"></i>
+						Website
+					</a>
+				</li>
 				{% endif %}
 
 				{% if app.tutorial %}
 				<li><a href="{{ app.tutorial }}" target="_blank">
-					<i class="fa fa-book"></i> Tutorial
+					<i class="fa fa-book"></i>
+					Tutorial
 				</a></li>
 				{% endif %}
 
