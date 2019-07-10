@@ -63,7 +63,7 @@ class StarRating extends HTMLElement {
             this.dispatchEvent(rateEvent);
 
             $.post('', {'action': 'rate', 'rating': this.value}, function() {
-              Msgs.add_msg('Rating Updated ! Thank you for the input.',  'info');
+              Msgs.add_msg('Rating Updated ! Thank you for the input.',  'info', 'rating');
             })
         });
 
