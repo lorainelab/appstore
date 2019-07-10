@@ -29,8 +29,6 @@ def submit_app(request):
             try:
                 jar_details = process_jar(f, expect_app_name)
                 pending = _create_pending(request.user, jar_details, f)
-                _send_email_for_pending(pending)
-                _send_email_for_pending_user(pending)
                 version_pattern ="^[0-9].[0-9].[0-9]+"
                 version_pattern = re.compile(version_pattern)
                 if not bool(version_pattern.match(jar_details['version'])):
@@ -77,6 +75,8 @@ def confirm_submission(request, id):
         if action == 'cancel':
             return _user_cancelled(request, pending)
         elif action == 'accept':
+            _send_email_for_pending(pending)
+            _send_email_for_pending_user(pending)
             return _user_accepted(request, pending)
     pom_attrs = None
     if pending.pom_xml_file:
