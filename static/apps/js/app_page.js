@@ -46,7 +46,6 @@ var AppPage = (function($) {
         }
 
         xhr.send(JSON.stringify(formData))
-        return xhr;
     }
 
     /* Increases the download counter for a particular app when installed */
