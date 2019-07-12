@@ -6,55 +6,47 @@ myDefaultWhiteList.button = []
 myDefaultWhiteList.style = []
 
 var AppPage = (function($) {
-	/*
-     ================================================================
-       Install via IGB App Manager
-     ================================================================
-	*/
+    /*
+    ================================================================
+    Install via IGB App Manager
+    ================================================================
+    */
 
-    var AppManagerURL = 'http://127.0.0.1:7090/manageApp';
-	function get_app_info(app_symbolicName, callback) {
+    function get_app_info(app_symbolicName, callback) {
+        var manageApp = 'http://127.0.0.1:7090/manageApp';
 
-         formData = {
-            "symbolicName" : app_symbolicName,
-            "action" : "getInfo"
-         };
+        var xhr = createCORSRequest('POST', manageApp, null, app_symbolicName);
 
-          $.ajax({
-              type: "POST",
-              url: AppManagerURL,
-              data: JSON.stringify(formData),
-              dataType: "json",
-			   contentType : "application/json",
-              'success': function(data, textStatus, xhr) {
-                            callback(data, xhr.status)
-                         },
-              'error': function(data, textStatus, xhr) {
-                            callback(xhr.status)
-                       },
-          });
+        if (!xhr) {
+            return;
+        }
 
-	}
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200 && callback) {
+                callback(JSON.parse(this.response), this.status);
+            }
+        }
+
+        xhr.send(JSON.stringify(formData))
+    }
 
     function install_app(app_symbolicName, action, callback) {
-       formData = {
-            "symbolicName" : app_symbolicName,
-            "action" : action
-         };
+        var manageApp = 'http://127.0.0.1:7090/manageApp';
 
-          $.ajax({
-             type: "POST",
-              url: AppManagerURL,
-              data: JSON.stringify(formData),
-              dataType: "json",
-			  contentType : "application/json",
-              'success': function(data, textStatus, xhr) {
-                            callback(data, xhr.status)
-                         },
-              'error': function(data, textStatus, xhr) {
-                            callback(xhr.status)
-                       },
-          });
+        var xhr = createCORSRequest('POST', manageApp, action, app_symbolicName);
+
+        if (!xhr) {
+            return;
+        }
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200 && callback) {
+                callback(JSON.parse(this.response), this.status);
+            }
+        }
+
+        xhr.send(JSON.stringify(formData))
+        return xhr;
     }
 
     /* Increases the download counter for a particular app when installed */
@@ -137,7 +129,7 @@ var AppPage = (function($) {
 		setup_install_btn('btn-warning', 'icon-install-upgrade', 'Upgrade',appVersion, igbVersion,
             function() {
                 set_install_btn_to_upgrading(appVersion, igbVersion);
-                install_app(app_symbolicName,"update", function(app_status, status) {
+                install_app(app_symbolicName, "update", function(app_status, status) {
                     if (status == "200" && app_status.status == "UPDATED") {
                         Msgs.add_msg(app_name + ' has been updated! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
@@ -154,7 +146,6 @@ var AppPage = (function($) {
 	}
 
 	function setup_install(app_name, app_symbolicName) {
-
 		get_app_info(app_symbolicName,function(app_status, is_running) {
 			if (is_running == "200") {
 					if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
@@ -172,13 +163,46 @@ var AppPage = (function($) {
 		});
 	}
 
-	
+
+    // Create and return an XHR object.
+    function createCORSRequest(method, url, action, app_symbolicName) {
+        if(action != null) {
+            // POST Data
+            formData = {
+                "symbolicName" : app_symbolicName,
+                "action" : action
+            };
+        } else {
+            // POST Data
+            formData = {
+                "symbolicName" : app_symbolicName,
+                "action" : "getInfo"
+            };
+        }
+
+        var xhr = new XMLHttpRequest();
+
+        if ("withCredentials" in xhr) {
+            // XHR for Chrome/Firefox/Opera/Safari.
+            xhr.open(method, url, true);
+        } else if (typeof XDomainRequest != "undefined") {
+            // XDomainRequest for IE.
+            xhr = new XDomainRequest();
+            xhr.open(method, url);
+        } else {
+            // CORS not supported.
+            xhr = null;
+            console.log("CORS Not Supported");
+        }
+
+        return xhr;
+    }
     /*
      ================================================================
        Stars
      ================================================================
     */
-    
+
     function rating_to_width_percent(rating) {
         return Math.ceil(100 * rating / 5);
     }
@@ -251,27 +275,27 @@ var AppPage = (function($) {
     function setup_details() {
         $('#app-details-md');
     }
-    
+
     /*
      ================================================================
        Release Notes
      ================================================================
     */
-    
+
     function setup_release_notes() {
         $('.app-release-notes').each(function() {
             $(this).text;
         });
-        
+
         $('.timeago').text;
     }
-    
+
     /*
      ================================================================
        Init
      ================================================================
     */
-    
+
     return {
 	    'setup_install': setup_install,
 //      'setup_twox_download_popover': setup_twox_download_popover,
