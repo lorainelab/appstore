@@ -1,40 +1,38 @@
-from django.db import models
+import datetime
+from os.path import basename
+
 from django.contrib.auth.models import User
-from django.conf import settings
+from django.db import models
+
 from apps.models import App, Release, ReleaseAPI
 from util.id_util import fullname_to_name
 from util.view_util import get_object_or_none
-from os.path import basename, join as pathjoin
-from threading import Thread
-import subprocess
-import datetime
-from django.core.mail import send_mail
-import warnings
+
 try:
     from conf.mvn import MVN_BIN_PATH, MVN_SETTINGS_PATH
     from conf.emails import EMAIL_ADDR
 except ImportError:
     from conf.mock import MVN_BIN_PATH, MVN_SETTINGS_PATH, EMAIL_ADDR
 
+
 class AppPending(models.Model):
-    submitter     = models.ForeignKey(User,on_delete=models.CASCADE)
-    fullname      = models.CharField(max_length=127)
-    symbolicname      = models.CharField(max_length=127)
-    manifest_version = models.CharField(max_length=31)
-    details = models.TextField(blank=True, null=True)
-    import_packages = models.TextField(blank=True, null=True)
-    lastmodified = models.CharField(max_length=127)
-    version       = models.CharField(max_length=31)
-    works_with = models.CharField(max_length=31)
-    created       = models.DateTimeField(auto_now_add=True)
-    release_file  = models.FileField(upload_to='pending_releases')
-    dependencies  = models.ManyToManyField(Release, related_name='+', blank=True, null=True)
-    javadocs_jar_file = models.FileField(upload_to='pending_releases', blank=True, null=True)
-    pom_xml_file      = models.FileField(upload_to='pending_releases', blank=True, null=True)
+    submitter           = models.ForeignKey(User,on_delete=models.CASCADE)
+    fullname            = models.CharField(max_length=127)
+    symbolicname        = models.CharField(max_length=127)
+    manifest_version    = models.CharField(max_length=31)
+    details             = models.TextField(blank=True, null=True)
+    import_packages     = models.TextField(blank=True, null=True)
+    lastmodified        = models.CharField(max_length=127)
+    version             = models.CharField(max_length=31)
+    works_with          = models.CharField(max_length=31, null=True, blank=True, default="9.1.0")
+    created             = models.DateTimeField(auto_now_add=True)
+    release_file        = models.FileField(upload_to='pending_releases')
+    dependencies        = models.ManyToManyField(Release, related_name='+', blank=True, null=True)
+    javadocs_jar_file   = models.FileField(upload_to='pending_releases', blank=True, null=True)
+    pom_xml_file        = models.FileField(upload_to='pending_releases', blank=True, null=True)
 
     def __str__(self):
         return self.fullname
-
 
     def can_confirm(self, user):
         if user.is_staff or user.is_superuser:
@@ -43,8 +41,8 @@ class AppPending(models.Model):
 
     @property
     def is_new_app(self):
-       name = fullname_to_name(self.fullname)
-       return get_object_or_none(App, name = name) == None
+        name = fullname_to_name(self.fullname)
+        return get_object_or_none(App, name = name) == None
 
     class Meta:
         ordering = ['created']
@@ -74,7 +72,7 @@ class AppPending(models.Model):
             api.pom_xml_file.save(basename(self.pom_xml_file.name), self.pom_xml_file)
             api.save()
             api.extract_javadocs_jar()
-            _deploy_artifact_async(api)
+            # _deploy_artifact_async(api)
 
     def delete_files(self):
         self.release_file.delete()
@@ -83,11 +81,18 @@ class AppPending(models.Model):
         if self.pom_xml_file:
             self.pom_xml_file.delete()
 
+
+"""
+
+Is Not Required For Now | Will need later if we plan no Deploying the Files to Nexus
+
+
 def _deploy_artifact_async(api):
     def run_deploy():
         _deploy_artifact(api)
     t = Thread(target = run_deploy)
     t.start()
+
 
 def _deploy_artifact(api):
     pom_path = pathjoin(settings.MEDIA_ROOT, api.pom_xml_file.name)
@@ -103,3 +108,4 @@ def _deploy_artifact(api):
     cmd = subprocess.Popen(deploy_cmd, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, shell=False)
     cmdout, _ = cmd.communicate()
     send_mail('IGB App Store - App Repo Deploy (Release API ID: %d)' % api.id, cmdout, EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+"""
