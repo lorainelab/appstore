@@ -1,22 +1,23 @@
-from zipfile import ZipFile
+import base64
+import re
 from os.path import basename
 from urllib.request import urlopen
-import re
-import base64
-from django.contrib.auth.decorators import login_required
-from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, HttpResponseForbidden
-from django.conf import settings
-from django.core.mail import send_mail
-from django.shortcuts import get_object_or_404
+from zipfile import ZipFile
 
-from util.view_util import html_response, json_response, get_object_or_none
-from util.id_util import fullname_to_name
+from django.conf import settings
+from django.contrib.auth.decorators import login_required
+from django.core.mail import send_mail
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, HttpResponseForbidden
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
+
 from apps.models import Release, App, Author, OrderedAuthor
-from apps.views import _parse_iso_date
+from util.id_util import fullname_to_name
+from util.view_util import html_response, json_response, get_object_or_none
 from .models import AppPending
 from .pomparse import PomAttrNames, parse_pom
 from .processjar import process_jar
+
 
 # Presents an app submission form and accepts app submissions.
 @login_required
@@ -46,10 +47,12 @@ def submit_app(request):
             context['expect_app_name'] = expect_app_name
     return html_response('upload_form.html', context, request)
 
+
 def _user_cancelled(request, pending):
     pending.delete_files()
     pending.delete()
     return HttpResponseRedirect(reverse('submit-app'))
+
 
 def _user_accepted(request, pending):
     app = get_object_or_none(App, name = fullname_to_name(pending.fullname))
@@ -65,6 +68,7 @@ def _user_accepted(request, pending):
         return HttpResponseRedirect(reverse('app_page_edit', args=[app.name]) + '?upload_release=true')
     else:
         return html_response('submit_done.html', {'app_name': pending.fullname}, request)
+
 
 def confirm_submission(request, id):
     pending = get_object_or_404(AppPending, id = int(id))
@@ -102,8 +106,7 @@ def _create_pending(submitter, jar_details, release_file):
                                         details = base64.b64decode(jar_details['details']).decode('utf-8'),
                                         lastmodified = jar_details['lastmodified'],
                                         fullname       = jar_details['fullname'],
-                                        version        = jar_details['version'],
-                                        works_with  = jar_details['works_with'])
+                                        version        = jar_details['version'])
     for dependency in jar_details['app_dependencies']:
         pending.dependencies.add(dependency)
     pending.release_file.save(basename(release_file.name), release_file)
