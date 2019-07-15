@@ -82,6 +82,7 @@ class App(models.Model):
     citation     = models.CharField(max_length=31, blank=True, null=True)
     coderepo     = models.URLField(blank=True, null=True)
     automation   = models.URLField(blank=True, null=True)
+
     contact      = models.EmailField(blank=True, null=True)
 
     stars        = models.PositiveIntegerField(default=0)
