@@ -27,7 +27,7 @@ logger = logging.getLogger("app_page.html") %}
 	<div class="col-md-12">
 		<a href="{{ go_back_to_url }}">&larr; Go back to {% autoescape off %}{{ go_back_to_title }}{% endautoescape %}</a>
 	</div>
-	{% endif %}
+	{% endif %}app
 	<br />
 	<br />
 	{# App header #}
@@ -230,7 +230,7 @@ logger = logging.getLogger("app_page.html") %}
 	<div class="col-md-3">
 		{# 3.0 download panel #}
 		<div class="box-release-info" id="app_status_block">
-			<h6 class="panel-title muted">IGB</h6>
+			<h6 class="panel-title text-muted">IGB</h6>
 			<button class="btn btn-large btn-block" id="app-install-btn">
 				<i></i> {# <-- download button icon will go here #}
 				<h4></h4> {# <-- download button text will go here #}
@@ -238,9 +238,12 @@ logger = logging.getLogger("app_page.html") %}
 			<p id="app_version"></p>
 			{% if app.license_text %}
 			<strong class="custom-font">License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a>
+			<br />
 			{% endif %}
 			<strong class="custom-font">Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a>
+			<!--
 			<strong class="custom-font">Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a>
+			-->
 		</div>
 
 		{# end 3.0 download panel #}

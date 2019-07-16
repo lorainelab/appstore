@@ -24,10 +24,38 @@ var AppPage = (function($) {
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200 && callback) {
                 callback(JSON.parse(this.response), this.status);
+            } else if(xhr.readyState === 4 && xhr.status === 0) {
+                get_old_app(app_symbolicName, function(app_status, is_running) {
+			        if (is_running == "200") {
+			            Msgs.add_msg('Older Version of IGB Detected',
+			             'danger', 'old_version');
+			            Msgs.add_msg('Please update to a newer version of IGB @ <a href="http://bioviz.org/download.html" target="_blank"> Click Here </a>',
+			             'info');
+                        document.getElementById("app_status_block").style.display = "none";
+			        } else {
+			            Msgs.add_msg('IGB is not running!', 'info');
+				        document.getElementById("app_status_block").style.display = "none";
+			        }
+			    });
             }
         }
+    }
 
-        xhr.send(JSON.stringify(formData))
+    function get_old_app(app_symbolicName, callback) {
+        var manageApp = 'http://127.0.0.1:7085/igbStatusCheck';
+
+        var xhr = createCORSRequest('GET', manageApp, null, app_symbolicName);
+
+        if (!xhr) {
+            return;
+        }
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200 && callback) {
+                console.log(this);
+                callback(this.response, this.status);
+            }
+        }
     }
 
     function install_app(app_symbolicName, action, callback) {
@@ -44,8 +72,6 @@ var AppPage = (function($) {
                 callback(JSON.parse(this.response), this.status);
             }
         }
-
-        xhr.send(JSON.stringify(formData))
     }
 
     /* Increases the download counter for a particular app when installed */
@@ -156,9 +182,9 @@ var AppPage = (function($) {
                         set_install_btn_to_upgrade(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
 					}
 			} else {
-				Msgs.add_msg('IGB is not running!', 'info');
-				document.getElementById("app_status_block").style.display = "none";
-			}
+                Msgs.add_msg('IGB is not running!', 'info');
+                document.getElementById("app_status_block").style.display = "none";
+            }
 		});
 	}
 
@@ -184,10 +210,12 @@ var AppPage = (function($) {
         if ("withCredentials" in xhr) {
             // XHR for Chrome/Firefox/Opera/Safari.
             xhr.open(method, url, true);
+            xhr.send(JSON.stringify(formData))
         } else if (typeof XDomainRequest != "undefined") {
             // XDomainRequest for IE.
             xhr = new XDomainRequest();
             xhr.open(method, url);
+            xhr.send(JSON.stringify(formData))
         } else {
             // CORS not supported.
             xhr = null;
