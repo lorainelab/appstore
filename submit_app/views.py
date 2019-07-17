@@ -132,7 +132,7 @@ The following app has been submitted:
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
 """.format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('{fullname} App - Successfully Submitted.', msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
+    send_mail('{fullname} App - Successfully Submitted.'.format(fullname = pending.fullname), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 def _verify_javadocs_jar(file):
     error_msg = None
