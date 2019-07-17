@@ -57,6 +57,7 @@ class AppPending(models.Model):
         release.created = datetime.datetime.today()
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
+        app.release_file.save(release.release_file.name, release.release_file)
         for dependee in self.dependencies.all():
             release.dependencies.add(dependee)
         release.calc_checksum()

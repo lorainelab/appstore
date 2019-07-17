@@ -125,13 +125,13 @@ The following app has been submitted:
 
 def _send_email_for_pending_user(pending):
     msg = u"""
-Your app has been submitted! You'll be notified by email when your app has been approved.
+Thank you for submitting the app! {approve_text}
 The following app has been submitted:
     Name: {fullname}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
-""".format(fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('IGB App Store - Submission Done!', msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
+""".format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
+    send_mail('{fullname} App - Successfully Submitted.', msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 def _verify_javadocs_jar(file):
     error_msg = None

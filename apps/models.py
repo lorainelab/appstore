@@ -73,7 +73,7 @@ class App(models.Model):
 
     latest_release_date       = models.DateField(blank=True, null=True)
     has_releases              = models.BooleanField(default=False)
-
+    release_file=models.FileField()
     license_text    = models.URLField(blank=True, null=True)
     license_confirm = models.BooleanField(default=False)
 

@@ -95,11 +95,7 @@ def generate_xml(dict_ver, tree, state):
     resource.set('id', dict_ver.symbolicname + '\\' + dict_ver.version)
     resource.set('symbolicname', dict_ver.symbolicname)
     resource.set('presentationname', dict_ver.fullname)
-    if state == 'pending':
-        resource.set('uri', '/media/pending_releases/' + dict_ver.symbolicname + '-' + dict_ver.version + '.jar')
-    else:
-        resource.set('uri', '/media/' + get_fullname(dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.version +
-                     '/' + dict_ver.symbolicname + '-' + dict_ver.version + '.jar')
+    resource.set('uri', '/media/' + dict_ver.release_file.name)
     resource.set('version', dict_ver.version)
 
     description = ET.SubElement(resource, 'description')
