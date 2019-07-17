@@ -110,6 +110,7 @@ def _create_pending(submitter, jar_details, release_file):
     for dependency in jar_details['app_dependencies']:
         pending.dependencies.add(dependency)
     pending.release_file.save(basename(release_file.name), release_file)
+    pending.release_file_name = basename(pending.release_file.name)
     pending.save()
     return pending
 
