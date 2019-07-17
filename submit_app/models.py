@@ -26,6 +26,7 @@ class AppPending(models.Model):
     version             = models.CharField(max_length=31)
     works_with          = models.CharField(max_length=31, null=True, blank=True, default="9.1.0")
     created             = models.DateTimeField(auto_now_add=True)
+    release_file_name = models.CharField(max_length=127)
     release_file        = models.FileField(upload_to='pending_releases')
     dependencies        = models.ManyToManyField(Release, related_name='+', blank=True, null=True)
     javadocs_jar_file   = models.FileField(upload_to='pending_releases', blank=True, null=True)
@@ -57,6 +58,10 @@ class AppPending(models.Model):
         release.created = datetime.datetime.today()
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
+        app.release_file.save(release.release_file.name, release.release_file)
+        app.release_file_name = basename(app.release_file.name)
+        app.save()
+
         for dependee in self.dependencies.all():
             release.dependencies.add(dependee)
         release.calc_checksum()

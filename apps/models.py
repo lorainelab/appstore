@@ -73,7 +73,8 @@ class App(models.Model):
 
     latest_release_date       = models.DateField(blank=True, null=True)
     has_releases              = models.BooleanField(default=False)
-
+    release_file    = models.FileField()
+    release_file_name = models.CharField(max_length=127)
     license_text    = models.URLField(blank=True, null=True)
     license_confirm = models.BooleanField(default=False)
 
@@ -158,6 +159,7 @@ class Release(models.Model):
     active        = models.BooleanField(default=True)
 
     release_file  = models.FileField(upload_to=release_file_path)
+    release_file_name = models.CharField(max_length=127)
     hexchecksum   = models.CharField(max_length=511, blank=True, null=True)
     dependencies  = models.ManyToManyField('self', related_name='dependents', symmetrical=False)
 
