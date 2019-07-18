@@ -133,12 +133,12 @@
             <div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
                 {% for release in app.releases %}
                 <div class="row">
-                    <div class="col-md-12" release_id="{{ release.id }}">
+                    <div class="col-md-12 release" release_id="{{ release.id }}">
                         {# Release version #}
-                        <h4>
+                        <h4 style="margin-top:10px;">
                             {{ release.version }}
                             <small><abbr class="timeago"> {{ release.created_iso }} </abbr></small>
-                            <button class="btn btn-light {% if release.dependents.count %}disabled{% endif %} release-delete"><i class="fa fa-trash"></i> Delete</button>
+                            <button class="btn btn-light {% if release.dependents.count %} disabled {% endif %} release-delete" style="margin-top:15px;"><i class="fa fa-trash"></i> Delete</button>
                         </h4>
                         {# End Release version #}
 

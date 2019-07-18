@@ -526,7 +526,7 @@ var AppPageEdit = (function($)
             var release_notes_preview = $(this).find('.release-notes-preview');
             var delete_btn = $(this).find('.release-delete');
 
-            MarkdownUtil.setup_preview(release_notes_field, release_notes_preview);
+            //MarkdownUtil.setup_preview(release_notes_field, release_notes_preview);
             field_change(release_notes_field, function() {
                 if (!SaveActions['release_notes'])
                     SaveActions['release_notes'] = new Object();
