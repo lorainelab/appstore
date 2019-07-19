@@ -37,6 +37,9 @@ var AppPage = (function($) {
 				        document.getElementById("app_status_block").style.display = "none";
 			        }
 			    });
+            } else if(xhr.readyState === 4 && xhr.status === 404) {
+                // Usually happens when Appstores OBR is not added to the IGB Desktop Apps Repository
+                Msgs.add_msg('Please add the Repository OBR to IGB > Tools > Open App Manager > Manage Repositories > Add', 'info');
             }
         }
     }
@@ -52,8 +55,10 @@ var AppPage = (function($) {
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200 && callback) {
-                console.log(this);
                 callback(this.response, this.status);
+            } else if(xhr.readyState === 4 && xhr.status === 0 && callback) {
+                Msgs.add_msg('IGB is not running!', 'info');
+                document.getElementById("app_status_block").style.display = "none";
             }
         }
     }
