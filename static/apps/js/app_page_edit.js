@@ -779,6 +779,7 @@ var AppPageEdit = (function($)
                 count++;
             }
             data['release_count'] = count;
+
             return {
                 'msg': 'Deleting releases',
                 'data': data
@@ -815,7 +816,15 @@ var AppPageEdit = (function($)
 
         if (!queue.length) {
             if (!next_action()) {
-                window.location.href = app_page_url;
+                // Check if the App Exists Else redirect to homepage.
+                var req = new XMLHttpRequest();
+                req.open('GET', app_page_url, true);
+                req.send();
+                if (req.status != "200") {
+                    window.location.href = '/#app-delete';
+                } else {
+                    window.location.href = app_page_url;
+                }
                 return;
             }
         }

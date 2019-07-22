@@ -118,6 +118,11 @@ class App(models.Model):
     def update_has_releases(self):
         self.has_releases = (self.release_set.filter(active=True).count() > 0)
         self.save()
+        self.delete_releases()
+
+    def delete_releases(self):
+        if not self.has_releases:
+            self.delete()
 
     @property
     def page_url(self):
