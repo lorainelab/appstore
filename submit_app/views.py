@@ -1,3 +1,5 @@
+import random
+import sys
 import base64
 import re
 from os.path import basename
@@ -109,7 +111,7 @@ def _create_pending(submitter, jar_details, release_file):
                                         version        = jar_details['version'])
     for dependency in jar_details['app_dependencies']:
         pending.dependencies.add(dependency)
-    pending.release_file.save(basename(release_file.name), release_file)
+    pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + release_file.name), release_file)
     pending.release_file_name = basename(pending.release_file.name)
     pending.save()
     return pending
@@ -122,7 +124,7 @@ The following app has been submitted:
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
 """.format(id = pending.id, fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('IGB App Store - App Submitted', msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+    send_mail('{fullname} App - Successfully Submitted.'.format(fullname = pending.fullname), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 def _send_email_for_pending_user(pending):
     msg = u"""
