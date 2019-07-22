@@ -391,7 +391,7 @@ var AppPageEdit = (function($)
     }
 
     function setup_add_editor_popover() {
-        $('.popover-title .close').click(toggle_add_editor);
+        $('.popover-header .close').click(toggle_add_editor);
 
         var add_field = $('#editor-add-popover input');
         var add_btn = $('#editor-add-popover button');
