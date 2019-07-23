@@ -131,6 +131,17 @@
                 </div>
             </div>
             <div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
+                {# checking if there is only one release #}
+                {% if app.releases|length == 1 %}
+                <br />
+                <div class="row">
+                    <div class="col-md-12 release">
+                        <span class="alert alert-info">Deleting this Release will delete the whole application.</span>
+                    </div>
+                </div>
+                <br />
+                {% endif %}
+
                 {% for release in app.releases %}
                 <div class="row">
                     <div class="col-md-12 release" release_id="{{ release.id }}">

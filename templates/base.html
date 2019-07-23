@@ -132,6 +132,12 @@
             $(document).ready(function(){
                 $('[data-toggle="popover"]').popover();
             });
+            // Show Information about Application Deleted
+            $(document).ready(function() {
+                if (window.location.hash === "#app-delete") {
+                    Msgs.add_msg("The Application was deleted !", "info");
+                }
+            });
             $(window).on('pageshow', function() {
             {% if go_back_to %}
                 Cookies('go_back_to_title', '{{ go_back_to }}',  {'path': '/'});
