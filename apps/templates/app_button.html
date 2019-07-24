@@ -20,14 +20,6 @@
                     <div class="col-md-12 desc-spaced">
                         <p class="desc-box">{{ app.description }}</p>
                     </div>
-                    {% else %}
-                    <div class="col-md-12 desc-spaced">
-                        {% if app.details|length > 100 %}
-                        <p class="desc-box">{{ app.details | truncatechars:100 }} <a href="#">read more</a></p>
-                        {% else %}
-                        <p class="desc-box">{{ app.details }}</p>
-                        {% endif %}
-                    </div>
                     {% endif %}
                      <div class="col-md-12">
                         <div class="rating-stars stars" data-placement="bottom">

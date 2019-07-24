@@ -51,8 +51,9 @@ logger = logging.getLogger("app_page.html") %}
 				{# Downloads #}
 				{% if app.has_releases %}
 				<span class="app-usage-info-divider"></span>
+				{{ app.downloads }}
 				<a href="{% url 'app_stats' app.name %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
-					{{ app.downloads }} Downloads
+					 Downloads
 				</a>
 				{% endif %}
 				{# End Downloads #}
@@ -251,60 +252,74 @@ logger = logging.getLogger("app_page.html") %}
 		{# app resources #}
 		<div class="alert alert-warning box-resource">
 			<ul class="nav nav-list">
-			<h5><i class="fa fa-circle-o-notch fa-spin" style="font-size:16px"></i>&ensp; RESOURCES</font> </h5>
-
-				<li><a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
-					<i class="fa fa-question-circle"></i>
-					Ask a question
-				</a></li>
+			<h5>RESOURCES</h5>
 
 				<li>
+					<i class="fa fa-question-circle"></i>
+					<a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
+						Ask a question
+					</a>
+				</li>
+
+				<li>
+					<i class="fa fa-comments"></i>
 					<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank">
-						<i class="fa fa-comments"></i>
 						Search helpdesk
 					</a>
 				</li>
 
 				{% if app.website %}
 				<li>
+					<i class="fa fa-home"></i>
 					<a href="{{ app.website }}" target="_blank" style="padding-right:50px;">
-						<i class="fa fa-home"></i>
 						Website
 					</a>
 				</li>
 				{% endif %}
 
 				{% if app.tutorial %}
-				<li><a href="{{ app.tutorial }}" target="_blank">
+				<li>
 					<i class="fa fa-book"></i>
-					Tutorial
-				</a></li>
+					<a href="{{ app.tutorial }}" target="_blank">
+						Tutorial
+					</a>
+				</li>
 				{% endif %}
 
 				{% if app.citation %}
-				<li><a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ app.citation }}" target="_blank">
-					<i class="fa fa-heart"></i> Cite this App
-				</a></li>
+				<li>
+					<i class="fa fa-heart"></i>
+					<a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ app.citation }}" target="_blank">
+						Cite this App
+					</a>
+				</li>
 				{% endif %}
 
 				{% if app.coderepo %}
-				<li><a href="{{ app.coderepo }}" target="_blank">
-					&nbsp;<i class="fa fa-code-fork"></i> Code Repository
-				</a></li>
+				<li>
+					<i class="fa fa-code-fork"></i>
+					<a href="{{ app.coderepo }}" target="_blank">
+						&nbsp;&nbsp;Code Repository
+					</a>
+				</li>
 				{% endif %}
 				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 				{% if 'www' in app.automation %}
-				<li><a href="http://{{app.automation}}" target="_blank">
-
-						<i class="fa fa-gear fa-spin" style="color:black"></i>
- Automation Support
-				</a></li>
+				<li>
+					<i class="fa fa-gear fa-spin" style="color:black"></i>
+					<a href="http://{{app.automation}}" target="_blank">
+ 						Automation Support
+					</a>
+				</li>
 				{% endif %}
 
 				{% if app.contact %}
-				<li><a href="mailto:{{ app.contact }}" target="_blank">
-					<i class="fa fa-envelope"></i> E-mail
-				</a></li>
+				<li>
+					<i class="fa fa-envelope"></i>
+					<a href="mailto:{{ app.contact }}" target="_blank">
+						 E-mail
+					</a>
+				</li>
 				{% endif %}
 			</ul>
 		</div>

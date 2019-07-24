@@ -27,9 +27,7 @@ var AppPage = (function($) {
             } else if(xhr.readyState === 4 && xhr.status === 0) {
                 get_old_app(app_symbolicName, function(app_status, is_running) {
 			        if (is_running == "200") {
-			            Msgs.add_msg('Older Version of IGB Detected',
-			             'danger', 'old_version');
-			            Msgs.add_msg('Please update to a newer version of IGB @ <a href="http://bioviz.org/download.html" target="_blank"> Click Here </a>',
+			            Msgs.add_msg('Appstore works with IGB Version 9.1 and above. Please update to a newer version of IGB @ <a href="https://bioviz.org/download.html" target="_blank"> Click Here </a>',
 			             'info');
                         document.getElementById("app_status_block").style.display = "none";
 			        } else {
@@ -40,6 +38,7 @@ var AppPage = (function($) {
             } else if(xhr.readyState === 4 && xhr.status === 404) {
                 // Usually happens when Appstores OBR is not added to the IGB Desktop Apps Repository
                 Msgs.add_msg('Please add the Repository OBR to IGB > Tools > Open App Manager > Manage Repositories > Add', 'info');
+                document.getElementById("app_status_block").style.display = "none";
             }
         }
     }
