@@ -91,6 +91,7 @@ def confirm_submission(request, id):
         pending.pom_xml_file.close()
     return html_response('confirm.html', {'pending': pending, 'pom_attrs': pom_attrs}, request)
 
+
 def _create_pending(submitter, jar_details, release_file):
     name = fullname_to_name(jar_details['fullname'])
     app = get_object_or_none(App, name = name)
@@ -101,20 +102,19 @@ def _create_pending(submitter, jar_details, release_file):
         if release and release.active:
             raise ValueError('cannot be accepted because the app %s already has a release with version %s. You can delete this version by going to the Release History tab in the app edit page' % (app.fullname, jar_details['version']))
 
-    pending = AppPending.objects.create(submitter      = submitter,
-                                        symbolicname = jar_details['symbolicname'],
-                                        manifest_version = jar_details['manifest_version'],
-                                        import_packages = jar_details['import_packages'],
-                                        details = base64.b64decode(jar_details['details']).decode('utf-8'),
-                                        lastmodified = jar_details['lastmodified'],
-                                        fullname       = jar_details['fullname'],
-                                        version        = jar_details['version'])
+    pending = AppPending.objects.create(submitter       = submitter,
+                                        symbolicname    = jar_details['symbolicname'],
+                                        details         = base64.b64decode(jar_details['details']).decode('utf-8'),
+                                        fullname        = jar_details['fullname'],
+                                        version         = jar_details['version'],
+                                        repository      = jar_details['repository'])
     for dependency in jar_details['app_dependencies']:
         pending.dependencies.add(dependency)
     pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + release_file.name), release_file)
     pending.release_file_name = basename(pending.release_file.name)
     pending.save()
     return pending
+
 
 def _send_email_for_pending(pending):
     msg = u"""
@@ -126,6 +126,7 @@ The following app has been submitted:
 """.format(id = pending.id, fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
     send_mail('{fullname} App - Successfully Submitted.'.format(fullname = pending.fullname), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
+
 def _send_email_for_pending_user(pending):
     msg = u"""
 Thank you for submitting the app! {approve_text}
@@ -135,6 +136,7 @@ The following app has been submitted:
     Submitter: {submitter_name} {submitter_email}
 """.format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
     send_mail('{fullname} App - Successfully Submitted.'.format(fullname = pending.fullname), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
+
 
 def _verify_javadocs_jar(file):
     error_msg = None
@@ -151,6 +153,7 @@ def _verify_javadocs_jar(file):
         error_msg = 'The Javadocs Jar file you submitted is not a valid jar/zip file'
     file.close()
     return error_msg
+
 
 def submit_api(request, id):
     pending = get_object_or_404(AppPending, id = int(id))
@@ -181,6 +184,7 @@ def submit_api(request, id):
 
     return html_response('submit_api.html', {'pending': pending, 'error_msg': error_msg}, request)
 
+
 def _send_email_for_accepted_app(to_email, from_email, app_fullname, app_name, server_url):
     subject = u'IGB App Store - {app_fullname} Has Been Approved'.format(app_fullname = app_fullname)
     app_url = reverse('app_page', args=[app_name])
@@ -205,6 +209,7 @@ the top-right.
 """.format(app_url = app_url, author_email = to_email, server_url = server_url)
     send_mail(subject, msg, from_email, (to_email,))
 
+
 def _get_server_url(request):
     name = request.META['SERVER_NAME']
     port = request.META['SERVER_PORT']
@@ -215,18 +220,17 @@ def _get_server_url(request):
     else:
         return 'http://%s:%s' % (name, port)
 
+
 def _pending_app_accept(pending, request):
     name = fullname_to_name(pending.fullname)
     # we always create a new app, because only new apps require accepting
     app = App.objects.create(fullname = pending.fullname, name = name)
     app.active = True
     app.symbolicname = pending.symbolicname
-    app.manifest_version =pending.manifest_version
-    app.import_packages = pending.import_packages
     app.details = pending.details
     app.version = pending.version
-    app.lastmodified = pending.lastmodified
     app.editors.add(pending.submitter)
+    app.repository = pending.repository
     app.save()
 
     pending.make_release(app)
@@ -236,9 +240,11 @@ def _pending_app_accept(pending, request):
     server_url = _get_server_url(request)
     _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.fullname, app.name, server_url)
 
+
 def _pending_app_decline(pending_app, request):
     pending_app.delete_files()
     pending_app.delete()
+
 
 _PendingAppsActions = {
     'accept': _pending_app_accept,
@@ -269,10 +275,10 @@ def pending_apps(request):
     pending_apps = AppPending.objects.all()
     return html_response('pending_apps.html', {'pending_apps': pending_apps}, request)
 
-AppRepoUrl = 'http://code.cytoscape.org/nexus/content/repositories/apps'
 
 def _get_deploy_url(groupId, artifactId, version):
     return '/'.join((AppRepoUrl, groupId.replace('.', '/'), artifactId, version))
+
 
 def _url_exists(url):
     try:
@@ -282,6 +288,7 @@ def _url_exists(url):
     except:
         pass
     return False
+
 
 def artifact_exists(request):
     if request.method != 'POST':
@@ -297,7 +304,10 @@ def artifact_exists(request):
 # 2.x plugin management page
 #
 
+
 _PluginXmlUrl = 'http://chianti.ucsd.edu/cyto_web/plugins/plugins.xml'
+
+
 def _forward_plugins_xml(request_post):
     try:
         reader = urlopen(_PluginXmlUrl)
@@ -309,12 +319,14 @@ def _forward_plugins_xml(request_post):
     except:
         return HttpResponse('Unable to retrieve: %s' % PluginXmlUrl, content_type='text/plain', status=503)
 
+
 def _app_info(request_post):
     fullname = request_post.get('app_fullname')
     name = fullname_to_name(fullname)
     url = reverse('app_page', args=(name,))
     exists = App.objects.filter(name = name, active = True).count() > 0
     return json_response({'url': url, 'exists': exists})
+
 
 def _update_app_page(request_post):
     fullname = request_post.get('fullname')

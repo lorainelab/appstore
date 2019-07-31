@@ -11,6 +11,11 @@ from submit_app.models import AppPending
 from apps.models import App
 
 
+"""
+These function will not be used, we can clean this once the work flow is defined and stable.
+
+CURRENTLY USELESS FUNCTIONS START
+"""
 def xml_writer(elem):
     """
     Write to XML string for the Element.
@@ -68,12 +73,6 @@ def generate_xml_from_obr(dict_ver):
         a = i.find('directive')
         packages.append(re.sub('osgi.wiring.', '', a.attrib["value"]))
     return packages
-
-
-def get_fullname(input):
-    input = input.lower()
-    input = input.replace(' ', '')
-    return input
 
 
 def generate_xml(dict_ver, tree, state):
@@ -154,18 +153,80 @@ def generate_xml(dict_ver, tree, state):
     return repository
 
 
+"""
+CURRENTLY USELESS FUNCTIONS END
+"""
+
+def get_fullname(input):
+    """
+    :param input: Complete Name of the application
+    :return: lower cased name
+    """
+    input = input.lower()
+    input = input.replace(' ', '')
+    return input
+
+
+def xml_generator(dict_ver, gen_tree, tree, state):
+    """
+    :param gen_tree: Final Element Tree After each Iteration
+    :param dict_ver: App Object Data
+    :param tree: Element Tree Retrieved from Jar
+    :param state: Pending or Released ?
+    :return: Nothing | Generates the XML at a given location
+    """
+    gen_tree = ET.tostring(gen_tree, encoding='unicode')
+    gen_tree = ET.fromstring(gen_tree)
+    super_tree = gen_tree
+
+    tree = ET.tostring(tree, encoding='unicode')
+    tree = ET.fromstring(tree)
+    cur_tree = tree
+
+    current_resource = cur_tree.find('resource')
+    if state == 'pending':
+        current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
+    else:
+        current_resource.set('uri', '/media/' + get_fullname(dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.version +
+                             '/' + dict_ver.release_file_name)
+
+    super_tree.append(current_resource)
+    return super_tree
+
+
+def initial_generation(dict_ver, state):
+    """
+    :param dict_ver: App Info Object
+    :param tree: Element Object
+    :param state: Pending or Released ?
+    :return: ElementTree
+    """
+    element_tree = ET.fromstring(dict_ver.repository)
+    current_resource = element_tree.find('resource')
+    if state == 'pending':
+        current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
+    else:
+        current_resource.set('uri', '/media/' + get_fullname(
+            dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.version + '/' + dict_ver.release_file_name)
+    return element_tree
+
+
 def main(status):
     if status == 'pending':
         all_entries = AppPending.objects.all()
     else:
         all_entries = App.objects.all()
 
-    tree = ""
+    gen_tree = ""
 
     if len(all_entries) > 0:
-        for entry in all_entries:
-            tree = generate_xml(entry, tree, status)
-        return tree
+        for i in range(0, len(all_entries)):
+            if i == 0:
+                gen_tree = initial_generation(all_entries[i], status)
+            else:
+                tree = ET.fromstring(all_entries[i].repository)
+                gen_tree = xml_generator(all_entries[i], gen_tree, tree, status)
+        return gen_tree
     else:
         repository = ET.Element('repository')
         resource = ET.SubElement(repository, 'resource')

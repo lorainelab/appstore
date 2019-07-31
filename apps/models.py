@@ -60,9 +60,6 @@ class App(models.Model):
     symbolicname = models.CharField(max_length=127, unique=True)
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
-    import_packages = models.TextField(blank=True, null=True)
-    manifest_version = models.CharField(max_length=31)
-    lastmodified = models.CharField(max_length=127)
     version       = models.TextField(blank=False)
     tags         = models.ManyToManyField(Tag, blank=True)
 
@@ -91,7 +88,7 @@ class App(models.Model):
     downloads    = models.PositiveIntegerField(default=0)
 
     featured = models.BooleanField(default=False)
-
+    repository = models.TextField(blank=True, null=True)
     active = models.BooleanField(default=False)
 
     def is_editor(self, user):
@@ -163,6 +160,7 @@ class Release(models.Model):
     created       = models.DateTimeField(auto_now_add=True)
     active        = models.BooleanField(default=True)
 
+    repository    = models.TextField(blank=True, null=True)
     release_file  = models.FileField(upload_to=release_file_path)
     release_file_name = models.CharField(max_length=127)
     hexchecksum   = models.CharField(max_length=511, blank=True, null=True)
