@@ -31,7 +31,7 @@ var AppPage = (function($) {
 			             'info');
                         document.getElementById("app_status_block").style.display = "none";
 			        } else {
-			            Msgs.add_msg('To install an App, start IGB version 9.1.0 or later., 'info');
+			            Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
 				        document.getElementById("app_status_block").style.display = "none";
 			        }
 			    });
