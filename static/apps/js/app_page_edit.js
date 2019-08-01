@@ -820,11 +820,12 @@ var AppPageEdit = (function($)
                 var req = new XMLHttpRequest();
                 req.open('GET', app_page_url, true);
                 req.send();
-                if (req.status != "200") {
-                    window.location.href = '/#app-delete';
-                } else {
-                    window.location.href = app_page_url;
-                }
+                req.onreadystatechange = function () {
+                    if (req.readyState === 4 && req.status != "200") {
+                        window.location.href = '/#app-delete';
+                    } else if(req.readyState === 4 && req.status == "200"){
+                        window.location.href = app_page_url;
+                    }                }
                 return;
             }
         }
