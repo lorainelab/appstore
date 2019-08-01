@@ -27,13 +27,11 @@ var AppPage = (function($) {
             } else if(xhr.readyState === 4 && xhr.status === 0) {
                 get_old_app(app_symbolicName, function(app_status, is_running) {
 			        if (is_running == "200") {
-			            Msgs.add_msg('Older Version of IGB Detected',
-			             'danger', 'old_version');
-			            Msgs.add_msg('Please update to a newer version of IGB @ <a href="http://bioviz.org/download.html" target="_blank"> Click Here </a>',
+			            Msgs.add_msg('Please update to a newer version of IGB @ <a href="https://bioviz.org/download.html" target="_blank"> Click Here </a>',
 			             'info');
                         document.getElementById("app_status_block").style.display = "none";
 			        } else {
-			            Msgs.add_msg('IGB is not running!', 'info');
+			            Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
 				        document.getElementById("app_status_block").style.display = "none";
 			        }
 			    });
@@ -57,7 +55,7 @@ var AppPage = (function($) {
             if (xhr.readyState === 4 && xhr.status === 200 && callback) {
                 callback(this.response, this.status);
             } else if(xhr.readyState === 4 && xhr.status === 0 && callback) {
-                Msgs.add_msg('IGB is not running!', 'info');
+                Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
                 document.getElementById("app_status_block").style.display = "none";
             }
         }
@@ -187,7 +185,7 @@ var AppPage = (function($) {
                         set_install_btn_to_upgrade(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
 					}
 			} else {
-                Msgs.add_msg('IGB is not running!', 'info');
+                Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
                 document.getElementById("app_status_block").style.display = "none";
             }
 		});
