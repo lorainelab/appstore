@@ -4,9 +4,13 @@ from apps.models import App, Release, VersionRE
 from django.utils.encoding import smart_text
 from util.view_util import get_object_or_none
 import logging, io, sys
+
 _MANIFEST_FILE_NAME = 'META-INF/MANIFEST.MF'
+_REPOSITORY_FILE_NAME = 'repository.xml'
 _MAX_MANIFEST_FILE_SIZE_B = 1024 * 1024
 logger = logging.getLogger(__name__)
+
+
 def process_jar(jar_file, expect_app_name):
     details_dict = {}
     try:
@@ -17,19 +21,21 @@ def process_jar(jar_file, expect_app_name):
     manifest_file = _get_manifest_file(archive)
     manifest = parse_manifest(manifest_file)
     manifest_file.close()
+
+    repository_file = _get_repository_file(archive)
+    details_dict['repository'] = repository_file.read()
+    repository_file.close()
+
     archive.close()
 
     is_osgi_bundle = True if manifest.get('Bundle-SymbolicName') else False
     parser_func = _parse_osgi_bundle if is_osgi_bundle else _parse_simple_app
     symbolicname = manifest.get('Bundle-SymbolicName')[0]
-    details_dict['manifest_version'] = manifest.get('Manifest-Version')[0]
-    details_dict['import_packages'] = manifest.get('Import-Package')[0]
     if manifest.get('Bundle-Description') is not None:
         details_dict['details'] = manifest.get('Bundle-Description')[0]
     else:
         # If no description it says "No Description" in base64 below.
         details_dict['details'] = "Tm8gRGVzY3JpcHRpb24="
-    details_dict['lastmodified'] = manifest.get('Bnd-LastModified')[0]
     app_name, app_ver, app_dependencies, has_export_pkg = parser_func(manifest)
     details_dict['has_export_pkg'] = has_export_pkg
 
@@ -45,6 +51,7 @@ def process_jar(jar_file, expect_app_name):
         raise ValueError('has a problem with its manifest for entry <tt>IGB-App-Dependencies</tt>: ' + msg)
     return details_dict
 
+
 def _app_dependencies_to_releases(app_dependencies):
     for dependency in app_dependencies:
         app_name, app_version = dependency
@@ -58,6 +65,7 @@ def _app_dependencies_to_releases(app_dependencies):
             raise ValueError('dependency on "%s" with version "%s": no such release exists' % (app_name, app_version))
 
         yield release
+
 
 def _get_manifest_file(zip_archive):
     try:
@@ -74,6 +82,23 @@ def _get_manifest_file(zip_archive):
         return manifest_file
     except IOError:
         raise ValueError('does not have an accessible manifest file located in <tt>%s</tt>' % _MANIFEST_FILE_NAME)
+
+
+def _get_repository_file(zip_archive):
+    """
+    Extract Repository File from the Bundle Package
+    """
+    try:
+        repository_info = zip_archive.getinfo(_REPOSITORY_FILE_NAME)
+    except KeyError:
+        raise ValueError('does not have a repository file located inside the jar named <tt>%s</tt>' % _REPOSITORY_FILE_NAME)
+
+    try:
+        repository_file = zip_archive.open(_REPOSITORY_FILE_NAME, 'r')
+        repository_file = io.TextIOWrapper(repository_file)
+        return repository_file
+    except IOError:
+        raise ValueError('does not have an accessible repository file located inside the jar named <tt>%s</tt>' % _REPOSITORY_FILE_NAME)
 
 
 def _last(d, k):

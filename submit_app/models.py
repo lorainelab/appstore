@@ -19,13 +19,11 @@ class AppPending(models.Model):
     submitter           = models.ForeignKey(User,on_delete=models.CASCADE)
     fullname            = models.CharField(max_length=127)
     symbolicname        = models.CharField(max_length=127)
-    manifest_version    = models.CharField(max_length=31)
     details             = models.TextField(blank=True, null=True)
-    import_packages     = models.TextField(blank=True, null=True)
-    lastmodified        = models.CharField(max_length=127)
     version             = models.CharField(max_length=31)
     works_with          = models.CharField(max_length=31, null=True, blank=True, default="9.1.0")
     created             = models.DateTimeField(auto_now_add=True)
+    repository          = models.TextField(blank=True, null=True)
     release_file_name = models.CharField(max_length=127)
     release_file        = models.FileField(upload_to='pending_releases')
     dependencies        = models.ManyToManyField(Release, related_name='+', blank=True, null=True)
@@ -52,10 +50,11 @@ class AppPending(models.Model):
         return self.fullname + ' ' + self.version + ' from ' + self.submitter.email
 
     def make_release(self, app):
-        release, _ = Release.objects.get_or_create(app = app, version = self.version)
+        release, _ = Release.objects.get_or_create(app=app, version=self.version)
         release.works_with = self.works_with
         release.active = True
         release.created = datetime.datetime.today()
+        release.repository = self.repository
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
         app.release_file.save(release.release_file.name, release.release_file)
