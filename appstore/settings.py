@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'storages',
 ]
 
+# https://stackoverflow.com/questions/19256919/location-of-django-logs-and-errors
+# https://github.com/ianalexander/ianalexander/blob/master/content/blog/getting-started-with-django-logging-in-5-minutes.html
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
