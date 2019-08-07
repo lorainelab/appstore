@@ -14,7 +14,7 @@ $(function() {
 	  $('#not-top-tags').slideDown('fast')
 	else
 	  $('#not-top-tags').show()
-	Cookies(TAG_LIST_COOKIE, 'show_all', {path: '/'});
+	Cookies.get(TAG_LIST_COOKIE, 'show_all', {path: '/'});
     }
 
     function hide_not_top_tags(animate) {
@@ -23,7 +23,7 @@ $(function() {
 	  $('#not-top-tags').slideUp('fast')
 	else
 	  $('#not-top-tags').hide()
-	Cookies(TAG_LIST_COOKIE, 'show_some', {path: '/'});
+	Cookies.get(TAG_LIST_COOKIE, 'show_some', {path: '/'});
     }
 
     if (Cookies(TAG_LIST_COOKIE) === 'show_all')
@@ -49,7 +49,7 @@ $(function() {
         $('#tag-list').show(animate ? 'fast' : '');
         $('#tag-buttons button').removeClass('active');
         $('#tag-buttons #tag-list-btn').addClass('active');
-        Cookies(TAGS_COOKIE, 'tag_list', {path: '/'})
+        Cookies.get(TAGS_COOKIE, 'tag_list', {path: '/'})
     }
 
     function show_tag_cloud(animate) {
@@ -57,7 +57,7 @@ $(function() {
         $('#tag-cloud').show(animate ? 'fast' : '');
         $('#tag-buttons button').removeClass('active');
         $('#tag-buttons #tag-cloud-btn').addClass('active');
-        Cookies(TAGS_COOKIE, 'tag_cloud', {path: '/'})
+        Cookies.get(TAGS_COOKIE, 'tag_cloud', {path: '/'})
     }
 
     if (Cookies(TAGS_COOKIE) === 'tag_cloud')
