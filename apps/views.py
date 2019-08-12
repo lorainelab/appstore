@@ -114,6 +114,8 @@ def apps_default(request, page=1):
 		'latest_apps': latest_apps,
 		'downloaded_apps_pg': downloaded_app,
 		'go_back_to': 'home',
+		'navbar_selected_link': 'all',
+		'search_query': '',
 	}
 	# c.update(_nav_panel_context(request)) # This is another way to fix categories to display in homepage #Remove for loop in html_response method added in view_util.py.
 	return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
@@ -233,6 +235,8 @@ def _mk_app_page(app, user, request, decoded_details):
 		'latest_release': _latest_release(app),
 		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
 		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
+		'go_back_to': request.COOKIES.get('go_back_to'),
+		'search_query': '',
 	}
 	return html_response('app_page.html', c, request)
 

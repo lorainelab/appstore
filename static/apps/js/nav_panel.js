@@ -14,7 +14,7 @@ $(function() {
 	  $('#not-top-tags').slideDown('fast')
 	else
 	  $('#not-top-tags').show()
-	Cookies.get(TAG_LIST_COOKIE, 'show_all', {path: '/'});
+	Cookies.set(TAG_LIST_COOKIE, 'show_all', {path: '/'});
     }
 
     function hide_not_top_tags(animate) {
@@ -23,10 +23,10 @@ $(function() {
 	  $('#not-top-tags').slideUp('fast')
 	else
 	  $('#not-top-tags').hide()
-	Cookies.get(TAG_LIST_COOKIE, 'show_some', {path: '/'});
+	Cookies.set(TAG_LIST_COOKIE, 'show_some', {path: '/'});
     }
 
-    if (Cookies(TAG_LIST_COOKIE) === 'show_all')
+    if (Cookies.get(TAG_LIST_COOKIE) === 'show_all')
 	show_not_top_tags(false);
     else
 	hide_not_top_tags(false);
@@ -49,7 +49,7 @@ $(function() {
         $('#tag-list').show(animate ? 'fast' : '');
         $('#tag-buttons button').removeClass('active');
         $('#tag-buttons #tag-list-btn').addClass('active');
-        Cookies.get(TAGS_COOKIE, 'tag_list', {path: '/'})
+        Cookies.set(TAGS_COOKIE, 'tag_list', {path: '/'})
     }
 
     function show_tag_cloud(animate) {
@@ -57,10 +57,10 @@ $(function() {
         $('#tag-cloud').show(animate ? 'fast' : '');
         $('#tag-buttons button').removeClass('active');
         $('#tag-buttons #tag-cloud-btn').addClass('active');
-        Cookies.get(TAGS_COOKIE, 'tag_cloud', {path: '/'})
+        Cookies.set(TAGS_COOKIE, 'tag_cloud', {path: '/'})
     }
 
-    if (Cookies(TAGS_COOKIE) === 'tag_cloud')
+    if (Cookies.get(TAGS_COOKIE) === 'tag_cloud')
 	    show_tag_cloud(false);
     else
 	    show_tag_list(false);

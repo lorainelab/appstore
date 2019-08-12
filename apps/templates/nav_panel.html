@@ -24,7 +24,7 @@
                     {% for tag in top_tags %}
                         {% if tag.count > 0 %}
                     <li>
-                        <!--<span {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>-->
+                        <span {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
                             <a href="{% url 'tag_page' tag.name %}">
                                 <span class="title">{{ tag.fullname }}</span>
                                 <span class="count">({{ tag.count }})</span>

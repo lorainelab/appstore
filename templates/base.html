@@ -130,8 +130,8 @@
             });
             $(window).on('pageshow', function() {
             {% if go_back_to %}
-                Cookies('go_back_to_title', '{{ go_back_to }}',  {'path': '/'});
-                Cookies('go_back_to_url',   '{{ request.get_full_path }}', {'path': '/'});
+                Cookies.set('go_back_to_title', '{{ go_back_to }}',  {'path': '/'});
+                Cookies.set('go_back_to_url',   '{{ request.get_full_path }}', {'path': '/'});
             {% endif %}
             });
         </script>
