@@ -116,6 +116,7 @@ def apps_default(request, page=1):
 		'go_back_to': 'home',
 		'navbar_selected_link': 'all',
 		'search_query': '',
+		'selected_tag_name': '',
 	}
 	# c.update(_nav_panel_context(request)) # This is another way to fix categories to display in homepage #Remove for loop in html_response method added in view_util.py.
 	return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
