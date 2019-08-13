@@ -134,8 +134,8 @@ var SortAppButtons = (function() {
             $(this).find('.triangle').html(descending ? '&#x25BC;' : '&#x25B2;');
             sort_app_buttons(container, sort_func, attr_name, attr_type);
 
-            Cookies(SORT_BY_COOKIE, sort_by, {path: '/'});
-            Cookies(SORT_DESCENDING_COOKIE, descending, {path: '/'});
+            Cookies.set(SORT_BY_COOKIE, sort_by, {path: '/'});
+            Cookies.set(SORT_DESCENDING_COOKIE, descending, {path: '/'});
         });
     }
 
@@ -144,8 +144,8 @@ var SortAppButtons = (function() {
        'init_sort_buttons': function(container) {
             setup_sort_buttons(container);
             var sort_by_hash = window.location.hash.substring(1);
-            var sort_by_cookie = Cookies(SORT_BY_COOKIE);
-            var descending_cookie = Cookies(SORT_DESCENDING_COOKIE);
+            var sort_by_cookie = Cookies.get(SORT_BY_COOKIE);
+            var descending_cookie = Cookies.get(SORT_DESCENDING_COOKIE);
             var sort_by;
             if (sort_by_hash === "") {
               sort_by = sort_by_cookie;
