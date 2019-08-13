@@ -202,6 +202,7 @@ if USE_S3:
     AWS_LOCATION = 'media'
     MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
     DEFAULT_FILE_STORAGE = 'appstore.storage_backends.MediaStorage'
+    AWS_DEFAULT_ACL = None
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
