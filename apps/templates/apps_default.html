@@ -1,53 +1,31 @@
 {% extends "nav_panel.html" %}
 {% load app_buttons %}
+{% load pagination %}
 
 {% block main %}
-<div class="row">
-    <div class="col-lg-8"><h1>Community Favorites</h1></div>
+<div class="row" style="margin:5px;">
+    <div class="col-lg-8">
+        <h2 style="color: black;">
+            <a style="text-decoration: none; color: black;" href="{% url 'all_apps'%}#downloads">Community Favorites</a>
+        </h2>
+    </div>
     <div class="col-lg-4">
         <a href="{% url 'submit-app' %}" class="btn btn-success submit-app pull-right" role="button" aria-disabled="true" style="margin-top:5px;">
             <strong>Submit your App »</strong>
         </a>
     </div>
 </div>
-<div class="row" style="margin-top:10px;">
-    <div class="row" style="margin-top:10px;">
+
+<div class="row" style="margin:5px;">
+    <div class="col-lg-12" style="margin-top:10px;">
         {% app_buttons downloaded_apps_pg %}
-    </div>
-    <div class="col-lg-12" style="margin-top:10px;text-align:right;">
-         <a href="{% url 'all_apps'%}#downloads">More community favorites &raquo;</a>
     </div>
 </div>
 
-<nav aria-label="Page navigation">
-    <ul class="pagination">
-        {% if downloaded_apps_pg.has_previous %}
-        <li class="page-item">
-            <a href="/community_fav/{{ downloaded_apps_pg.previous_page_number }}" class="page-link">
-                <i class="fas fa-angle-double-left"></i>
-            </a>
-        </li>
-        {% endif %}
-        {% for num in downloaded_apps_pg.paginator.page_range %}
-        {% if downloaded_apps_pg.number == num %}
-        <li class="page-item">
-            <a href="#" class="page-link active">{{ num }}</a>
-        </li>
-        {% elif num > downloaded_apps_pg.number|add:'-3' and num < downloaded_apps_pg.number|add:'3' %}
-        <li class="page-item">
-            <a href="/community_fav/{{ num }}" class="page-link">{{ num }}</a>
-        </li>
-        {% endif %}
-        {% endfor %}
-        {% if downloaded_apps_pg.has_next %}
-        <li class="page-item">
-            <a href="/community_fav/{{ downloaded_apps_pg.next_page_number }}" class="page-link">
-                <i class="fas fa-angle-double-right"></i>
-            </a>
-        </li>
-    {% endif %}
-    </ul>
-</nav>
-
+<div class="row">
+    <div class="col-md-12">
+        {% pagination downloaded_apps_pg %}
+    </div>
+</div>
 <a style="display: none;" href="/media/fu.txt">fu skript kiddiez</a>
 {% endblock %}

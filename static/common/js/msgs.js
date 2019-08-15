@@ -21,6 +21,9 @@ var Msgs = (function() {
 		if (group) {
 		    alerts_tag.find('.' + group).remove();
 		    msg_tag.addClass(group);
+		    setTimeout(function(){
+                alerts_tag.find('.' + group).hide('slow');
+            }, 1500);
 		}
 	}
 

@@ -26,15 +26,15 @@
 <form action="" method="post" enctype="multipart/form-data">
 {% csrf_token %}
 
-    <div class="col-md-6">
+    <div class="col-md-8">
         <p>
             We found that your app exports OSGi packages. Do you want to submit an API? To submit an API, upload:
         </p>
         <ol>
             <li>
                 <p>
-                The <b><tt>pom.xml</tt> file</b> used to build your app. This is used to get the group ID, artifact ID,
-                version, and dependencies of your app. That way, other developers can compile their apps against yours.
+                    The <b><tt>pom.xml</tt> file</b> used to build your app. This is used to get the group ID, artifact ID,
+                    version, and dependencies of your app. That way, other developers can compile their apps against yours.
                 </p>
                 <p>
                 Please ensure that:
@@ -99,4 +99,5 @@
 <script type="text/javascript">
   SubmitAPI.setupInputFiles();
 </script>
+
 {% endblock %}

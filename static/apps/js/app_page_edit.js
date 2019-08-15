@@ -391,7 +391,7 @@ var AppPageEdit = (function($)
     }
 
     function setup_add_editor_popover() {
-        $('.popover-title .close').click(toggle_add_editor);
+        $('.popover-header .close').click(toggle_add_editor);
 
         var add_field = $('#editor-add-popover input');
         var add_btn = $('#editor-add-popover button');
@@ -518,7 +518,6 @@ var AppPageEdit = (function($)
        =============================== */
 
     function setup_release_notes() {
-        $('.timeago').timeago();
 
         $('.release').each(function() {
             var release_div = $(this);
@@ -527,7 +526,7 @@ var AppPageEdit = (function($)
             var release_notes_preview = $(this).find('.release-notes-preview');
             var delete_btn = $(this).find('.release-delete');
 
-            MarkdownUtil.setup_preview(release_notes_field, release_notes_preview);
+            //MarkdownUtil.setup_preview(release_notes_field, release_notes_preview);
             field_change(release_notes_field, function() {
                 if (!SaveActions['release_notes'])
                     SaveActions['release_notes'] = new Object();
@@ -780,6 +779,7 @@ var AppPageEdit = (function($)
                 count++;
             }
             data['release_count'] = count;
+
             return {
                 'msg': 'Deleting releases',
                 'data': data
@@ -816,7 +816,16 @@ var AppPageEdit = (function($)
 
         if (!queue.length) {
             if (!next_action()) {
-                window.location.href = app_page_url;
+                // Check if the App Exists Else redirect to homepage.
+                var req = new XMLHttpRequest();
+                req.open('GET', app_page_url, true);
+                req.send();
+                req.onreadystatechange = function () {
+                    if (req.readyState === 4 && req.status != "200") {
+                        window.location.href = '/#app-delete';
+                    } else if(req.readyState === 4 && req.status == "200"){
+                        window.location.href = app_page_url;
+                    }                }
                 return;
             }
         }

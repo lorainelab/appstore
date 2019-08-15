@@ -60,9 +60,6 @@ class App(models.Model):
     symbolicname = models.CharField(max_length=127, unique=True)
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
-    import_packages = models.TextField(blank=True, null=True)
-    manifest_version = models.CharField(max_length=31)
-    lastmodified = models.CharField(max_length=127)
     version       = models.TextField(blank=False)
     tags         = models.ManyToManyField(Tag, blank=True)
 
@@ -73,7 +70,8 @@ class App(models.Model):
 
     latest_release_date       = models.DateField(blank=True, null=True)
     has_releases              = models.BooleanField(default=False)
-
+    release_file    = models.FileField()
+    release_file_name = models.CharField(max_length=127)
     license_text    = models.URLField(blank=True, null=True)
     license_confirm = models.BooleanField(default=False)
 
@@ -82,6 +80,7 @@ class App(models.Model):
     citation     = models.CharField(max_length=31, blank=True, null=True)
     coderepo     = models.URLField(blank=True, null=True)
     automation   = models.URLField(blank=True, null=True)
+
     contact      = models.EmailField(blank=True, null=True)
 
     stars        = models.PositiveIntegerField(default=0)
@@ -89,7 +88,7 @@ class App(models.Model):
     downloads    = models.PositiveIntegerField(default=0)
 
     featured = models.BooleanField(default=False)
-
+    repository = models.TextField(blank=True, null=True)
     active = models.BooleanField(default=False)
 
     def is_editor(self, user):
@@ -117,6 +116,11 @@ class App(models.Model):
     def update_has_releases(self):
         self.has_releases = (self.release_set.filter(active=True).count() > 0)
         self.save()
+        self.delete_releases()
+
+    def delete_releases(self):
+        if not self.has_releases:
+            self.delete()
 
     @property
     def page_url(self):
@@ -156,7 +160,9 @@ class Release(models.Model):
     created       = models.DateTimeField(auto_now_add=True)
     active        = models.BooleanField(default=True)
 
+    repository    = models.TextField(blank=True, null=True)
     release_file  = models.FileField(upload_to=release_file_path)
+    release_file_name = models.CharField(max_length=127)
     hexchecksum   = models.CharField(max_length=511, blank=True, null=True)
     dependencies  = models.ManyToManyField('self', related_name='dependents', symmetrical=False)
 
@@ -173,7 +179,7 @@ class Release(models.Model):
 
     @property
     def created_iso(self):
-        return self.created.isoformat()
+        return self.created
 
     @property
     def release_file_url(self):

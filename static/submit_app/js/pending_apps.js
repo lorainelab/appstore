@@ -3,7 +3,7 @@ var PendingApps = (function() {
     function setup_accept_and_decline_btns() {
         $('[pending_id]').each(function() {
             var pending_tag = $(this);
-            var app_name = $(this).find('.app-name').text();
+            var app_name = $(this).find('.app-name-pending').text();
             var app_version = $(this).find('.app-version').text();
             var pending_id = $(this).attr('pending_id');
             
@@ -31,7 +31,7 @@ var PendingApps = (function() {
                 do_action('accept', '&ldquo;%s&rdquo; has been accepted.', 'success')
             });
             $(this).find('.decline').click(function() {
-                do_action('decline', '&ldquo;%s&rdquo; has been declined.', 'error')
+                do_action('decline', '&ldquo;%s&rdquo; has been declined.', 'danger')
             });
         });
     }

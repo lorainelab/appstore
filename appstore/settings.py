@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     'storages',
 ]
 
+# https://stackoverflow.com/questions/19256919/location-of-django-logs-and-errors
+# https://github.com/ianalexander/ianalexander/blob/master/content/blog/getting-started-with-django-logging-in-5-minutes.html
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -200,6 +202,7 @@ if USE_S3:
     AWS_LOCATION = 'media'
     MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
     DEFAULT_FILE_STORAGE = 'appstore.storage_backends.MediaStorage'
+    AWS_DEFAULT_ACL = None
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
