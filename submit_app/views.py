@@ -81,7 +81,8 @@ def confirm_submission(request, id):
         if action == 'cancel':
             return _user_cancelled(request, pending)
         elif action == 'accept':
-            _send_email_for_pending(pending)
+            server_url = _get_server_url(request)
+            _send_email_for_pending(server_url, pending)
             _send_email_for_pending_user(pending)
             return _user_accepted(request, pending)
     pom_attrs = None
@@ -116,15 +117,17 @@ def _create_pending(submitter, jar_details, release_file):
     return pending
 
 
-def _send_email_for_pending(pending):
+def _send_email_for_pending(server_url, pending):
+    admin_url = reverse('admin:login', current_app=pending.fullname)
     msg = u"""
 The following app has been submitted:
     ID: {id}
     Name: {fullname}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
-""".format(id = pending.id, fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('{fullname} App - Successfully Submitted.'.format(fullname = pending.fullname), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+    Server Url: {server_url}{admin_url}
+""".format(id=pending.id, fullname=pending.fullname, version=pending.version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
+    send_mail('{fullname} App - Successfully Submitted.'.format(fullname=pending.fullname), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 
 def _send_email_for_pending_user(pending):
