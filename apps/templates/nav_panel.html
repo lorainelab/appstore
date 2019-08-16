@@ -33,8 +33,26 @@
                     </li>
                         {% endif %}
                     {% endfor %}
+		    <li>
+                        <ul class="navigation-list" id="not-top-tags">
+                            {% for tag in not_top_tags %}
+                                {% if tag.count > 0 %}
+                            <li>
+                                <span {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
+                                    <a href="{% url 'tag_page' tag.name %}">
+                                        <span class="title">{{ tag.fullname }}</span>
+                                        <span class="count">({{ tag.count }})</span>
+                                    </a>
+                                </span>
+                            </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </li>
                 </ul>
-                <button class="btn btn-info btn-md more-btn" id="more-button">More</button>
+		{% if not_top_tags %}
+                    <button class="btn btn-info btn-md more-btn" id="more-button">More</button>
+                {% endif %}
             </div>
             <div id="tag-cloud">
               {% for tag in all_tags %}
