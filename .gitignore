@@ -3,6 +3,10 @@
 *.tgz
 *.swp
 *.swo
+appstore/whoosh_index/
+debug.log
+static/admin/
+static/rest_framework/
 /appstore/settings.ini
 /apps/migrations
 /download/migrations
