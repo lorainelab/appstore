@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load pagination %}
 
 {% block content %}
 <div class="row">
@@ -65,5 +66,13 @@
         {% block main %}{% endblock %}
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-9">
+        {% pagination downloaded_apps_pg %}
+    </div>
+</div>
+
 <script type="text/javascript" src="{% get_static_prefix %}apps/js/nav_panel.js"></script>
 {% endblock %}

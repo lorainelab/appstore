@@ -105,7 +105,7 @@ h4 a:active {
 }
 
 .box-part:hover {
-    position:absolute;
+    position:relative;
     z-index: 1;
     background: whiteSmoke;
     height: max-content;
