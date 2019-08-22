@@ -26,7 +26,7 @@ class AppPending(models.Model):
     repository          = models.TextField(blank=True, null=True)
     release_file_name = models.CharField(max_length=127)
     release_file        = models.FileField(upload_to='pending_releases')
-    dependencies        = models.ManyToManyField(Release, related_name='+', blank=True, null=True)
+    dependencies        = models.ManyToManyField(Release, related_name='+', blank=True)
     javadocs_jar_file   = models.FileField(upload_to='pending_releases', blank=True, null=True)
     pom_xml_file        = models.FileField(upload_to='pending_releases', blank=True, null=True)
 
