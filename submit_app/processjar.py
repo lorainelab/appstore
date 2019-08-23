@@ -16,6 +16,8 @@ def process_jar(jar_file, expect_app_name):
     details_dict = {}
     if isinstance(jar_file,str):
         file_obj = requests.get(jar_file)
+    else:
+        file_obj = None
 
     try:
         if file_obj is not None:

@@ -14,9 +14,6 @@
         #instructions { display: none; }
         #loading { display: none; }
         #instructions li { margin-bottom: 1em; }
-        .tooltip-inner {
-            background-color: gray !important;
-        }
     </style>
 {% endblock %}
 
@@ -49,7 +46,10 @@
         <div class="col-md-12">
             <br />
             Upload your IGB App jar file here.
-            <a class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right">
+            <a id = "ddd" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"
+                 title = "IGB Apps are OSGi bundles, which are ordinary Java jar files with some extra meta-data that enables
+                          them to run within IGB’s OSGi run-time. An IGB App also needs an OBR index file named repository.xml.
+                          See <a href ='#'> developer’s documentation.</a>">
                 <i class="fa fa-question-circle" style="font-size: 30px"></i>
             </a>
             <br/><br/>
