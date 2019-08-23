@@ -2,6 +2,7 @@ import random
 import sys
 import base64
 import re
+import os
 from os.path import basename
 from urllib.request import urlopen
 from zipfile import ZipFile
@@ -28,6 +29,7 @@ def submit_app(request):
     if request.method == 'POST':
         expect_app_name = request.POST.get('expect_app_name')
         f = request.FILES.get('file')
+        f = request.POST.get('url_val', None) if f is None else f
         if f:
             try:
                 jar_details = process_jar(f, expect_app_name)
@@ -111,8 +113,17 @@ def _create_pending(submitter, jar_details, release_file):
                                         repository      = jar_details['repository'])
     for dependency in jar_details['app_dependencies']:
         pending.dependencies.add(dependency)
-    pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + release_file.name), release_file)
-    pending.release_file_name = basename(pending.release_file.name)
+    file_name = basename(release_file) if isinstance(release_file, str) else basename(release_file.name)
+    if isinstance(release_file, str):
+        url_data = urlopen(release_file).read()
+        with open(file_name, 'wb') as file:
+            file.write(url_data)
+        file = open(file_name, 'rb')
+    else:
+        file = release_file
+    pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + file_name), file)
+    os.remove(file_name)
+    pending.release_file_name = file_name
     pending.save()
     return pending
 

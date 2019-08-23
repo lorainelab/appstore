@@ -1,18 +1,21 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}- Confirm Submission{% endblock %}
+{% block title %}- Good news! Your App passed first level, automated review.{% endblock %}
 
 {% block more_head %}
 <style type="text/css">
   form { display: inline; }
   #loading { display: none; }
+  .tooltip-inner {
+        background-color: gray !important;
+    }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="col-md-12">
-    <h1>Confirm Submission</h1>
+    <h1 class="text-success">Good news! Your App passed first level, automated review.</h1>
 </div>
 
 
@@ -32,42 +35,82 @@
                 {% else %}
                     No&mdash;this submission is an updated version of an existing app
                 {% endif %}
+                <button class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right"
+                        title="
+                    {% if pending.is_new_app %}
+                     This is a new version of a released App {{ pending.symbolicname }}.
+                     Currently, the highest version released in App Store is {{ pending.version }}.
+                    {% else %}
+                    This is a replacement jar file for pendingApp {{  pending.symbolicname }}
+                    version {{ pending.version }}.
+                    {% endif %} ">
+                     <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                </button>
             </td>
         </tr>
         <tr>
             <td>
-                <b>App Name</b>
+                <b>Bundle Name</b>
             </td>
-            <td>{{ pending.fullname }}</td>
+            <td>{{ pending.fullname }}
+                <button class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"
+                             title="BundleNameis a short, user-friendly name for your App. AppStore and
+                               IGB App Manager displayBundleNameto users.See
+                               <a href= '#'>developer’s documentation</a>">
+                     <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                </button>
+            </td>
         </tr>
         <tr>
             <td>
-                <b>App Version</b>
+                <b>Bundle-Symbolic Name</b>
             </td>
-            <td>{{ pending.version }}</td>
+            <td>{{ pending.symbolicname }}
+                <button class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"
+                         title="Bundle-SymbolicName and Bundle-Version uniquely identify an IGB App jar file within the IGB OSGi runtime.
+                                IGB needsBundle-Version and Bundle-Symbolic Name to install and run your App.
+                                Users never see Bundle-SymbolicName, but IGB needs it to run your App.
+                                See <a href= '#'>developer’s documentation</a>">
+                     <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                </button>
+            </td>
         </tr>
         <tr>
             <td>
-                <b>Minimum IGB Version</b>
+                <b>Bundle Version</b>
             </td>
-            <td>{{ pending.works_with }}</td>
-        </tr>
-        <tr>
-            <td>
-                <b>App Dependencies</b>
-            </td>
-            <td>
-                {% if pending.dependencies.count %}
-                    {% for release in pending.dependencies.all %}
-                    <p>
-                        <i class="icon-ok"></i> {{ release.app.fullname }}&nbsp;&nbsp;{{ release.version }}
-                    </p>
-                    {% endfor %}
-                {% else %}
-                    None
-                {% endif %}
+            <td>{{ pending.version }}
+                <button class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"
+                         title="Bundle-Version and Bundle-SymbolicName uniquely identify an IGB App jar file within the IGB OSGi runtime.
+                                IGB needsBundle-Version and Bundle-SymbolicName to install and run your App.
+                                Bundle-Version contain number and full-stop characters only, such as 0.0.1 or 6.1.0.
+                                See <a href= '#'>developer’s documentation</a>">
+                     <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                </button>
             </td>
         </tr>
+{#        <tr>#}
+{#            <td>#}
+{#                <b>Minimum IGB Version</b>#}
+{#            </td>#}
+{#            <td>{{ pending.works_with }}</td>#}
+{#        </tr>#}
+{#        <tr>#}
+{#            <td>#}
+{#                <b>App Dependencies</b>#}
+{#            </td>#}
+{#            <td>#}
+{#                {% if pending.dependencies.count %}#}
+{#                    {% for release in pending.dependencies.all %}#}
+{#                    <p>#}
+{#                        <i class="icon-ok"></i> {{ release.app.fullname }}&nbsp;&nbsp;{{ release.version }}#}
+{#                    </p>#}
+{#                    {% endfor %}#}
+{#                {% else %}#}
+{#                    None#}
+{#                {% endif %}#}
+{#            </td>#}
+{#        </tr>#}
     </table>
 
     {% if pom_attrs %}
@@ -105,15 +148,15 @@
         <div id="loading">
             <img src="{% get_static_prefix %}common/img/loading.gif">
         </div>
-        <form action="{% url 'confirm-submission' pending.id %}" method="post">
+         <form action="{% url 'confirm-submission' pending.id %}" method="post">
             {% csrf_token %}
-            <input type="hidden" name="action" value="cancel">
-            <input type="submit" class="btn btn-danger" value="No, cancel it">
+            <input type="hidden" name="action" value="accept">
+            <input type="submit" class="btn btn-success" value="It's all good.Submit my App">
         </form>
         <form action="{% url 'confirm-submission' pending.id %}" method="post">
             {% csrf_token %}
-            <input type="hidden" name="action" value="accept">
-            <input type="submit" class="btn btn-success" value="Yes, accept it">
+            <input type="hidden" name="action" value="cancel">
+            <input type="submit" class="btn btn-danger" value="No. Cancel submission">
         </form>
     </div>
 </div>
@@ -124,6 +167,7 @@ $(function() {
         $('input[type=submit]').hide();
         $('#loading').show();
     });
+
 });
 </script>
 {% endblock %}
