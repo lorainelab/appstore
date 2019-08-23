@@ -122,9 +122,10 @@ def _create_pending(submitter, jar_details, release_file):
     else:
         file = release_file
     pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + file_name), file)
-    os.remove(file_name)
     pending.release_file_name = file_name
     pending.save()
+    if isinstance(release_file, str) :
+        os.remove(file_name)
     return pending
 
 
