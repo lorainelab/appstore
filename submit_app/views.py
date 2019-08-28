@@ -91,8 +91,8 @@ def confirm_submission(request, id):
             if pending_obj.count() > 1:
                 _replace_jar_details(request, pending_obj, released_obj)
             server_url = _get_server_url(request)
-            # _send_email_for_pending(server_url, latest_pending_obj_)
-            # _send_email_for_pending_user(latest_pending_obj_)
+            _send_email_for_pending(server_url, latest_pending_obj_)
+            _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
     pom_attrs = None
     if pending.pom_xml_file:
