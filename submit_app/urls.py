@@ -1,10 +1,10 @@
-from django.conf.urls import patterns, include, url
+from django.urls import include, path, re_path
+from . import views
 
-urlpatterns = patterns('',
-    url(r'^$',                      'submit_app.views.submit_app',         name='submit-app'),
-    url(r'^pending$',               'submit_app.views.pending_apps',       name='pending-apps'),
-    url(r'^cy2xplugins$',           'submit_app.views.cy2x_plugins',       name='cy2x-plugins'),
-    url(r'^confirm/(\d{1,5})$',     'submit_app.views.confirm_submission', name='confirm-submission'),
-    url(r'^submit_api/(\d{1,5})$',  'submit_app.views.submit_api',         name='submit-api'),
-    url(r'^artifact_exists$',       'submit_app.views.artifact_exists'),
-)
+urlpatterns = [
+    path(r'',                      views.submit_app,         name='submit-app'),
+    path(r'pending',               views.pending_apps,       name='pending-apps'),
+    re_path(r'confirm/(\d{1,5})',     views.confirm_submission, name='confirm-submission'),
+    re_path(r'submit_api/(\d{1,5})',  views.submit_api,         name='submit-api'),
+    path(r'artifact_exists',       views.artifact_exists),
+]

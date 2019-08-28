@@ -58,7 +58,7 @@ def _multival_dict(keysAndVals):
 # could take the form of a version range, which has this syntax:
 #   "("|"[" + lower-version + "," + upper-version + ")"|"]"
 # The problem with parsing Import-Package is that we can't just split the string by ",".
-# This is because the version attribute could have a "," if it's a version range. The 
+# This is because the version attribute could have a "," if it's a version range. The
 # function _index_of_char is used to split the string by "," while ignoring any commas
 # surrounded by quotes.
 
@@ -186,20 +186,20 @@ def _parse_version_range(s):
 
 # Given a string containing the 'Import-Package' value,
 # returns a generator containing all the versions of
-# packages whose names begin with 'org.cytoscape'.
-def _lower_cytoscape_pkg_versions(s):
+# packages whose names begin with 'com.affymetrix'.
+def _lower_igb_pkg_versions(s):
     for (pkgname, attrs) in map(_extract_pkg_and_attrs, _split_by_pkg(s)):
-        if not 'version' in attrs or not pkgname.startswith('org.cytoscape'):
+        if not 'version' in attrs or not pkgname.startswith('com.affymetrix'):
             continue
         yield _lower_version(attrs['version'])
 
 # Given a string containing the 'Import-Package' value,
 # returns the maximum version across all the lower
-# versions of 'org.cytoscape.*' packages.
+# versions of 'org.igb.*' packages.
 # Returns None if there are no IGB packages.
-def max_of_lower_cytoscape_pkg_versions(s):
+def max_of_lower_igb_pkg_versions(s):
     try:
-        return max(_lower_cytoscape_pkg_versions(s))
+        return max(_lower_igb_pkg_versions(s))
     except ValueError:
         return None
 

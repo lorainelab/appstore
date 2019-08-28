@@ -1,31 +1,31 @@
 {% extends "nav_panel.html" %}
 {% load app_buttons %}
+{% load pagination %}
 
 {% block main %}
-  <style type="text/css">
-    h2 { margin-bottom: 0.5em; }
-    .span4 { margin-bottom: 1em; }
-  </style>
-  <div class="row">
-    <div class="span4"><h2>Newest Releases</h2></div>
-    <div class="span4" style="text-align: right; margin-top: 1.0em;">
-      <a href="{% url 'submit-app' %}" class="btn btn-primary">Submit your app &raquo;</a>
+<div class="row" style="margin:5px;">
+    <div class="col-lg-8">
+        <h2 style="color: black;">
+            <a style="text-decoration: none; color: black;" href="{% url 'all_apps'%}#downloads">Community Favorites</a>
+        </h2>
     </div>
-  </div>
-  <div class="row">{% app_buttons latest_apps %}</div>
-  <div class="row">
-    <div class="span8" style="text-align: right;">
-      <a href="{% url 'all_apps'%}#newest release">more newest releases &raquo;</a>
+    <div class="col-lg-4">
+        <a href="{% url 'submit-app' %}" class="btn btn-success submit-app pull-right" role="button" aria-disabled="true" style="margin-top:5px;">
+            <strong>Submit your App »</strong>
+        </a>
     </div>
-  </div>
+</div>
 
-  <div class="row"><div class="span8"><h2>Top Downloaded Apps</h2></div></div>
-  <div class="row">{% app_buttons downloaded_apps %}</div>
-  <div class="row">
-    <div class="span8" style="text-align: right;">
-      <a href="{% url 'all_apps'%}#downloads">more top downloads &raquo;</a>
+<div class="row" style="margin:5px;">
+    <div class="col-lg-12" style="margin-top:10px;">
+        {% app_buttons downloaded_apps_pg %}
     </div>
-  </div>
+</div>
 
-  <a style="display: none;" href="/media/fu.txt">fu skript kiddiez</a>
+<div class="row">
+    <div class="col-md-12">
+        {% pagination downloaded_apps_pg %}
+    </div>
+</div>
+<a style="display: none;" href="/media/fu.txt">fu skript kiddiez</a>
 {% endblock %}

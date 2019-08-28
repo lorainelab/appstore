@@ -1,5 +1,5 @@
-from django.conf.urls import patterns, include, url
-
-urlpatterns = patterns('',
-    url(r'^all_apps$', 'backend.views.all'),
-)
+from django.urls import path, include
+from . import views
+urlpatterns = [
+    path(r'all_apps',views.all),
+]

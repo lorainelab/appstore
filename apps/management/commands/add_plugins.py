@@ -6,18 +6,18 @@ from collections import defaultdict
 from django.core.management.base import BaseCommand
 
 from apps.models import App, Author, OrderedAuthor
-from CyAppStore.util.id_util import fullname_to_name
-from CyAppStore.apps.views import _parse_iso_date
+from util.id_util import fullname_to_name
+from apps.views import _parse_iso_date
 
 PLUGINS_XML_URL = 'http://cytoscape.org/plugins/plugins.xml'
 
 def dom_to_std_obj(dom_obj):
     result = dict()
-    
+
     result['description'] = dom_obj.getElementsByTagName('description')[0].childNodes[0].nodeValue
     result['version'] = dom_obj.getElementsByTagName('pluginVersion')[0].childNodes[0].nodeValue
     result['release-date'] = dom_obj.getElementsByTagName('release_date')[0].childNodes[0].nodeValue
-    
+
     authors_dom = dom_obj.getElementsByTagName('authorlist')
     if authors_dom and authors_dom[0].hasChildNodes():
         authors = list()
@@ -35,15 +35,15 @@ def dom_to_std_obj(dom_obj):
             else:
                 authors.append((name, None))
         result['authors'] = authors
-    
-    cy_versions = list()
-    cy_versions_dom = dom_obj.getElementsByTagName('cytoscapeVersions')[0]
-    for cy_version_dom in cy_versions_dom.childNodes:
-        cy_versions.append(cy_version_dom.childNodes[0].nodeValue)
-    result['cy-versions'] = cy_versions
-    
+
+    versions = list()
+    versions_dom = dom_obj.getElementsByTagName('cytoscapeVersions')[0]
+    for version_dom in versions_dom.childNodes:
+        versions.append(version_dom.childNodes[0].nodeValue)
+    result['versions'] = versions
+
     result['download'] = dom_obj.getElementsByTagName('url')[0].childNodes[0].nodeValue
-    
+
     return result
 
 def gather_plugins_by_name_and_version(plugins):
@@ -71,7 +71,7 @@ class Command(BaseCommand):
         #input_file = open('plugins.xml', 'r')
         dom_root = parse(input_file)
         input_file.close()
-        
+
         plugins = dom_root.getElementsByTagName('plugin')
         plugins_by_name_and_version = gather_plugins_by_name_and_version(plugins)
         plugins_by_name = extract_latest_version(plugins_by_name_and_version)
@@ -80,11 +80,11 @@ class Command(BaseCommand):
             if not arg in plugins_by_name:
                 print '"%s" not found in plugins.xml' % arg
                 return
-    
+
         for fullname in args:
             plugin = plugins_by_name[fullname]
             plugin_name = fullname_to_name(fullname)
-            
+
             print '%s:' % plugin_name,
             sys.stdout.flush()
             app, _ = App.objects.get_or_create(name = plugin_name)
@@ -98,10 +98,7 @@ class Command(BaseCommand):
                     author, _ = Author.objects.get_or_create(name = name, institution = institution)
                     author_order = OrderedAuthor.objects.create(app = app, author = author, author_order = author_order)
 
-            app.cy_2x_plugin_download = plugin['download']
-            app.cy_2x_plugin_version = plugin['version']
-            app.cy_2x_plugin_release_date = _parse_iso_date(plugin['release-date'])
-            app.cy_2x_versions = ', '.join(plugin['cy-versions'])
+
             app.save()
 
             print 'done.'

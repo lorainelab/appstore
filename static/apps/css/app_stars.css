@@ -1,13 +1,17 @@
-[class^="icon-cy-stars-"], [class*="icon-cy-stars-"] {
+[class^="icon-stars-"], [class*="icon-stars-"] {
     background-image: url('../../apps/img/stars_glyph.png');
     width: 85px;
     height: 14px;
 }
 
-.icon-cy-stars-empty {
+.icon-stars-empty {
     background-position: 0 0;
 }
 
-.icon-cy-stars-filled {
+.icon-stars-filled {
     background-position: 0 -20px;
+}
+
+.get-app-stars {
+    display: none;
 }

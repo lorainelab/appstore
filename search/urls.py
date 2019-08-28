@@ -1,5 +1,5 @@
-from django.conf.urls import patterns, include, url
+from django.urls import include, path
 
-urlpatterns = patterns('',
-    url(r'^$', 'search.views.search', name='search'),
-)
+urlpatterns = [
+    path(r'', 'search.views.search', name='search'),
+]

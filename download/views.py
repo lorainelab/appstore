@@ -1,7 +1,7 @@
 import datetime
 
 from django.shortcuts import get_object_or_404
-from django.contrib.gis.geoip import GeoIP
+from django.contrib.gis.geoip2 import GeoIP2 
 from django.http import HttpResponseRedirect
 
 from util.view_util import html_response, json_response, ipaddr_str_to_long, ipaddr_long_to_str
@@ -12,7 +12,10 @@ from download.models import ReleaseDownloadsByDate, AppDownloadsByGeoLoc, Downlo
 #   Download release
 # ===================================
 
-geoIP = GeoIP()
+# put database in project directory
+# see https://docs.djangoproject.com/en/2.1/ref/contrib/gis/geoip2/
+from appstore.settings import BASE_DIR
+geoIP = GeoIP2(BASE_DIR)
 
 def _client_ipaddr(request):
     forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
@@ -27,8 +30,8 @@ def _increment_count(klass, **args):
     obj.count += 1
     obj.save()
 
-def release_download(request, app_name, version):
-    release = get_object_or_404(Release, app__name = app_name, version = version, active = True)
+def release_download(request, app_name):
+    release = get_object_or_404(Release, app__name = app_name, active = True)
     ip4addr = _client_ipaddr(request)
     when    = datetime.date.today()
 

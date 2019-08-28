@@ -2,43 +2,48 @@
 {% load app_buttons %}
 
 {% block main %}
-  {% if results.Tag %}
-    <div class="row"><div class="span8"><h3>Tags</h3></div></div>
-    <div class="row">
-      <div class="span8" style="margin-bottom: 1em;">
+    {% if results.Tag %}
+    <div class="col-md-12">
+        <h3>Tags</h3>
+    </div>
+    <div class="col-md-12">
         {% for tag in results.Tag %}
-          <a class="link" href="{% url 'tag_page' tag.name %}">{{tag.fullname}}</a>{% if not forloop.last %}, {% endif %}
+            <a class="link" href="{% url 'tag_page' tag.name %}">{{tag.fullname}}</a> {% if not forloop.last %}, {% endif %}
         {% endfor %}
-      </div>
     </div>
-  {% endif %}
+    {% endif %}
 
-  {% if results.Author %}
-    <div class="row"><div class="span8"><h3>Authors</h3></div></div>
-    <div class="row">
-      <div class="span8" style="margin-bottom: 1em;">
+    {% if results.Author %}
+    <div class="col-md-12">
+        <h3>Authors</h3>
+    </div>
+    <div class="col-md-12">
         <ul>
-          {% for author in results.Author %}
-              <li>
-              <a href="{% url 'author_page' author.name %}">
-                {{ author.name }}
-                {% if author.institution %}
-                  ({{ author.institution }})
-                {% endif %}
-              </a>
+        {% for author in results.Author %}
+            <li>
+                <a href="{% url 'author_page' author.name %}">
+                    {{ author.name }}
+                    {% if author.institution %}
+                        ({{ author.institution }})
+                    {% endif %}
+                </a>
             </li>
-          {% endfor %}
+        {% endfor %}
         </ul>
-      </div>
     </div>
-  {% endif %}
-  
-  {% if results.App %}
-    <div class="row"><div class="span8"><h3>Apps</h3></div></div>
-    {% list_of_apps results.App True %}
-  {% endif %}
+    {% endif %}
 
-  {% if not results.Tag and not results.App and not results.Author %}
-    <div class="row"><div class="span8"><h3>No results found</h3></div></div>
-  {% endif %}
+    {% if results.App %}
+    <div class="col-md-9">
+        <h3>Apps</h3>
+
+        {% list_of_apps results.App True %}
+
+    </div>
+    {% endif %}
+{% if not results.Tag and not results.App and not results.Author %}
+    <div class="col-md-12">
+        <h3>No results found</h3>
+    </div>
+{% endif %}
 {% endblock %}

@@ -1,12 +1,12 @@
 $(function() {
     var form = $('#search');
-    form.find('button').click(function() {
-	form.submit();
+        form.find('button').click(function() {
+        form.submit();
     });
 });
 
 $(function() {
-    var TAG_LIST_COOKIE = 'cytoscape.AppStore.Nav.TagList';
+    var TAG_LIST_COOKIE = 'igb.AppStore.Nav.TagList';
 
     function show_not_top_tags(animate) {
 	$('#more-button').html('less &laquo;');
@@ -14,19 +14,19 @@ $(function() {
 	  $('#not-top-tags').slideDown('fast')
 	else
 	  $('#not-top-tags').show()
-	$.cookie(TAG_LIST_COOKIE, 'show_all', {path: '/'});
+	Cookies.set(TAG_LIST_COOKIE, 'show_all', {path: '/'});
     }
 
     function hide_not_top_tags(animate) {
-	$('#more-button').html('more &raquo;');
+	$('#more-button').html('More &raquo;');
 	if (animate)
 	  $('#not-top-tags').slideUp('fast')
 	else
 	  $('#not-top-tags').hide()
-	$.cookie(TAG_LIST_COOKIE, 'show_some', {path: '/'});
+	Cookies.set(TAG_LIST_COOKIE, 'show_some', {path: '/'});
     }
 
-    if ($.cookie(TAG_LIST_COOKIE) === 'show_all')
+    if (Cookies.get(TAG_LIST_COOKIE) === 'show_all')
 	show_not_top_tags(false);
     else
 	hide_not_top_tags(false);
@@ -42,36 +42,36 @@ $(function() {
 });
 
 $(function() {
-    var TAGS_COOKIE = 'cytoscape.AppStore.Nav.Tags';
+    var TAGS_COOKIE = 'igb.AppStore.Nav.Tags';
 
     function show_tag_list(animate) {
-	$('#cy-tag-cloud').hide();
-	$('#cy-tag-list').show(animate ? 'fast' : '');
-	$('#cy-tag-buttons button').removeClass('active');
-	$('#cy-tag-buttons #cy-tag-list-btn').addClass('active');
-	$.cookie(TAGS_COOKIE, 'tag_list', {path: '/'})
+        $('#tag-cloud').hide();
+        $('#tag-list').show(animate ? 'fast' : '');
+        $('#tag-buttons button').removeClass('active');
+        $('#tag-buttons #tag-list-btn').addClass('active');
+        Cookies.set(TAGS_COOKIE, 'tag_list', {path: '/'})
     }
 
     function show_tag_cloud(animate) {
-	$('#cy-tag-list').hide();
-	$('#cy-tag-cloud').show(animate ? 'fast' : '');
-	$('#cy-tag-buttons button').removeClass('active');
-	$('#cy-tag-buttons #cy-tag-cloud-btn').addClass('active');
-	$.cookie(TAGS_COOKIE, 'tag_cloud', {path: '/'})
+        $('#tag-list').hide();
+        $('#tag-cloud').show(animate ? 'fast' : '');
+        $('#tag-buttons button').removeClass('active');
+        $('#tag-buttons #tag-cloud-btn').addClass('active');
+        Cookies.set(TAGS_COOKIE, 'tag_cloud', {path: '/'})
     }
 
-    if ($.cookie(TAGS_COOKIE) === 'tag_cloud')
-	show_tag_cloud(false);
+    if (Cookies.get(TAGS_COOKIE) === 'tag_cloud')
+	    show_tag_cloud(false);
     else
-	show_tag_list(false);
+	    show_tag_list(false);
     
-    $('#cy-tag-buttons #cy-tag-list-btn').click(function() {
-	if (!($('#cy-tag-list').is(':visible')))
+    $('#tag-buttons #tag-list-btn').click(function() {
+	if (!($('#tag-list').is(':visible')))
 	    show_tag_list(true);
     });
 
-    $('#cy-tag-buttons #cy-tag-cloud-btn').click(function() {
-	if (!($('#cy-tag-cloud').is(':visible')))
+    $('#tag-buttons #tag-cloud-btn').click(function() {
+	if (!($('#tag-cloud').is(':visible')))
 	    show_tag_cloud(true);
     });
 });

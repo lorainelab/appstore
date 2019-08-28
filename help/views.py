@@ -27,11 +27,6 @@ def contact(request):
         c['message'] = message
     return html_response('contact.html', c, request)
 
-def competitions(request):
-	c = dict()
-	c['footer_selected'] = 'competitions'
-	return html_response('competitions.html', c, request)
-
 def getstarted(request):
 	return html_response('getstarted.html', {}, request)
 

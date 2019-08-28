@@ -51,34 +51,64 @@ var SortAppButtons = (function() {
     };
     
     
-    function sort_app_buttons(container, sort_func) {
+    function sort_app_buttons(container, sort_func, attr_name, attr_type) {
         var lpanel = container.find('#left');
         var rpanel = container.find('#right');
-        
+
         var buttons = [];
         container.find('.app_button').each(function () {
             buttons.push($(this));
         });
-        
+
+        zero_value_buttons = [];
+        $.each(buttons, function(index, button) {
+            button_value = button[0]['attributes'][attr_name].value;
+            if(button_value == "0" || button_value == "") {
+                delete buttons[index];
+                zero_value_buttons.push(button);
+            }
+        });
+        /*
+            If all the buttons have 0 attribute value then no sorting is done.
+        */
+        if( buttons.includes(undefined) && buttons.length == zero_value_buttons.length || buttons.length == 0 ){
+            return;
+        }
+
+        buttons = buttons.filter(function(e) { return e != undefined; })
         buttons.sort(sort_func);
-        if (descending)
+        /*
+          In case few buttons have 0 values for the sorting attribute then those buttons
+           are sorted by name and the others are sorted by value.
+        */
+        if(zero_value_buttons.length != 0) {
+          zero_value_buttons = zero_value_buttons.filter(function(e) {
+            return e != undefined;})
+            zero_value_buttons.sort(sort_funcs['str']('fullname'));
+        }
+
+        if (descending) {
             buttons = buttons.reverse();
-        
+            zero_value_buttons = zero_value_buttons.reverse();
+            buttons = $.merge(buttons, zero_value_buttons);
+        } else {
+             buttons = $.merge(zero_value_buttons, buttons);
+        }
+
         lpanel.empty();
         rpanel.empty();
-        
         $.each(buttons, function(index, button) {
             panel = (index % 2 == 0 ? lpanel : rpanel);
             panel.append(button);
         });
     }
-    
+
     function sort_button_by_name(container, name) {
         return container.find('#sort_app_buttons button .title:contains(' + name + ')').parent();
     }
-    
-    var SORT_BY_COOKIE = 'cytoscape.AppStore.AppButtons.SortBy';
-    var SORT_DESCENDING_COOKIE = 'cytoscape.AppStore.AppButtons.SortDescending';
+
+    var SORT_BY_COOKIE = 'igb.AppStore.AppButtons.SortBy';
+    var SORT_DESCENDING_COOKIE = 'igb.AppStore.AppButtons.SortDescending';
 
     function setup_sort_buttons(container) {
         var buttons = container.find('#sort_app_buttons');
@@ -102,20 +132,20 @@ var SortAppButtons = (function() {
             }
 
             $(this).find('.triangle').html(descending ? '&#x25BC;' : '&#x25B2;');
-            sort_app_buttons(container, sort_func);
+            sort_app_buttons(container, sort_func, attr_name, attr_type);
 
-            $.cookie(SORT_BY_COOKIE, sort_by, {path: '/'});
-            $.cookie(SORT_DESCENDING_COOKIE, descending, {path: '/'});
+            Cookies.set(SORT_BY_COOKIE, sort_by, {path: '/'});
+            Cookies.set(SORT_DESCENDING_COOKIE, descending, {path: '/'});
         });
     }
-   
+
 
    return {
        'init_sort_buttons': function(container) {
             setup_sort_buttons(container);
             var sort_by_hash = window.location.hash.substring(1);
-            var sort_by_cookie = $.cookie(SORT_BY_COOKIE);
-            var descending_cookie = $.cookie(SORT_DESCENDING_COOKIE);
+            var sort_by_cookie = Cookies.get(SORT_BY_COOKIE);
+            var descending_cookie = Cookies.get(SORT_DESCENDING_COOKIE);
             var sort_by;
             if (sort_by_hash === "") {
               sort_by = sort_by_cookie;

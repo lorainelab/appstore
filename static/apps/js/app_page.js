@@ -1,50 +1,114 @@
+var myDefaultWhiteList = $.fn.tooltip.Constructor.Default.whiteList
+
+// To allow table elements
+myDefaultWhiteList.input = []
+myDefaultWhiteList.button = []
+myDefaultWhiteList.style = []
+
 var AppPage = (function($) {
-	/*
-     ================================================================
-       Install via IGB App Manager
-     ================================================================
-	*/
+    /*
+    ================================================================
+    Install via IGB App Manager
+    ================================================================
+    */
 
-	var AppManagerURL = 'http://localhost:2607/';
+    function get_app_info(app_symbolicName, callback) {
+        var manageApp = 'http://127.0.0.1:7090/manageApp';
 
-	function is_manager_running(callback) {
-		$.ajax(AppManagerURL + 'status/',
-			{'type': 'GET',
-			 'success': function() { callback(true); },
-			 'error': function() { callback(false); }});
-	}
-	
-	function get_app_status(fullname, callback) {
-		$.getJSON(AppManagerURL + 'status/' + fullname,
-			{},
-			callback);
-	}
+        var xhr = createCORSRequest('POST', manageApp, null, app_symbolicName);
 
-    function install_app(app_name, app_version, callback) {
-        $.getJSON(AppManagerURL + 'install/' + app_name + '/' + app_version,
-            {},
-            callback);
+        if (!xhr) {
+            return;
+        }
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200 && callback) {
+                callback(JSON.parse(this.response), this.status);
+            } else if(xhr.readyState === 4 && xhr.status === 0) {
+                get_old_app(app_symbolicName, function(app_status, is_running) {
+			        if (is_running == "200") {
+			            Msgs.add_msg('Please update to a newer version of IGB @ <a href="https://bioviz.org/download.html" target="_blank"> Click Here </a>',
+			             'info');
+                        document.getElementById("app_status_block").style.display = "none";
+			        } else {
+			            Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
+				        document.getElementById("app_status_block").style.display = "none";
+			        }
+			    });
+            } else if(xhr.readyState === 4 && xhr.status === 404) {
+                // Usually happens when Appstores OBR is not added to the IGB Desktop Apps Repository
+                Msgs.add_msg('Please add the Repository OBR to IGB > Tools > Open App Manager > Manage Repositories > Add', 'info');
+                document.getElementById("app_status_block").style.display = "none";
+            }
+        }
     }
 
-	var install_btn = $('#cy-app-install-btn');
+    function get_old_app(app_symbolicName, callback) {
+        var manageApp = 'http://127.0.0.1:7085/igbStatusCheck';
+
+        var xhr = createCORSRequest('GET', manageApp, null, app_symbolicName);
+
+        if (!xhr) {
+            return;
+        }
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200 && callback) {
+                callback(this.response, this.status);
+            } else if(xhr.readyState === 4 && xhr.status === 0 && callback) {
+                Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
+                document.getElementById("app_status_block").style.display = "none";
+            }
+        }
+    }
+
+    function install_app(app_symbolicName, action, callback) {
+        var manageApp = 'http://127.0.0.1:7090/manageApp';
+
+        var xhr = createCORSRequest('POST', manageApp, action, app_symbolicName);
+
+        if (!xhr) {
+            return;
+        }
+
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState === 4 && xhr.status === 200 && callback) {
+                callback(JSON.parse(this.response), this.status);
+            }
+        }
+    }
+
+    /* Increases the download counter for a particular app when installed */
+    function set_download_count(status) {
+         $.post('', {'action': 'installed_count', 'status': status}, function(data) {
+                // Can Write a Logic here if we change it in later phases
+            });
+    }
+
+	var install_btn = $('#app-install-btn');
+	var igb_version = $('#igb_version');
+	var app_version = $('#app_version');
     var install_btn_last_class = [];
 
-	function setup_install_btn(btn_class, icon_class, btn_text, func) {
+	function setup_install_btn(btn_class, icon_class, btn_text, appVersion, igbVersion, func) {
+
         if (install_btn_last_class.length !== 0)
             install_btn.removeClass(install_btn_last_class.pop());
-		install_btn.addClass(btn_class);
-        install_btn_last_class.push(btn_class);
+            install_btn.addClass(btn_class);
+            install_btn_last_class.push(btn_class);
 
-		install_btn.find('i').attr('class', '');
-		install_btn.find('i').addClass(icon_class);
+            install_btn.find('i').attr('class', '');
+            install_btn.find('i').addClass(icon_class);
 
-		install_btn.find('h4').html(btn_text);
+            install_btn.find('h4').html(btn_text);
+            app_version.html("<strong>Version </strong>"+appVersion);
+            igb_version.html("IGB "+igbVersion);
 
-        install_btn.off('click');
-        install_btn.removeClass('disabled');
+            install_btn.off('click');
+            install_btn.removeClass('disabled');
 		if (func) {
             var license_modal = $('#license_modal');
-            if (license_modal.size() !== 0) {
+            if (license_modal.length !== 0) {
                 license_modal.find('.btn-primary').click(function() {
                     license_modal.modal('hide');
                     func();
@@ -63,97 +127,113 @@ var AppPage = (function($) {
         }
 	}
 
-	function set_install_btn_to_download(release_url) {
-		setup_install_btn('btn-primary', 'icon-cy-install-download', 'Download',
-            function() {
-                window.location.href = release_url;
-            });
-	}
 
-	function set_install_btn_to_installing() {
-		setup_install_btn('btn-info', 'icon-cy-install-install', 'Installing...');
+	function set_install_btn_to_installing(appVersion, igbVersion) {
+		setup_install_btn('btn-info', 'icon-install-install', 'Installing...',appVersion, igbVersion);
     }
 
-	function set_install_btn_to_install(app_name, latest_release_version) {
-		setup_install_btn('btn-info', 'icon-cy-install-install', 'Install',
+	function set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion) {
+
+		setup_install_btn('btn-info', 'icon-install-install', 'Install', appVersion, igbVersion,
             function() {
-                set_install_btn_to_installing();
-                install_app(app_name, latest_release_version, function(result) {
-                    if (result['install_status'] === 'success') {
-                        CyMsgs.add_msg(result['name'] + ' has been installed! Go to IGB to use it.', 'success');
-                        set_install_btn_to_installed();
+                set_install_btn_to_installing(appVersion, igbVersion);
+                install_app(app_symbolicName, "install", function(app_status, status) {
+                    if (status == "200" && app_status.status == "INSTALLED") {
+                        Msgs.add_msg(app_name + ' has been installed! Go to IGB to use it.', 'success');
+                        set_download_count('Installed');
+                        set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
-                        CyMsgs.add_msg('Could not install &ldquo;' + result['name'] + '&rdquo; app: <tt>' + result['install_status'] + '</tt>', 'error');
-                        set_install_btn_to_install(app_name, latest_release_version);
+                        Msgs.add_msg('Could not install &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
+                        set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion);
                     }
                 });
             });
 	}
 
-	function set_install_btn_to_upgrading() {
-		setup_install_btn('btn-warning', 'icon-cy-install-upgrade', 'Upgrading...');
+	function set_install_btn_to_upgrading(appVersion, igbVersion) {
+		setup_install_btn('btn-warning', 'icon-install-upgrade', 'Upgrading...',appVersion, igbVersion);
     }
 
-	function set_install_btn_to_upgrade(app_name, latest_release_version) {
-		setup_install_btn('btn-warning', 'icon-cy-install-upgrade', 'Upgrade',
+	function set_install_btn_to_upgrade(app_name, app_symbolicName, appVersion, igbVersion) {
+		setup_install_btn('btn-warning', 'icon-install-upgrade', 'Upgrade',appVersion, igbVersion,
             function() {
-                set_install_btn_to_upgrading();
-                install_app(app_name, latest_release_version, function(result) {
-                    if (result['install_status'] === 'success') {
-                        CyMsgs.add_msg(result['name'] + ' has been updated! Go to IGB to use it.', 'success');
-                        set_install_btn_to_installed();
+                set_install_btn_to_upgrading(appVersion, igbVersion);
+                install_app(app_symbolicName, "update", function(app_status, status) {
+                    if (status == "200" && app_status.status == "UPDATED") {
+                        Msgs.add_msg(app_name + ' has been updated! Go to IGB to use it.', 'success');
+                        set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
-                        CyMsgs.add_msg('Could not update &ldquo;' + result['name'] + '&rdquo; app: <tt>' + result['install_status'] + '</tt>', 'error');
-                        set_install_btn_to_install(app_name, latest_release_version);
+                        Msgs.add_msg('Could not update &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
+                        set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion);
                     }
                 });
             });
 	}
 
-	function set_install_btn_to_installed() {
-		setup_install_btn('btn-success', 'icon-cy-install-installed', 'Installed');
+	function set_install_btn_to_installed(appVersion, igbVersion) {
+		setup_install_btn('btn-success', 'icon-install-installed', 'Installed', appVersion, igbVersion);
 	}
 
-	function setup_install(app_name, app_fullname, latest_release_url, latest_release_version, install_app_help_url) {
-        set_install_btn_to_download(latest_release_url);
+	function setup_install(app_name, app_symbolicName) {
+		get_app_info(app_symbolicName,function(app_status, is_running) {
+			if (is_running == "200") {
+					if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
+						set_install_btn_to_install(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
+					} else if (app_status.status === 'INSTALLED') {
+						set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
 
-		is_manager_running(function(is_running) {
-			if (is_running) {
-				get_app_status(app_fullname, function(app_status) {
-					if (app_status.status === 'not-found' || app_status.status === 'uninstalled') {
-						set_install_btn_to_install(app_fullname, latest_release_version);
-					} else if (app_status.status === 'installed') {
-						var installed_version = app_status.version;
-
-						if (installed_version === latest_release_version) {
-							set_install_btn_to_installed();
-						} else {
-							set_install_btn_to_upgrade(app_fullname, latest_release_version);
-						}
+					} else if (app_status.status === 'TO_UPDATE') {
+                        set_install_btn_to_upgrade(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
 					}
-				});
 			} else {
-				CyMsgs.add_msg('Want an easier way to install apps? <a href="' + install_app_help_url + '" target="_blank">Click here</a> to learn how!', 'info');
-			}
+                Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
+                document.getElementById("app_status_block").style.display = "none";
+            }
 		});
 	}
 
-	function setup_cy_2x_download_popover(plugins_dir_img) {
-		$('.cy-app-2x-download-popover').popover({
-			'title': 'How to Install',
-			'html': true,
-			'content': '<p>Download to your <strong>plugins</strong> folder.</p><p align="center"><img style="margin-top: 1em;" src="' + plugins_dir_img + '"></p>',
-			'placement': 'bottom',
-            'trigger': 'hover',
-		});
-	}
-	
+
+    // Create and return an XHR object.
+    function createCORSRequest(method, url, action, app_symbolicName) {
+        if(action != null) {
+            // POST Data
+            formData = {
+                "symbolicName" : app_symbolicName,
+                "action" : action
+            };
+        } else {
+            // POST Data
+            formData = {
+                "symbolicName" : app_symbolicName,
+                "action" : "getInfo"
+            };
+        }
+
+        var xhr = new XMLHttpRequest();
+
+        if ("withCredentials" in xhr) {
+            // XHR for Chrome/Firefox/Opera/Safari.
+            xhr.open(method, url, true);
+            xhr.send(JSON.stringify(formData))
+        } else if (typeof XDomainRequest != "undefined") {
+            // XDomainRequest for IE.
+            xhr = new XDomainRequest();
+            xhr.open(method, url);
+            xhr.send(JSON.stringify(formData))
+        } else {
+            // CORS not supported.
+            xhr = null;
+            console.log("CORS Not Supported");
+        }
+
+        return xhr;
+    }
     /*
      ================================================================
        Stars
      ================================================================
     */
-    
+
     function rating_to_width_percent(rating) {
         return Math.ceil(100 * rating / 5);
     }
@@ -209,9 +289,12 @@ var AppPage = (function($) {
         var stars_empty_tag = $('#app-usage-info .rating-stars-empty');
         var stars_full_tag  = $('#app-usage-info .rating-stars-filled');
         stars_tag.popover({
-            'trigger': 'manual',
-            'content': $('#rate-popover-content').html()
-        }).click(function() {
+            'container' : 'body',
+            'html': true,
+            'content': $('#rate-popover-content').html(),
+            'trigger': 'manual'
+        });
+        stars_tag.click(function() {
             stars_tag.popover('toggle');
             setup_rate_popover($(this));
         });
@@ -221,32 +304,32 @@ var AppPage = (function($) {
 
 
     function setup_details() {
-        MarkdownUtil.format($('#cy-app-details-md'));
+        $('#app-details-md');
     }
-    
+
     /*
      ================================================================
        Release Notes
      ================================================================
     */
-    
+
     function setup_release_notes() {
-        $('.cy-app-release-notes').each(function() {
-            MarkdownUtil.format($(this));
+        $('.app-release-notes').each(function() {
+            $(this).text;
         });
-        
-        $('.timeago').timeago();
+
+        $('.timeago').text;
     }
-    
+
     /*
      ================================================================
        Init
      ================================================================
     */
-    
+
     return {
-	'setup_install': setup_install,
-	'setup_cy_2x_download_popover': setup_cy_2x_download_popover,
+	    'setup_install': setup_install,
+//      'setup_twox_download_popover': setup_twox_download_popover,
         'setup_stars': setup_stars,
         'setup_details': setup_details,
         'setup_release_notes': setup_release_notes,
