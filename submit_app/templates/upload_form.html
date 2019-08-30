@@ -36,7 +36,14 @@
     </div>
 </div>
 {% endif %}
-
+<br />
+Upload your IGB App jar file here.
+<button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle"
+     title = "">
+    <i class="fa fa-question-circle" style="font-size: 30px"></i>
+</button>
+{{ doc_link }}
+<br/><br/>
 <form action="" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {% if expect_app_name %}
@@ -44,15 +51,6 @@
     {% endif %}
     <div class="row">
         <div class="col-md-12">
-            <br />
-            Upload your IGB App jar file here.
-            <a id = "ddd" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"
-                 title = "IGB Apps are OSGi bundles, which are ordinary Java jar files with some extra meta-data that enables
-                          them to run within IGB’s OSGi run-time. An IGB App also needs an OBR index file named repository.xml.
-                          See <a href ='#'> developer’s documentation.</a>">
-                <i class="fa fa-question-circle" style="font-size: 30px"></i>
-            </a>
-            <br/><br/>
             <div>
             <input type="file" name="file" id="input-file" class="span8" style="width:25%">
              <button id="delete_file_btn" class="btn btn-light">
@@ -124,6 +122,11 @@
 </div>
 
 <script type="text/javascript">
+    var message = "IGB Apps are OSGi bundles, which are ordinary Java jar files with some extra meta-data that enables them to run within IGB’s OSGi run-time. An IGB App also needs an OBR index file named repository.xml. See <a href='" + getDocLink() + "'> developer’s documentation.</a>";
+
+    document.getElementById("tooltip-1").title= message
+
+
     $(function() {
         var instructions_tag = $('#instructions');
         var loading_tag = $('#loading');
@@ -179,10 +182,5 @@
         });
 
     });
-
-    function  getDocLink(){
-        return window.location.href = "http://bit.ly/30ofP7T";
-    }
-
 </script>
 {% endblock %}

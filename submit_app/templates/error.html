@@ -24,29 +24,6 @@
     <table class="table">
         <tr>
             <td>
-                <b>Is this a new app?</b>
-            </td>
-            <td>
-                {% if pending.is_new_app %}
-                    Yes&mdash;a new app page will be created after an App Store administrator approves your app
-                {% else %}
-                    No&mdash;this submission is an updated version of an existing app
-                {% endif %}
-                <span data-toggle="tooltip" data-placement="right"
-                        title="
-                    {% if pending.is_new_app %}
-                     This is a new version of a released App {{ pending.symbolicname }}.
-                     Currently, the highest version released in App Store is {{ pending.version }}.
-                    {% else %}
-                    This is a replacement jar file for pendingApp {{  pending.symbolicname }}
-                    version {{ pending.version }}.
-                    {% endif %} ">
-                     <i class="fa fa-question-circle" style="font-size: 30px"></i>
-                </span>
-            </td>
-        </tr>
-        <tr>
-            <td>
                 <b>Bundle Name</b>
             </td>
             <td>?</td>
