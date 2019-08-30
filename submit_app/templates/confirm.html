@@ -27,6 +27,12 @@
 
 <div class="col-md-8">
     <table class="table">
+    <tr>
+        <td>
+            <b>You Submitted</b>
+        </td>
+       <td> {{ pending.release_file_name }}</td>
+    </tr>
         <tr>
             <td>
                 <b>Is this a new app?</b>
@@ -46,7 +52,7 @@
                         This is a new version of a released App {{ pending.symbolicname }}.
                         Currently, the highest version released in App Store is {{ pending.version }}.
                     {% endif %} ">
-                     <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>
             </td>
         </tr>
@@ -56,7 +62,7 @@
             </td>
             <td>{{ pending.fullname }}
                 <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
-                     <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>
             </td>
         </tr>
@@ -66,7 +72,7 @@
             </td>
             <td>{{ pending.symbolicname }}
                 <button id="tooltip-2" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
-                     <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>
             </td>
         </tr>
@@ -76,7 +82,7 @@
             </td>
             <td>{{ pending.version }}
                 <button id="tooltip-3" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"  data-trigger="toggle" data-html="true">
-                     <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>
             </td>
         </tr>

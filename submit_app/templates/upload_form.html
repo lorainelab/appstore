@@ -62,7 +62,8 @@ Upload your IGB App jar file here.
                  <i class="fa fa-trash"></i>
              </button>
             </div>
-            <i style="color: #DCDCDC;margin-left:13%">Best for bitbucket pipeline users.</i> <a href=""><u>Learn more</u></a>
+            <i style="color: #808080;margin-left:13%">Best for bitbucket pipeline users.</i>
+            <a  href="#" id = "doc_link"><u>Learn more</u></a>
         </div>
     </div>
     <div id="instructions">
@@ -126,6 +127,11 @@ Upload your IGB App jar file here.
 
     document.getElementById("tooltip-1").title= message
 
+    let learn_more_dom = document.getElementById("doc_link");
+    learn_more_dom.onclick = function() {
+        learn_more_dom.href= getDocLink();
+        learn_more_dom.setAttribute('target', '_blank')
+  };
 
     $(function() {
         var instructions_tag = $('#instructions');
