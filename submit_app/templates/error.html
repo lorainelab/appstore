@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}- Something is wrong. Please go back and try again{% endblock %}
+
+{% block more_head %}
+<style type="text/css">
+  form { display: inline; }
+  #loading { display: none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-12">
+    <h1 class="text-warning">Something is wrong. Please go back and try again</h1>
+</div>
+
+
+<div class="col-md-12">
+    <p>We found the following information about your app:</p>
+</div>
+
+<div class="col-md-8">
+    <table class="table">
+        <tr>
+            <td>
+                <b>Bundle Name</b>
+            </td>
+            <td>?</td>
+        </tr>
+        <tr>
+            <td>
+                <b>Bundle-Symbolic Name</b>
+            </td>
+            <td>?</td>
+        </tr>
+        <tr>
+            <td>
+                <b>Bundle Version</b>
+            </td>
+            <td>?</td>
+        </tr>
+    </table>
+</div>
+    If you still need help after reading <a href="#">developer’s documentation </a>, post a question to <a href="#">this Google Group.</a>
+{% endblock %}
+    

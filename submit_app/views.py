@@ -2,6 +2,7 @@ import random
 import sys
 import base64
 import re
+import os
 from os.path import basename
 from urllib.request import urlopen
 from zipfile import ZipFile
@@ -28,6 +29,7 @@ def submit_app(request):
     if request.method == 'POST':
         expect_app_name = request.POST.get('expect_app_name')
         f = request.FILES.get('file')
+        f = request.POST.get('url_val', None) if f is None else f
         if f:
             try:
                 jar_details = process_jar(f, expect_app_name)
@@ -73,35 +75,33 @@ def _user_accepted(request, pending):
 
 
 def confirm_submission(request, id):
-    pending = get_object_or_404(AppPending, id = int(id))
+    pending = get_object_or_404(AppPending, id=int(id))
     if not pending.can_confirm(request.user):
         return HttpResponseForbidden('You are not authorized to view this page')
+    pending_obj = AppPending.objects.filter(symbolicname=pending.symbolicname, version=pending.version)
+    is_pending_replace = True if pending_obj.count() > 1 else False
     action = request.POST.get('action')
     if action:
+        latest_pending_obj_ = pending_obj[1] if is_pending_replace else pending_obj[0]
         if action == 'cancel':
-            return _user_cancelled(request, pending)
+            return _user_cancelled(request, latest_pending_obj_)
         elif action == 'accept':
-            _send_email_for_pending(pending)
-            _send_email_for_pending_user(pending)
-            return _user_accepted(request, pending)
+            if pending_obj.count() > 1:
+                _replace_jar_details(request, pending_obj)
+            server_url = _get_server_url(request)
+            _send_email_for_pending(server_url, latest_pending_obj_)
+            _send_email_for_pending_user(latest_pending_obj_)
+            return _user_accepted(request, latest_pending_obj_)
     pom_attrs = None
     if pending.pom_xml_file:
-        pending.pom_xml_file.open(mode = 'r')
+        pending.pom_xml_file.open(mode='r')
         pom_attrs = parse_pom(pending.pom_xml_file)
         pending.pom_xml_file.close()
-    return html_response('confirm.html', {'pending': pending, 'pom_attrs': pom_attrs}, request)
+    return html_response('confirm.html', {'pending': pending, 'pom_attrs': pom_attrs,
+                                          'is_pending_replace': is_pending_replace}, request)
 
 
 def _create_pending(submitter, jar_details, release_file):
-    name = fullname_to_name(jar_details['fullname'])
-    app = get_object_or_none(App, name = name)
-    if app:
-        if not app.is_editor(submitter):
-            raise ValueError('cannot be accepted because you are not an editor')
-        release = get_object_or_none(Release, app = app, version = jar_details['version'])
-        if release and release.active:
-            raise ValueError('cannot be accepted because the app %s already has a release with version %s. You can delete this version by going to the Release History tab in the app edit page' % (app.fullname, jar_details['version']))
-
     pending = AppPending.objects.create(submitter       = submitter,
                                         symbolicname    = jar_details['symbolicname'],
                                         details         = base64.b64decode(jar_details['details']).decode('utf-8'),
@@ -110,21 +110,68 @@ def _create_pending(submitter, jar_details, release_file):
                                         repository      = jar_details['repository'])
     for dependency in jar_details['app_dependencies']:
         pending.dependencies.add(dependency)
-    pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + release_file.name), release_file)
-    pending.release_file_name = basename(pending.release_file.name)
+    file, file_name = _get_jar_file(release_file)
+    pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + file_name), file)
+    pending.release_file_name = file_name
     pending.save()
+    if isinstance(release_file, str):
+        os.remove(file_name)
     return pending
 
 
-def _send_email_for_pending(pending):
+def _replace_jar_details(request, pending_obj):
+    """
+    The function replaces the existing pending app details with the latest jar details
+    if the jar is not yet released else replaces the released app details with the latest
+    app details.
+    :param request:
+    :param pending_obj:
+    :return:
+    """
+    latest_pending_obj = pending_obj[pending_obj.count() - 1]
+    existing_pending_obj = pending_obj[pending_obj.count() - 2]
+    if latest_pending_obj and latest_pending_obj.submitter != request.user:
+        raise ValueError('cannot be accepted because you are not an editor')
+    name = fullname_to_name(latest_pending_obj.fullname)
+    existing_pending_obj.details = latest_pending_obj.details
+    existing_pending_obj.repository = latest_pending_obj.repository
+    existing_pending_obj.fullname = latest_pending_obj.fullname
+    existing_pending_obj.release_file = latest_pending_obj.release_file
+    existing_pending_obj.save()
+    latest_pending_obj.delete_files()
+    latest_pending_obj.delete()
+
+
+def _get_jar_file(release_file):
+    """
+    The function checks if the given file is a url. If yes, it reads the
+    details into a temporary file and returns
+    the file object and file name else returns the given file object.
+    :param release_file:
+    :return:
+    """
+    file_name = basename(release_file) if isinstance(release_file, str) else basename(release_file.name)
+    if isinstance(release_file, str):
+        url_data = urlopen(release_file).read()
+        with open(file_name, 'wb') as file:
+            file.write(url_data)
+        file = open(file_name, 'rb')
+    else:
+        file = release_file
+    return file, file_name
+
+
+def _send_email_for_pending(server_url, pending):
+    admin_url = reverse('admin:login', current_app=pending.fullname)
     msg = u"""
 The following app has been submitted:
     ID: {id}
     Name: {fullname}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
-""".format(id = pending.id, fullname = pending.fullname, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('{fullname} App - Successfully Submitted.'.format(fullname = pending.fullname), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+    Server Url: {server_url}{admin_url}
+""".format(id=pending.id, fullname=pending.fullname, version=pending.version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
+    send_mail('{fullname} App - Successfully Submitted.'.format(fullname=pending.fullname), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 
 def _send_email_for_pending_user(pending):

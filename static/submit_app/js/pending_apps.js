@@ -18,12 +18,7 @@ var PendingApps = (function() {
                                 pending_tag.remove();
                             });
                             msg = msg.replace('%s', app_name + ' ' + app_version);
-                            var msg_tag = $('<div>').
-                                addClass('alert').
-                                addClass('alert-' + msg_type).
-                                html(msg).
-                                prependTo(alerts);
-                            msg_tag.hide().slideDown('fast');
+                            Msgs.add_msg(msg, msg_type, 'rating');
                        });
             }
             
