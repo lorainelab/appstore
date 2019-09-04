@@ -238,6 +238,7 @@ def _mk_app_page(app, user, request, decoded_details):
 		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
 		'go_back_to': request.COOKIES.get('go_back_to'),
 		'search_query': '',
+		'repository_url':get_host_url(request) + '/obr/releases',
 	}
 	return html_response('app_page.html', c, request)
 
@@ -247,6 +248,15 @@ _AppActions = {
 	'ratings_delete_all': _app_ratings_delete_all,
 	'installed_count': _installed_count,
 }
+
+
+def get_host_url(request):
+	host_name = request.get_host()
+	port = request.META['SERVER_PORT']
+	if port == '443':
+		return 'https://%s' % host_name
+	else:
+		return 'http://%s' % host_name
 
 
 def app_page(request, app_name):
