@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load static %}
+{% load pagination %}
 
 {% block content %}
 <div class="row">
@@ -33,8 +34,26 @@
                     </li>
                         {% endif %}
                     {% endfor %}
+		    <li>
+                        <ul class="navigation-list" id="not-top-tags">
+                            {% for tag in not_top_tags %}
+                                {% if tag.count > 0 %}
+                            <li>
+                                <span {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
+                                    <a href="{% url 'tag_page' tag.name %}">
+                                        <span class="title">{{ tag.fullname }}</span>
+                                        <span class="count">({{ tag.count }})</span>
+                                    </a>
+                                </span>
+                            </li>
+                                {% endif %}
+                            {% endfor %}
+                        </ul>
+                    </li>
                 </ul>
-                <button class="btn btn-info btn-md more-btn" id="more-button">More</button>
+		{% if not_top_tags %}
+                    <button class="btn btn-info btn-md more-btn" id="more-button">More</button>
+                {% endif %}
             </div>
             <div id="tag-cloud">
               {% for tag in all_tags %}
@@ -47,5 +66,13 @@
         {% block main %}{% endblock %}
     </div>
 </div>
+
+<div class="row">
+    <div class="col-md-3"></div>
+    <div class="col-md-9">
+        {% pagination downloaded_apps_pg %}
+    </div>
+</div>
+
 <script type="text/javascript" src="{% get_static_prefix %}apps/js/nav_panel.js"></script>
 {% endblock %}
