@@ -25,7 +25,7 @@ def process_jar(jar_file, expect_app_name):
         else:
             archive = ZipFile(jar_file)
     except BadZipfile as IOError:
-        raise ValueError('is not a valid zip file')
+        raise ValueError('%s cannot be read as a zip file.'%jar_file)
 
     manifest_file = _get_manifest_file(archive)
     manifest = parse_manifest(manifest_file)
@@ -53,14 +53,18 @@ def process_jar(jar_file, expect_app_name):
         raise ValueError('has app name as <tt>%s</tt> but must be <tt>%s</tt>' % (app_name, expect_app_name))
     details_dict['version'] = smart_text(app_ver, errors='replace')
     details_dict['symbolicname'] = smart_text(symbolicname, errors='replace')
+    """
+    IGBF-1994
     try:
         details_dict['app_dependencies'] = list(_app_dependencies_to_releases(app_dependencies))
     except ValueError as e:
         (msg, ) = e.args
         raise ValueError('has a problem with its manifest for entry <tt>IGB-App-Dependencies</tt>: ' + msg)
+    """
     return details_dict
 
-
+"""
+IGBF-1994
 def _app_dependencies_to_releases(app_dependencies):
     for dependency in app_dependencies:
         app_name, app_version = dependency
@@ -74,13 +78,13 @@ def _app_dependencies_to_releases(app_dependencies):
             raise ValueError('dependency on "%s" with version "%s": no such release exists' % (app_name, app_version))
 
         yield release
-
+"""
 
 def _get_manifest_file(zip_archive):
     try:
         manifest_info = zip_archive.getinfo(_MANIFEST_FILE_NAME)
     except KeyError:
-        raise ValueError('does not have a manifest file located in <tt>%s</tt>' % _MANIFEST_FILE_NAME)
+        raise ValueError('%s lacks a MANIFEST.MF file' % _MANIFEST_FILE_NAME)
 
     if manifest_info.file_size > _MAX_MANIFEST_FILE_SIZE_B:
         raise ValueError('has a manifest file that\'s too large; it can be at most %d bytes but is %d bytes' % (_MAX_MANIFEST_FILE_SIZE_B, manifest_info.file_size))
@@ -95,19 +99,19 @@ def _get_manifest_file(zip_archive):
 
 def _get_repository_file(zip_archive):
     """
-    Extract Repository File from the Bundle Package
+    Extract OBR index file (repository.xml) from the IGB App OSGi bundle
     """
     try:
         repository_info = zip_archive.getinfo(_REPOSITORY_FILE_NAME)
     except KeyError:
-        raise ValueError('does not have a repository file located inside the jar named <tt>%s</tt>' % _REPOSITORY_FILE_NAME)
+        raise ValueError('<tt>%s</tt> lacks repository.xml OBR index file.' % _REPOSITORY_FILE_NAME)
 
     try:
         repository_file = zip_archive.open(_REPOSITORY_FILE_NAME, 'r')
         repository_file = io.TextIOWrapper(repository_file)
         return repository_file
     except IOError:
-        raise ValueError('does not have an accessible repository file located inside the jar named <tt>%s</tt>' % _REPOSITORY_FILE_NAME)
+        raise ValueError('<tt>%s</tt> contains inacessible repository.xml OBR index file.' % _REPOSITORY_FILE_NAME)
 
 
 def _last(d, k):
@@ -128,7 +132,8 @@ def _get_name_and_version(manifest, name_attr, version_attr):
 
     return app_name, app_version
 
-
+"""
+IGBF-1994
 def _parse_simple_app(manifest):
     app_name, app_version = _get_name_and_version(manifest, 'IGB-App-Name', 'IGB-App-Version')
 
@@ -140,7 +145,7 @@ def _parse_simple_app(manifest):
     has_export_pkg = False # simple apps can't export packages
 
     return app_name, app_version, app_dependencies, has_export_pkg
-
+"""
 
 def _ver_tuple_to_str(tup):
     return tup[0] + ('.' + tup[1] if tup[1] else '') + ('.' + tup[2] if tup[2] else '') + ('.' + tup[3] if tup[3] else '')
@@ -155,7 +160,8 @@ def _parse_osgi_bundle(manifest):
     #     raise ValueError('does not import any packages--<tt>Import-Package</tt> is not in its manifest')
     #import_packages = ','.join(import_packages)
     #max_ver = max_of_lower_igb_pkg_versions(import_packages)
-
+    """
+    IGFB-1994
     app_dependencies_str = _last(manifest, 'IGB-App-Dependencies')
     if app_dependencies_str:
         try:
@@ -165,7 +171,8 @@ def _parse_osgi_bundle(manifest):
             raise ValueError('has a problem with the <tt>IGB-App-Dependencies</tt> entry: ' + msg)
     else:
         app_dependencies = list()
-
+    """
+    app_dependencies = list() # remove this later; return 2 items instead of 3
     has_export_pkg_str = _last(manifest, 'Export-Package')
     has_export_pkg = True if has_export_pkg_str else False
 
