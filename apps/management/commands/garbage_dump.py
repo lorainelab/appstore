@@ -2,7 +2,7 @@ import os
 import os.path
 from django.core.management.base import BaseCommand
 from django.conf import settings
-from apps.models import App, Release, ReleaseAPI, Screenshot, Tag, Author
+from apps.models import App, Release, Screenshot, Tag, Author
 from submit_app.models import AppPending
 
 def rm_empty_tags():
@@ -21,15 +21,13 @@ FILE_FIELDS = (
 	(Screenshot, 'screenshot'),
 	(Screenshot, 'thumbnail'),
 	(Release,    'release_file'),
-	(ReleaseAPI, 'javadocs_jar_file'),
-	(ReleaseAPI, 'pom_xml_file'),
 	(AppPending, 'release_file'),
 	(App,        'icon'),
 )
 
 def add_files_to_set(s, dirname, names):
     for name in names:
-        path = os.path.join(dirname, name) 
+        path = os.path.join(dirname, name)
         if os.path.isfile(path):
             abspath = os.path.abspath(path)
             s.add(unicode(abspath))

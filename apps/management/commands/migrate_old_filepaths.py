@@ -9,8 +9,6 @@ fields = (
   ('apps.models', 'Release',    'release_file', 'release_file_path'),
   ('apps.models', 'Screenshot', 'screenshot',   'screenshot_path'),
   ('apps.models', 'Screenshot', 'thumbnail',    'thumbnail_path'),
-  ('apps.models', 'ReleaseAPI', 'javadocs_jar_file', 'javadocs_path'),
-  ('apps.models', 'ReleaseAPI', 'pom_xml_file', 'pom_xml_path'),
 )
 
 class Command(BaseCommand):
