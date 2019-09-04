@@ -8,6 +8,7 @@ from os.path import join as pathjoin
 from urllib.parse import urljoin
 from django.db import models
 from django.contrib.auth.models import User
+from django.dispatch import receiver
 from django.conf import settings
 #from django.core.urlresolvers import reverse
 from django.urls import reverse
@@ -120,6 +121,7 @@ class App(models.Model):
 
     def delete_releases(self):
         if not self.has_releases:
+            self.release_file.delete()
             self.delete()
 
     @property
@@ -135,6 +137,12 @@ class App(models.Model):
 
     def __unicode__(self):
         return self.name
+
+@receiver(models.signals.pre_delete, sender=App)
+def delete_file(sender, instance, *args, **kwargs):
+    """ Deletes thumbnail files on `post_delete` """
+    if instance.release_file:
+        instance.release_file.delete()
 
 class OrderedAuthor(models.Model):
     author       = models.ForeignKey(Author,on_delete=models.CASCADE)
