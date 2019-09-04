@@ -114,8 +114,10 @@ AUTHENTICATION_BACKENDS = (
 
 # these will probably break eventually
 # the callback is localhost
-localhost_key='1021453897231-47d8do1k3ashh6e7vr8fq15lht3up3b7.apps.googleusercontent.com'
-localhost_secret='OfM4FsAIqTiWQmQo8R6OiRlJ'
+#localhost_key='1021453897231-47d8do1k3ashh6e7vr8fq15lht3up3b7.apps.googleusercontent.com'
+localhost_key='75688787985-kdqelrpmlfnmk1v5qgfjp3lf8h7038t1.apps.googleusercontent.com'
+#localhost_secret='OfM4FsAIqTiWQmQo8R6OiRlJ'
+localhost_secret='35tFEarM2ISnsivKhVU6SjLp'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY=config('SOCIAL_AUTH_GOOGLE_OAUTH2_KEY',default=localhost_key)
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET=config('SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET',default=localhost_secret)
 

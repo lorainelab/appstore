@@ -12,7 +12,7 @@ var AppPage = (function($) {
     ================================================================
     */
 
-    function get_app_info(app_symbolicName, callback) {
+    function get_app_info(app_symbolicName, repository_url, callback) {
         var manageApp = 'http://127.0.0.1:7090/manageApp';
 
         var xhr = createCORSRequest('POST', manageApp, null, app_symbolicName);
@@ -37,9 +37,10 @@ var AppPage = (function($) {
 			    });
             } else if(xhr.readyState === 4 && xhr.status === 404) {
                 // Usually happens when Appstores OBR is not added to the IGB Desktop Apps Repository
-                Msgs.add_msg('Please add the Repository OBR to IGB > Tools > Open App Manager > Manage Repositories > Add', 'info');
+                Msgs.add_msg('Before IGB can load Apps, add this App Store to IGB. Open the App Manager (Tools menu) and click Manage Repositories.' +
+                    ' Then click "Add" to add the URL ' + repository_url, 'info');
                 document.getElementById("app_status_block").style.display = "none";
-            }
+          }
         }
     }
 
@@ -66,7 +67,6 @@ var AppPage = (function($) {
         var manageApp = 'http://127.0.0.1:7090/manageApp';
 
         var xhr = createCORSRequest('POST', manageApp, action, app_symbolicName);
-
         if (!xhr) {
             return;
         }
@@ -174,8 +174,8 @@ var AppPage = (function($) {
 		setup_install_btn('btn-success', 'icon-install-installed', 'Installed', appVersion, igbVersion);
 	}
 
-	function setup_install(app_name, app_symbolicName) {
-		get_app_info(app_symbolicName,function(app_status, is_running) {
+	function setup_install(app_name, app_symbolicName, repository_url) {
+		get_app_info(app_symbolicName, repository_url, function(app_status, is_running) {
 			if (is_running == "200") {
 					if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
 						set_install_btn_to_install(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
