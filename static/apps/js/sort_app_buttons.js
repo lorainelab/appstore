@@ -52,8 +52,8 @@ var SortAppButtons = (function() {
     
     
     function sort_app_buttons(container, sort_func, attr_name, attr_type) {
-        var lpanel = container.find('#left');
-        var rpanel = container.find('#right');
+        var currLeftCounter, currRightCounter;
+        currLeftCounter = currRightCounter = -1;
 
         var buttons = [];
         container.find('.app_button').each(function () {
@@ -95,10 +95,17 @@ var SortAppButtons = (function() {
              buttons = $.merge(zero_value_buttons, buttons);
         }
 
-        lpanel.empty();
-        rpanel.empty();
         $.each(buttons, function(index, button) {
-            panel = (index % 2 == 0 ? lpanel : rpanel);
+            if(index % 2 == 0)
+            {
+                currLeftCounter++;
+                panel = container.find("div #left").eq(currLeftCounter).find(".wrap");
+            }
+            else{
+                currRightCounter++;
+                panel = container.find("div #right").eq(currRightCounter).find(".wrap");
+            }
+            panel.empty();
             panel.append(button);
         });
     }

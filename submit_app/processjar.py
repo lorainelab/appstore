@@ -1,4 +1,5 @@
 from zipfile import ZipFile, BadZipfile
+import requests, io
 from .mfparse import parse_manifest, max_of_lower_igb_pkg_versions, parse_app_dependencies
 from apps.models import App, Release, VersionRE
 from django.utils.encoding import smart_text
@@ -13,8 +14,16 @@ logger = logging.getLogger(__name__)
 
 def process_jar(jar_file, expect_app_name):
     details_dict = {}
+    if isinstance(jar_file,str):
+        file_obj = requests.get(jar_file)
+    else:
+        file_obj = None
+
     try:
-        archive = ZipFile(jar_file)
+        if file_obj is not None:
+            archive = ZipFile(io.BytesIO(file_obj.content))
+        else:
+            archive = ZipFile(jar_file)
     except BadZipfile as IOError:
         raise ValueError('is not a valid zip file')
 
