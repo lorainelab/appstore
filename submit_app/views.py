@@ -77,7 +77,7 @@ def _user_accepted(request, pending):
 def confirm_submission(request, id):
     pending = get_object_or_404(AppPending, id=int(id))
     if not pending.can_confirm(request.user):
-        return HttpResponseForbidden('You are not authorized to view this page')
+        return HttpResponseRedirect('/')
     pending_obj = AppPending.objects.filter(symbolicname=pending.symbolicname, version=pending.version)
     is_pending_replace = True if pending_obj.count() > 1 else False
     action = request.POST.get('action')
