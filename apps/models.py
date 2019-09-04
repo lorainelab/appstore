@@ -10,7 +10,6 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.conf import settings
-#from django.core.urlresolvers import reverse
 from django.urls import reverse
 
 class Author(models.Model):
@@ -172,7 +171,6 @@ class Release(models.Model):
     release_file  = models.FileField(upload_to=release_file_path)
     release_file_name = models.CharField(max_length=127)
     hexchecksum   = models.CharField(max_length=511, blank=True, null=True)
-    dependencies  = models.ManyToManyField('self', related_name='dependents', symmetrical=False)
 
     @property
     def version_tuple(self):
@@ -235,33 +233,3 @@ class Screenshot(models.Model):
 
     def __unicode__(self):
         return '%s - %d' % (self.app.fullname, self.id)
-
-def javadocs_path(release_api, filename):
-    return pathjoin(release_api.release.app.name, 'releases', release_api.release.version, filename)
-
-def pom_xml_path(release_api, filename):
-    return pathjoin(release_api.release.app.name, 'releases', release_api.release.version, filename)
-
-class ReleaseAPI(models.Model):
-    release           = models.ForeignKey(Release,on_delete=models.CASCADE)
-    javadocs_jar_file = models.FileField(upload_to=javadocs_path)
-    pom_xml_file      = models.FileField(upload_to=pom_xml_path)
-
-    def __unicode__(self):
-        return unicode(self.release)
-
-    def extract_javadocs_jar(self):
-        file = self.javadocs_jar_file
-        dirpath = file.path + '-extracted'
-        if not os.path.exists(dirpath):
-            mkdir(dirpath)
-        nullfile = open(devnull, 'w')
-        subprocess.call(['unzip', file.path, '-d', dirpath], stdout = nullfile, stderr = nullfile)
-        nullfile.close()
-
-    def delete_files(self):
-        dirpath = self.javadocs_jar_file.path + '-extracted'
-        if os.path.exists(dirpath):
-            rmtree(dirpath)
-        self.javadocs_jar_file.delete()
-        self.pom_xml_file.delete()
