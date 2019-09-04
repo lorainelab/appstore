@@ -1,5 +1,3 @@
-import random
-import sys
 import base64
 import re
 import os
@@ -111,7 +109,7 @@ def _create_pending(submitter, jar_details, release_file):
     for dependency in jar_details['app_dependencies']:
         pending.dependencies.add(dependency)
     file, file_name = _get_jar_file(release_file)
-    pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + file_name), file)
+    pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
     pending.save()
     if isinstance(release_file, str):
