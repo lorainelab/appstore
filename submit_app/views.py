@@ -18,7 +18,8 @@ from apps.models import Release, App, Author, OrderedAuthor
 from util.id_util import fullname_to_name
 from util.view_util import html_response, json_response, get_object_or_none
 from .models import AppPending
-from .pomparse import PomAttrNames, parse_pom
+# IGBF-1994
+# from .pomparse import PomAttrNames, parse_pom
 from .processjar import process_jar
 
 
@@ -92,14 +93,19 @@ def confirm_submission(request, id):
             _send_email_for_pending(server_url, latest_pending_obj_)
             _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
+    """
+    IGBF-1994
     pom_attrs = None
     if pending.pom_xml_file:
         pending.pom_xml_file.open(mode='r')
         pom_attrs = parse_pom(pending.pom_xml_file)
         pending.pom_xml_file.close()
+
     return html_response('confirm.html', {'pending': pending, 'pom_attrs': pom_attrs,
                                           'is_pending_replace': is_pending_replace}, request)
-
+    """
+    return html_response('confirm.html',{'pending': pending,
+                         'is_pending_replace': is_pending_replace}, request)
 
 def _create_pending(submitter, jar_details, release_file):
     pending = AppPending.objects.create(submitter       = submitter,
@@ -201,7 +207,8 @@ def _verify_javadocs_jar(file):
     file.close()
     return error_msg
 
-
+"""
+IGBF-1994
 def submit_api(request, id):
     pending = get_object_or_404(AppPending, id = int(id))
     if not pending.can_confirm(request.user):
@@ -230,7 +237,7 @@ def submit_api(request, id):
                 return HttpResponseRedirect(reverse('confirm-submission', args=[pending.id]))
 
     return html_response('submit_api.html', {'pending': pending, 'error_msg': error_msg}, request)
-
+"""
 
 def _send_email_for_accepted_app(to_email, from_email, app_fullname, app_name, server_url):
     subject = u'IGB App Store - {app_fullname} Has Been Approved'.format(app_fullname = app_fullname)
@@ -403,4 +410,3 @@ def _update_app_page(request_post):
 
     app.save()
     return json_response(True)
-
