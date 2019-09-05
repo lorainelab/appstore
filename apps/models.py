@@ -88,7 +88,7 @@ class App(models.Model):
     downloads    = models.PositiveIntegerField(default=0)
 
     featured = models.BooleanField(default=False)
-    repository_xml = models.TextField(blank=True, null=True, comment = "OBR Index Repository XML")
+    repository_xml = models.TextField(blank=True, null=True) ##OBR Index Repository XML
     active = models.BooleanField(default=False)
 
     def is_editor(self, user):
@@ -167,7 +167,7 @@ class Release(models.Model):
     created       = models.DateTimeField(auto_now_add=True)
     active        = models.BooleanField(default=True)
 
-    repository_xml    = models.TextField(blank=True, null=True, comment = "OBR Index Repository XML")
+    repository_xml    = models.TextField(blank=True, null=True) #OBR Index Repository XML
     release_file  = models.FileField(upload_to=release_file_path)
     release_file_name = models.CharField(max_length=127)
     hexchecksum   = models.CharField(max_length=511, blank=True, null=True)

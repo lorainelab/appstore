@@ -609,7 +609,7 @@ var AppPageEdit = (function($)
 
     function add_action_msg(msg) {
         var msg_tag = $('<p>').html(msg).appendTo(save_modal_body);
-        $('<img>').attr('src', loading_icon_url).appendTo(msg_tag);
+        $('<img>').attr('src', loading_logo_url).appendTo(msg_tag);
     }
 
     function finish_last_action_msg() {

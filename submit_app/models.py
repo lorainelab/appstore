@@ -22,7 +22,7 @@ class AppPending(models.Model):
     version             = models.CharField(max_length=31) # Bundle-Version
     works_with          = models.CharField(max_length=31, null=True, blank=True, default="9.1.0")
     created             = models.DateTimeField(auto_now_add=True)
-    repository_xml         = models.TextField(blank=True, null=True, comment = "OBR Index Repository XML") # OBR index file repository.xml
+    repository_xml         = models.TextField(blank=True, null=True) # OBR index file repository.xml
     release_file_name = models.CharField(max_length=127) # ?
     release_file        = models.FileField(upload_to='pending_releases') # ?
 

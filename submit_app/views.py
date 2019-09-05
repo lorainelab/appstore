@@ -100,7 +100,7 @@ def _create_pending(submitter, jar_details, release_file):
                                         details         = base64.b64decode(jar_details['details']).decode('utf-8'),
                                         fullname        = jar_details['fullname'],
                                         version         = jar_details['version'],
-                                        repository      = jar_details['repository'])
+                                        repository_xml      = jar_details['repository'])
 
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + file_name), file)
@@ -238,7 +238,7 @@ def _pending_app_accept(pending, request):
     app.details = pending.details
     app.version = pending.version
     app.editors.add(pending.submitter)
-    app.repository = pending.repository
+    app.repository_xml = pending.repository_xml
     app.save()
 
     pending.make_release(app)
