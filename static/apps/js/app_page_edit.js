@@ -556,14 +556,14 @@ var AppPageEdit = (function($)
        =============================== */
 
     var app_page_url;
-    var loading_icon_url;
+    var loading_logo_url;
 
     function set_app_page_url(_app_page_url) {
         app_page_url = _app_page_url;
     }
 
-    function set_loading_icon_url(_loading_icon_url) {
-        loading_icon_url = _loading_icon_url;
+    function set_loading_logo_url(_loading_logo_url) {
+        loading_logo_url = _loading_logo_url;
     }
 
     function setup_cancel_btn() {
@@ -897,7 +897,7 @@ var AppPageEdit = (function($)
         'setup_screenshot_btns': setup_screenshot_btns,
         'setup_details': setup_details,
         'set_app_page_url': set_app_page_url,
-        'set_loading_icon_url': set_loading_icon_url,
+        'set_loading_logo_url': set_loading_logo_url,
         'setup_add_editor_btn': setup_add_editor_btn,
         'add_editor': add_editor,
         'setup_author_add_btn': setup_author_add_btn,
