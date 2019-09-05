@@ -143,7 +143,6 @@ def delete_file(sender, instance, *args, **kwargs):
     """ Deletes thumbnail files on `post_delete` """
     if instance.release_file:
         instance.release_file.delete()
-    print("Instance Deleted :" , instance)
 
 class OrderedAuthor(models.Model):
     author       = models.ForeignKey(Author,on_delete=models.CASCADE)
