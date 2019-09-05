@@ -385,7 +385,7 @@ logger = logging.getLogger("app_page.html") %}
 </script>
 
 <script type="text/javascript">
-	AppPage.setup_install("{{ app.name | escapejs }}", "{{ app.symbolicname | escapejs }}");
+	AppPage.setup_install("{{ app.name | escapejs }}", "{{ app.symbolicname | escapejs }}",  "{{ repository_url | escapejs }}");
 
 
 	{% if app.details %}

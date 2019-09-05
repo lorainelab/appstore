@@ -18,7 +18,6 @@ from apps.models import Release, App, Author, OrderedAuthor
 from util.id_util import fullname_to_name
 from util.view_util import html_response, json_response, get_object_or_none
 from .models import AppPending
-from .pomparse import PomAttrNames, parse_pom
 from .processjar import process_jar
 
 
@@ -77,7 +76,7 @@ def _user_accepted(request, pending):
 def confirm_submission(request, id):
     pending = get_object_or_404(AppPending, id=int(id))
     if not pending.can_confirm(request.user):
-        return HttpResponseForbidden('You are not authorized to view this page')
+        return HttpResponseRedirect('/')
     pending_obj = AppPending.objects.filter(symbolicname=pending.symbolicname, version=pending.version)
     is_pending_replace = True if pending_obj.count() > 1 else False
     action = request.POST.get('action')
@@ -92,13 +91,11 @@ def confirm_submission(request, id):
             _send_email_for_pending(server_url, latest_pending_obj_)
             _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
-    pom_attrs = None
-    if pending.pom_xml_file:
-        pending.pom_xml_file.open(mode='r')
-        pom_attrs = parse_pom(pending.pom_xml_file)
-        pending.pom_xml_file.close()
-    return html_response('confirm.html', {'pending': pending, 'pom_attrs': pom_attrs,
-                                          'is_pending_replace': is_pending_replace}, request)
+    return html_response('confirm.html',{'pending': pending,
+                         'is_pending_replace': is_pending_replace}, request)
+
+# Get the Current Directory Path to Temporarily store the Zip File
+dir_path = os.path.dirname(os.path.abspath(__file__))
 
 
 def _create_pending(submitter, jar_details, release_file):
@@ -108,14 +105,13 @@ def _create_pending(submitter, jar_details, release_file):
                                         fullname        = jar_details['fullname'],
                                         version         = jar_details['version'],
                                         repository      = jar_details['repository'])
-    for dependency in jar_details['app_dependencies']:
-        pending.dependencies.add(dependency)
+
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + file_name), file)
     pending.release_file_name = file_name
     pending.save()
     if isinstance(release_file, str):
-        os.remove(file_name)
+        os.remove(dir_path + file_name)
     return pending
 
 
@@ -153,9 +149,9 @@ def _get_jar_file(release_file):
     file_name = basename(release_file) if isinstance(release_file, str) else basename(release_file.name)
     if isinstance(release_file, str):
         url_data = urlopen(release_file).read()
-        with open(file_name, 'wb') as file:
+        with open(dir_path + file_name, 'wb') as file:
             file.write(url_data)
-        file = open(file_name, 'rb')
+        file = open(dir_path + file_name, 'rb')
     else:
         file = release_file
     return file, file_name
@@ -200,37 +196,6 @@ def _verify_javadocs_jar(file):
         error_msg = 'The Javadocs Jar file you submitted is not a valid jar/zip file'
     file.close()
     return error_msg
-
-
-def submit_api(request, id):
-    pending = get_object_or_404(AppPending, id = int(id))
-    if not pending.can_confirm(request.user):
-        return HttpResponseForbidden('You are not authorized to view this page')
-
-    error_msg = None
-    if request.POST.get('dont_submit') != None:
-        return HttpResponseRedirect(reverse('confirm-submission', args=[pending.id]))
-    elif request.POST.get('submit') != None:
-        pom_xml_f = request.FILES.get('pom_xml')
-        javadocs_jar_f = request.FILES.get('javadocs_jar')
-        if pom_xml_f and javadocs_jar_f:
-            if not error_msg:
-                pom_xml_f.open(mode = 'r')
-                pom_attrs = parse_pom(pom_xml_f)
-                if len(pom_attrs) != len(PomAttrNames):
-                    error_msg = 'pom.xml is not valid; it must have these tags under &lt;project&gt;: ' + ', '.join(PomAttrNames)
-                pom_xml_f.close()
-
-            if not error_msg:
-                error_msg = _verify_javadocs_jar(javadocs_jar_f)
-
-            if not error_msg:
-                pending.pom_xml_file.save(basename(pom_xml_f.name), pom_xml_f)
-                pending.javadocs_jar_file.save(basename(javadocs_jar_f.name), javadocs_jar_f)
-                return HttpResponseRedirect(reverse('confirm-submission', args=[pending.id]))
-
-    return html_response('submit_api.html', {'pending': pending, 'error_msg': error_msg}, request)
-
 
 def _send_email_for_accepted_app(to_email, from_email, app_fullname, app_name, server_url):
     subject = u'IGB App Store - {app_fullname} Has Been Approved'.format(app_fullname = app_fullname)
@@ -403,4 +368,3 @@ def _update_app_page(request_post):
 
     app.save()
     return json_response(True)
-
