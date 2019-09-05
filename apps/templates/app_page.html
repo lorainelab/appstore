@@ -34,7 +34,7 @@ logger = logging.getLogger("app_page.html") %}
 	<div class="col-md-12">
 		{# App Name and Icon #}
 		<div class="row">
-			<div class="col-md-2 img-div" style="background-image: url('{{app.icon_url}}');background-size: contain;"></div>
+			<div class="col-md-2 img-div" style="background-image: url('{{app.logo_url}}');background-size: contain;"></div>
 			<div class="col-md-8">
 				{# App Name and description #}
 				<h2 class="app-name" id="app-name">
@@ -63,7 +63,7 @@ logger = logging.getLogger("app_page.html") %}
 				<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.fullname }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
 				{# End Helpdesk #}
 				{# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
-				{% if app.citation or  app.coderepo or app.automation %}
+				{% if app.citation or  app.code_repository_url or app.automation %}
 				{# Citations #}
 				{% if app.citation %}
 				<span> | </span>
@@ -73,8 +73,8 @@ logger = logging.getLogger("app_page.html") %}
 				{# End Citations #}
 				<span class="app-usage-info-divider"></span>
 
-				{% if app.coderepo %}
-				<a href="{{ app.coderepo }}" target="_blank">
+				{% if app.code_repository_url %}
+				<a href="{{ app.code_repository_url }}" target="_blank">
 					<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
 				</a>
 				{% endif %}
@@ -236,8 +236,8 @@ logger = logging.getLogger("app_page.html") %}
 				<h4></h4> {# <-- download button text will go here #}
 			</button>
 			<p id="app_version"></p>
-			{% if app.license_text %}
-			<strong class="custom-font">License</strong> <a href="{{ app.license_text }}" target="_blank">Click here</a>
+			{% if app.license_url %}
+			<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
 			<br />
 			{% endif %}
 			<strong class="custom-font">Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a>
@@ -267,19 +267,19 @@ logger = logging.getLogger("app_page.html") %}
 					</a>
 				</li>
 
-				{% if app.website %}
+				{% if app.website_url %}
 				<li>
 					<i class="fa fa-home"></i>
-					<a href="{{ app.website }}" target="_blank" style="padding-right:50px;">
+					<a href="{{ app.website_url }}" target="_blank" style="padding-right:50px;">
 						Website
 					</a>
 				</li>
 				{% endif %}
 
-				{% if app.tutorial %}
+				{% if app.tutorial_url %}
 				<li>
 					<i class="fa fa-book"></i>
-					<a href="{{ app.tutorial }}" target="_blank">
+					<a href="{{ app.tutorial_url }}" target="_blank">
 						Tutorial
 					</a>
 				</li>
@@ -294,10 +294,10 @@ logger = logging.getLogger("app_page.html") %}
 				</li>
 				{% endif %}
 
-				{% if app.coderepo %}
+				{% if app.code_repository_url %}
 				<li>
 					<i class="fa fa-code-fork"></i>
-					<a href="{{ app.coderepo }}" target="_blank">
+					<a href="{{ app.code_repository_url }}" target="_blank">
 						&nbsp;&nbsp;Code Repository
 					</a>
 				</li>
@@ -312,10 +312,10 @@ logger = logging.getLogger("app_page.html") %}
 				</li>
 				{% endif %}
 
-				{% if app.contact %}
+				{% if app.contact_email %}
 				<li>
 					<i class="fa fa-envelope"></i>
-					<a href="mailto:{{ app.contact }}" target="_blank">
+					<a href="mailto:{{ app.contact_email }}" target="_blank">
 						 E-mail
 					</a>
 				</li>
@@ -355,14 +355,14 @@ logger = logging.getLogger("app_page.html") %}
 {# End modal dialog #}
 
 {# License modal dialog #}
-{% if app.license_confirm and app.license_text %}
+{% if app.license_confirm and app.license_url %}
 <div class="modal hide fade in" id="license_modal">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">&times;</a>
 		<h3>License Agreement</h3>
 	</div>
 	<div class="modal-body">
-		<iframe data-src="{{ app.license_text }}" width="500" height="400"></iframe>
+		<iframe data-src="{{ app.license_url }}" width="500" height="400"></iframe>
 	</div>
 	<div class="modal-footer">
 		<a href="#" class="btn" data-dismiss="modal">Don't Accept</a>

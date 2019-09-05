@@ -49,7 +49,7 @@ class Tag(models.Model):
 	class Meta:
 		ordering = ["name"]
 
-GENERIC_ICON_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
+GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
 
 def app_icon_path(app, filename):
     return filename
@@ -63,7 +63,7 @@ class App(models.Model):
     version       = models.TextField(blank=False)
     tags         = models.ManyToManyField(Tag, blank=True)
 
-    icon         = models.ImageField(blank=True, null=True)
+    logo         = models.ImageField(blank=True, null=True)
 
     authors      = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
     editors      = models.ManyToManyField(User, blank=True)
@@ -72,23 +72,23 @@ class App(models.Model):
     has_releases              = models.BooleanField(default=False)
     release_file    = models.FileField()
     release_file_name = models.CharField(max_length=127)
-    license_text    = models.URLField(blank=True, null=True)
+    license_url    = models.URLField(blank=True, null=True)
     license_confirm = models.BooleanField(default=False)
 
-    website      = models.URLField(blank=True, null=True)
-    tutorial     = models.URLField(blank=True, null=True)
+    website_url      = models.URLField(blank=True, null=True)
+    tutorial_url     = models.URLField(blank=True, null=True)
     citation     = models.CharField(max_length=31, blank=True, null=True)
-    coderepo     = models.URLField(blank=True, null=True)
+    code_repository_url     = models.URLField(blank=True, null=True)
     automation   = models.URLField(blank=True, null=True)
 
-    contact      = models.EmailField(blank=True, null=True)
+    contact_email      = models.EmailField(blank=True, null=True)
 
     stars        = models.PositiveIntegerField(default=0)
     votes        = models.PositiveIntegerField(default=0)
     downloads    = models.PositiveIntegerField(default=0)
 
     featured = models.BooleanField(default=False)
-    repository = models.TextField(blank=True, null=True)
+    repository_xml = models.TextField(blank=True, null=True, comment = "OBR Index Repository XML")
     active = models.BooleanField(default=False)
 
     def is_editor(self, user):
@@ -106,8 +106,8 @@ class App(models.Model):
         return 100 * self.stars / self.votes / 5 if self.votes != 0 else 0
 
     @property
-    def icon_url(self):
-        return self.icon.url if self.icon else GENERIC_ICON_URL
+    def logo_url(self):
+        return self.logo.url if self.logo else GENERIC_LOGO_URL
 
     @property
     def releases(self):
@@ -167,7 +167,7 @@ class Release(models.Model):
     created       = models.DateTimeField(auto_now_add=True)
     active        = models.BooleanField(default=True)
 
-    repository    = models.TextField(blank=True, null=True)
+    repository_xml    = models.TextField(blank=True, null=True, comment = "OBR Index Repository XML")
     release_file  = models.FileField(upload_to=release_file_path)
     release_file_name = models.CharField(max_length=127)
     hexchecksum   = models.CharField(max_length=511, blank=True, null=True)
