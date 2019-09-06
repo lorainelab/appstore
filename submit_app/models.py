@@ -19,7 +19,7 @@ class AppPending(models.Model):
     fullname            = models.CharField(max_length=127) # Bundle-Name
     symbolicname        = models.CharField(max_length=127) # Bundle-SymbolicName
     details             = models.TextField(blank=True, null=True) # Bundle-Description
-    version             = models.CharField(max_length=31) # Bundle-Version
+    bundle_version      = models.CharField(max_length=31) # Bundle-Version
     works_with          = models.CharField(max_length=31, null=True, blank=True, default="9.1.0")
     created             = models.DateTimeField(auto_now_add=True)
     repository          = models.TextField(blank=True, null=True) # OBR index file repository.xml
@@ -43,10 +43,10 @@ class AppPending(models.Model):
         ordering = ['created']
 
     def __unicode__(self):
-        return self.fullname + ' ' + self.version + ' from ' + self.submitter.email
+        return self.fullname + ' ' + self.bundle_version + ' from ' + self.submitter.email
 
     def make_release(self, app):
-        release, _ = Release.objects.get_or_create(app=app, version=self.version)
+        release, _ = Release.objects.get_or_create(app=app, bundle_version=self.bundle_version)
         release.works_with = self.works_with
         release.active = True
         release.created = datetime.datetime.today()

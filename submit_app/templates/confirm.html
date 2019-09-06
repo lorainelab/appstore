@@ -47,10 +47,10 @@
                         title="
                     {% if is_pending_replace %}
                         This is a replacement jar file for pending App {{ pending.symbolicname }}
-                        version {{ pending.version }}.
+                        version {{ pending.bundle_version }}.
                     {% else %}
                         This is a new version of a released App {{ pending.symbolicname }}.
-                        Currently, the highest version released in App Store is {{ pending.version }}.
+                        Currently, the highest version released in App Store is {{ pending.bundle_version }}.
                     {% endif %} ">
                      <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>
@@ -80,7 +80,7 @@
             <td>
                 <b>Bundle Version</b>
             </td>
-            <td>{{ pending.version }}
+            <td>{{ pending.bundle_version }}
                 <button id="tooltip-3" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"  data-trigger="toggle" data-html="true">
                      <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>
