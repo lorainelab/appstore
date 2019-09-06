@@ -275,7 +275,6 @@ var AppPage = (function($) {
             $.post('', {'action': 'rate', 'rating': rating}, function(data) {
                 popover.off('click').popover('destroy').css('cursor', 'default');
                 popover.find('.rating-stars-filled').css('width', data.stars_percentage.toString() + '%');
-                $('#rating-count').text('(' + data.votes.toString() + ')');
                 popover.tooltip({'title': 'Your rating has been submitted. Thanks!'}).tooltip('show');
                 setTimeout(function() {
                     popover.tooltip('hide');

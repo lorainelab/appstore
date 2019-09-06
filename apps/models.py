@@ -79,15 +79,12 @@ class App(models.Model):
     tutorial     = models.URLField(blank=True, null=True)
     citation     = models.CharField(max_length=31, blank=True, null=True)
     coderepo     = models.URLField(blank=True, null=True)
-    automation   = models.URLField(blank=True, null=True)
 
     contact      = models.EmailField(blank=True, null=True)
 
     stars        = models.PositiveIntegerField(default=0)
-    votes        = models.PositiveIntegerField(default=0)
     downloads    = models.PositiveIntegerField(default=0)
 
-    featured = models.BooleanField(default=False)
     repository = models.TextField(blank=True, null=True)
     active = models.BooleanField(default=False)
 
@@ -103,7 +100,7 @@ class App(models.Model):
 
     @property
     def stars_percentage(self):
-        return 100 * self.stars / self.votes / 5 if self.votes != 0 else 0
+        return 100 * self.stars / 5
 
     @property
     def icon_url(self):
