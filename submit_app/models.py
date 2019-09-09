@@ -3,6 +3,7 @@ from os.path import basename
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.dispatch import receiver
 
 from apps.models import App, Release
 from util.id_util import fullname_to_name
@@ -63,3 +64,9 @@ class AppPending(models.Model):
 
     def delete_files(self):
         self.release_file.delete()
+
+@receiver(models.signals.pre_delete, sender=AppPending)
+def delete_file(sender, instance, *args, **kwargs):
+    """ Deletes Jar from Pending Releases folder in S3 on `post_delete` """
+    if instance.release_file:
+        instance.release_file.delete()
