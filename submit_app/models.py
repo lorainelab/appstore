@@ -17,7 +17,7 @@ except ImportError:
 
 class AppPending(models.Model):
     submitter           = models.ForeignKey(User,on_delete=models.CASCADE)
-    fullname            = models.CharField(max_length=127) # Bundle-Name
+    bundle_name            = models.CharField(max_length=127) # Bundle-Name
     symbolicname        = models.CharField(max_length=127) # Bundle-SymbolicName
     details             = models.TextField(blank=True, null=True) # Bundle-Description
     version             = models.CharField(max_length=31) # Bundle-Version
@@ -28,7 +28,7 @@ class AppPending(models.Model):
     release_file        = models.FileField(upload_to='pending_releases') # ?
 
     def __str__(self):
-        return self.fullname
+        return self.bundle_name
 
     def can_confirm(self, user):
         if user.is_staff or user.is_superuser:
@@ -37,14 +37,14 @@ class AppPending(models.Model):
 
     @property
     def is_new_app(self):
-        name = fullname_to_name(self.fullname)
+        name = fullname_to_name(self.bundle_name)
         return get_object_or_none(App, name = name) == None
 
     class Meta:
         ordering = ['created']
 
     def __unicode__(self):
-        return self.fullname + ' ' + self.version + ' from ' + self.submitter.email
+        return self.bundle_name + ' ' + self.version + ' from ' + self.submitter.email
 
     def make_release(self, app):
         release, _ = Release.objects.get_or_create(app=app, version=self.version)

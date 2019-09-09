@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/base.css" />
 {% endblock %}
 
-{% block title %}- Edit {{ app.fullname }}{% endblock %}
+{% block title %}- Edit {{ app.bundle_name }}{% endblock %}
 
 {% block content %}
 {# app header #}
@@ -23,7 +23,7 @@
             <div class="col-md-10">
                 {# App Name and description #}
                 <h2 class="app-name-edit" data-toggle="tooltip" title="Your app name cannot be changed">
-                    {{ app.fullname }}
+                    {{ app.bundle_name }}
                 </h2>
                 <input class="form-control" type="text" id="app-description" placeholder="Enter a short description of your app here;"
                        value="{% if app.description %}{{ app.description|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}" />
@@ -179,7 +179,7 @@
                             <strong>Apps that depend on this release</strong>
                             <ul>
                                 {% for dependent in release.dependents.all %}
-                                <li><a href="{% url 'app_page' dependent.app.name %}" target="_blank">{{ dependent.app.fullname }}</a> {{ dependent.version }}</li>
+                                <li><a href="{% url 'app_page' dependent.app.name %}" target="_blank">{{ dependent.app.bundle_name }}</a> {{ dependent.version }}</li>
                                 {% endfor %}
                             </ul>
                         </p>
