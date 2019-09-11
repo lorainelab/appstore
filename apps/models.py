@@ -37,27 +37,15 @@ class Tag(models.Model):
         if self.name in _TagCountCache:
             count = _TagCountCache[self.name]
         else:
-            count = App.objects.filter(active = True, tags = self).count()
+            count = App.objects.filter(active = True, categories = self).count()
             _TagCountCache[self.name] = count
         return count
 
     search_schema = ('fullname', )
     search_key = 'name'
 
-<<<<<<< HEAD
-	@property
-	def count(self):
-		global _TagCountCache
-		if self.name in _TagCountCache:
-			count = _TagCountCache[self.name]
-		else:
-			count = App.objects.filter(active = True, categories = self).count()
-			_TagCountCache[self.name] = count
-		return count
-=======
     def __unicode__(self):
         return self.name
->>>>>>> 2d9e292247cb62dc1aabf09323486c5cafcf61eb
 
     class Meta:
         ordering = ["name"]
