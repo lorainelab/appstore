@@ -48,7 +48,7 @@ def process_jar(jar_file, expect_app_name):
     app_name, app_ver, app_dependencies, has_export_pkg = parser_func(manifest)
     details_dict['has_export_pkg'] = has_export_pkg
 
-    details_dict['bundle_name'] = smart_text(app_name, errors='replace')
+    details_dict['Bundle_Name'] = smart_text(app_name, errors='replace')
     if expect_app_name and (not app_name == expect_app_name):
         raise ValueError('has app name as <tt>%s</tt> but must be <tt>%s</tt>' % (app_name, expect_app_name))
     details_dict['version'] = smart_text(app_ver, errors='replace')

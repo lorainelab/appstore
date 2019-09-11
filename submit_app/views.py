@@ -56,7 +56,7 @@ def _user_cancelled(request, pending):
 
 
 def _user_accepted(request, pending):
-    app = get_object_or_none(App, name = fullname_to_name(pending.bundle_name))
+    app = get_object_or_none(App, name = fullname_to_name(pending.Bundle_Name))
     if app:
         if not app.is_editor(request.user):
             return HttpResponseForbidden('You are not authorized to add releases, because you are not an editor')
@@ -68,7 +68,7 @@ def _user_accepted(request, pending):
         pending.delete()
         return HttpResponseRedirect(reverse('app_page_edit', args=[app.name]) + '?upload_release=true')
     else:
-        return html_response('submit_done.html', {'app_name': pending.bundle_name}, request)
+        return html_response('submit_done.html', {'app_name': pending.Bundle_Name}, request)
 
 
 def confirm_submission(request, id):
@@ -100,7 +100,7 @@ def _create_pending(submitter, jar_details, release_file):
     pending = AppPending.objects.create(submitter       = submitter,
                                         symbolicname    = jar_details['symbolicname'],
                                         details         = base64.b64decode(jar_details['details']).decode('utf-8'),
-                                        bundle_name        = jar_details['bundle_name'],
+                                        Bundle_Name        = jar_details['Bundle_Name'],
                                         version         = jar_details['version'],
                                         repository      = jar_details['repository'])
 
@@ -126,10 +126,10 @@ def _replace_jar_details(request, pending_obj):
     existing_pending_obj = pending_obj[pending_obj.count() - 2]
     if latest_pending_obj and latest_pending_obj.submitter != request.user:
         raise ValueError('cannot be accepted because you are not an editor')
-    name = fullname_to_name(latest_pending_obj.bundle_name)
+    name = fullname_to_name(latest_pending_obj.Bundle_Name)
     existing_pending_obj.details = latest_pending_obj.details
     existing_pending_obj.repository = latest_pending_obj.repository
-    existing_pending_obj.bundle_name = latest_pending_obj.bundle_name
+    existing_pending_obj.Bundle_Name = latest_pending_obj.Bundle_Name
     existing_pending_obj.release_file = latest_pending_obj.release_file
     existing_pending_obj.save()
     latest_pending_obj.delete_files()
@@ -156,27 +156,27 @@ def _get_jar_file(release_file):
 
 
 def _send_email_for_pending(server_url, pending):
-    admin_url = reverse('admin:login', current_app=pending.bundle_name)
+    admin_url = reverse('admin:login', current_app=pending.Bundle_Name)
     msg = u"""
 The following app has been submitted:
     ID: {id}
-    Name: {bundle_name}
+    Name: {Bundle_Name}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
     Server Url: {server_url}{admin_url}
-""".format(id=pending.id, bundle_name=pending.bundle_name, version=pending.version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
-    send_mail('{bundle_name} App - Successfully Submitted.'.format(bundle_name=pending.bundle_name), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+""".format(id=pending.id, Bundle_Name=pending.Bundle_Name, version=pending.version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
+    send_mail('{Bundle_Name} App - Successfully Submitted.'.format(Bundle_Name=pending.Bundle_Name), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 
 def _send_email_for_pending_user(pending):
     msg = u"""
 Thank you for submitting the app! {approve_text}
 The following app has been submitted:
-    Name: {bundle_name}
+    Name: {Bundle_Name}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
-""".format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',bundle_name = pending.bundle_name, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('{bundle_name} App - Successfully Submitted.'.format(bundle_name = pending.bundle_name), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
+""".format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',Bundle_Name = pending.Bundle_Name, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
+    send_mail('{Bundle_Name} App - Successfully Submitted.'.format(Bundle_Name = pending.Bundle_Name), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 
 def _send_email_for_accepted_app(to_email, from_email, app_fullname, app_name, server_url):
@@ -216,9 +216,9 @@ def _get_server_url(request):
 
 
 def _pending_app_accept(pending, request):
-    name = fullname_to_name(pending.bundle_name)
+    name = fullname_to_name(pending.Bundle_Name)
     # we always create a new app, because only new apps require accepting
-    app = App.objects.create(bundle_name = pending.bundle_name, name = name)
+    app = App.objects.create(Bundle_Name = pending.Bundle_Name, name = name)
     app.active = True
     app.symbolicname = pending.symbolicname
     app.details = pending.details
@@ -232,7 +232,7 @@ def _pending_app_accept(pending, request):
     pending.delete()
 
     server_url = _get_server_url(request)
-    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.bundle_name, app.name, server_url)
+    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.Bundle_Name, app.name, server_url)
 
 
 def _pending_app_decline(pending_app, request):
@@ -271,23 +271,23 @@ def pending_apps(request):
 
 
 def _app_info(request_post):
-    bundle_name = request_post.get('app_fullname')
-    name = fullname_to_name(bundle_name)
+    Bundle_Name = request_post.get('app_fullname')
+    name = fullname_to_name(Bundle_Name)
     url = reverse('app_page', args=(name,))
     exists = App.objects.filter(name = name, active = True).count() > 0
     return json_response({'url': url, 'exists': exists})
 
 
 def _update_app_page(request_post):
-    bundle_name = request_post.get('bundle_name')
-    if not bundle_name:
-        return HttpResponseBadRequest('"bundle_name" not specified')
-    name = fullname_to_name(bundle_name)
+    Bundle_Name = request_post.get('Bundle_Name')
+    if not Bundle_Name:
+        return HttpResponseBadRequest('"Bundle_Name" not specified')
+    name = fullname_to_name(Bundle_Name)
     app = get_object_or_none(App, name = name)
     if app:
         app.active = True
     else:
-        app = App.objects.create(name = name, bundle_name = bundle_name)
+        app = App.objects.create(name = name, Bundle_Name = Bundle_Name)
 
     details = request_post.get('details')
     if details:

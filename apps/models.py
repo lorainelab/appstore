@@ -59,7 +59,7 @@ def app_icon_path(app, filename):
 
 class App(models.Model):
     name         = models.CharField(max_length=127, unique=True)
-    bundle_name  = models.CharField(max_length=127, unique=True)
+    Bundle_Name  = models.CharField(max_length=127, unique=True)
     symbolicname = models.CharField(max_length=127, unique=True)
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
@@ -102,7 +102,7 @@ class App(models.Model):
         return user in self.editors.all()
 
     def __str__(self):
-        return self.bundle_name
+        return self.Bundle_Name
 
     @property
     def stars_percentage(self):
@@ -134,7 +134,7 @@ class App(models.Model):
     def ordered_authors(self):
         return (a.author for a in OrderedAuthor.objects.filter(app = self))
 
-    search_schema = ('^bundle_name', 'description', 'details')
+    search_schema = ('^Bundle_Name', 'description', 'details')
     search_key = 'name'
 
     def __unicode__(self):
@@ -204,7 +204,7 @@ class Release(models.Model):
         return reverse('release_download', args=[self.app.name, self.version])
 
     def __unicode__(self):
-        return self.app.bundle_name + ' ' + self.version
+        return self.app.Bundle_Name + ' ' + self.version
 
     def calc_checksum(self):
         cs = hashlib.sha512()
@@ -239,4 +239,4 @@ class Screenshot(models.Model):
     thumbnail  = models.ImageField(upload_to=thumbnail_path)
 
     def __unicode__(self):
-        return '%s - %d' % (self.app.bundle_name, self.id)
+        return '%s - %d' % (self.app.Bundle_Name, self.id)

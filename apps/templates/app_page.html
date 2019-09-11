@@ -15,7 +15,7 @@ logger = logging.getLogger("app_page.html") %}
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" integrity="sha256-HAaDW5o2+LelybUhfuk0Zh2Vdk8Y2W2UeKmbaXhalfA=" crossorigin="anonymous" />
 {% endblock %}
 
-{% block title %}- {{ app.bundle_name }}{% endblock %}
+{% block title %}- {{ app.Bundle_Name }}{% endblock %}
 
 {% block content %}
 
@@ -38,7 +38,7 @@ logger = logging.getLogger("app_page.html") %}
 			<div class="col-md-8">
 				{# App Name and description #}
 				<h2 class="app-name" id="app-name">
-					{{ app.bundle_name }}
+					{{ app.Bundle_Name }}
 				</h2>
 				<span class="app-def-desc">{% if app.description %}<b> {{ app.description }} </b>{% endif %}</span>
 				<br />
@@ -60,7 +60,7 @@ logger = logging.getLogger("app_page.html") %}
 
 				{# Helpdesk #}
 				<span> | </span>
-				<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.bundle_name }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
+				<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
 				{# End Helpdesk #}
 				{# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
 				{% if app.citation or  app.coderepo or app.automation %}
@@ -194,7 +194,7 @@ logger = logging.getLogger("app_page.html") %}
 							<strong>Apps that depend on this release</strong>
 							<ul>
 								{% for dependent in release.dependents.all %}
-								<li><a href="{% url 'app_page' dependent.app.name %}" target="_blank">{{ dependent.app.bundle_name }}</a> {{ dependent.version }}</li>
+								<li><a href="{% url 'app_page' dependent.app.name %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
 								{% endfor %}
 							</ul>
 						</p>
@@ -249,7 +249,7 @@ logger = logging.getLogger("app_page.html") %}
 
 				<li>
 					<i class="fa fa-comments"></i>
-					<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.bundle_name }}" target="_blank">
+					<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank">
 						Search helpdesk
 					</a>
 				</li>
