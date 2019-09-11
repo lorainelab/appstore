@@ -37,7 +37,7 @@ class Tag(models.Model):
 		if self.name in _TagCountCache:
 			count = _TagCountCache[self.name]
 		else:
-			count = App.objects.filter(active = True, tags = self).count()
+			count = App.objects.filter(active = True, categories = self).count()
 			_TagCountCache[self.name] = count
 		return count
 
@@ -61,7 +61,7 @@ class App(models.Model):
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
     version       = models.TextField(blank=False)
-    tags         = models.ManyToManyField(Tag, blank=True)
+    categories         = models.ManyToManyField(Tag, blank=True)
 
     icon         = models.ImageField(blank=True, null=True)
 

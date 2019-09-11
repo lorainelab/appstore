@@ -149,7 +149,7 @@ def wall_of_apps(request):
 
 def apps_with_tag(request, tag_name):
 	tag = get_object_or_404(Tag, name=tag_name)
-	apps = App.objects.filter(active=True, tags=tag).order_by('name')
+	apps = App.objects.filter(active=True, categories=tag).order_by('name')
 	c = {
 		'tag': tag,
 		'apps': apps,
@@ -344,10 +344,10 @@ def _save_tags(app, request):
 			raise ValueError('expected ' + tag_key)
 		tags.append(tag)
 
-	app.tags.clear()
+	app.categories.clear()
 	for tag in tags:
 		tag_obj, _ = Tag.objects.get_or_create(fullname=tag, name=fullname_to_name(tag))
-		app.tags.add(tag_obj)
+		app.categories.add(tag_obj)
 
 	_flush_tag_caches()
 

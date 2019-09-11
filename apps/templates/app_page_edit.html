@@ -53,7 +53,7 @@
         <div class="tab-content">
             <div class="tab-pane active" id="app-info" role="tabpanel" aria-labelledby="app-info-tab">
                 {# Categories #}
-                {% if app.tags.all %}
+{#                {% if app.categories.all %}#}
                 <br />
                 <div class="row">
                     <div class="col-md-12">
@@ -66,7 +66,7 @@
                         </button>
                     </div>
                 </div>
-                {% endif %}
+{#                {% endif %}#}
                 {# End Categories #}
 
                 <br />
@@ -406,8 +406,8 @@
         AppPageEdit.setup_icon_selection({{ max_icon_dim_px }});
 
         AppPageEdit.setup_add_tag_btn();
-        {% if app.tags %}
-            {% for tag in app.tags.all %}
+        {% if app.categories %}
+            {% for tag in app.categories.all %}
                 AppPageEdit.add_tag('{{ tag.fullname|escapejs}}', false);
             {% endfor %}
         {% endif %}

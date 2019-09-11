@@ -8,7 +8,7 @@ class AppIndex(indexes.SearchIndex, indexes.Indexable):
     description = indexes.CharField(model_attr = 'description',null=True)
     details = indexes.CharField(model_attr = 'details',null=True)
     has_releases = indexes.BooleanField(model_attr='has_releases',null = True)
-    tags = indexes.MultiValueField(model_attr = 'tags',null=True)
+    categories = indexes.MultiValueField(model_attr = 'categories',null=True)
     authors = indexes.MultiValueField(model_attr = 'authors',null=True)
     downloads = indexes.IntegerField(model_attr = 'downloads',null = True)
     votes = indexes.IntegerField(model_attr = 'votes',null = True)
@@ -22,5 +22,5 @@ class AppIndex(indexes.SearchIndex, indexes.Indexable):
     def prepare_authors(self, obj):
         return [author.id for author in obj.authors.all()]
     def prepare_tags(self, obj):
-        return [tag.id for tag in obj.tags.all()]
+        return [tag.id for tag in obj.categories.all()]
 
