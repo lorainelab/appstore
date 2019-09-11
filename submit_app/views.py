@@ -1,5 +1,3 @@
-import random
-import sys
 import base64
 import re
 import os
@@ -94,6 +92,10 @@ def confirm_submission(request, id):
     return html_response('confirm.html',{'pending': pending,
                          'is_pending_replace': is_pending_replace}, request)
 
+# Get the Current Directory Path to Temporarily store the Zip File
+dir_path = os.path.dirname(os.path.abspath(__file__))
+
+
 def _create_pending(submitter, jar_details, release_file):
     pending = AppPending.objects.create(submitter       = submitter,
                                         symbolicname    = jar_details['symbolicname'],
@@ -103,11 +105,11 @@ def _create_pending(submitter, jar_details, release_file):
                                         repository      = jar_details['repository'])
 
     file, file_name = _get_jar_file(release_file)
-    pending.release_file.save(basename(str(random.randrange(sys.maxsize)) + "_" + file_name), file)
+    pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
     pending.save()
     if isinstance(release_file, str):
-        os.remove(file_name)
+        os.remove(dir_path + file_name)
     return pending
 
 
@@ -145,9 +147,9 @@ def _get_jar_file(release_file):
     file_name = basename(release_file) if isinstance(release_file, str) else basename(release_file.name)
     if isinstance(release_file, str):
         url_data = urlopen(release_file).read()
-        with open(file_name, 'wb') as file:
+        with open(dir_path + file_name, 'wb') as file:
             file.write(url_data)
-        file = open(file_name, 'rb')
+        file = open(dir_path + file_name, 'rb')
     else:
         file = release_file
     return file, file_name

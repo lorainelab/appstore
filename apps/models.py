@@ -139,7 +139,7 @@ class App(models.Model):
 
 @receiver(models.signals.pre_delete, sender=App)
 def delete_file(sender, instance, *args, **kwargs):
-    """ Deletes thumbnail files on `post_delete` """
+    """ Deletes Release files on `post_delete` """
     if instance.release_file:
         instance.release_file.delete()
 
