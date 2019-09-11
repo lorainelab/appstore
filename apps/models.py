@@ -1,62 +1,65 @@
-import re
 import hashlib
-from shutil import rmtree
-import subprocess
-from os import mkdir, devnull
-import os.path
+import re
 from os.path import join as pathjoin
 from urllib.parse import urljoin
-from django.db import models
-from django.contrib.auth.models import User
-from django.dispatch import receiver
+
 from django.conf import settings
+from django.contrib.auth.models import User
+from django.db import models
+from django.dispatch import receiver
 from django.urls import reverse
 
+
 class Author(models.Model):
-	name        = models.CharField(max_length=255)
-	institution = models.CharField(max_length=255, null=True, blank=True)
+    name        = models.CharField(max_length=255)
+    institution = models.CharField(max_length=255, null=True, blank=True)
 
-	search_schema = ('name', 'institution')
-	search_key = 'id'
+    search_schema = ('name', 'institution')
+    search_key = 'id'
 
-	def __unicode__(self):
-		if not self.institution:
-			return self.name
-		else:
-			return self.name + ' (' + self.institution + ')'
+    def __unicode__(self):
+        if not self.institution:
+            return self.name
+        else:
+            return self.name + ' (' + self.institution + ')'
+
 
 _TagCountCache = dict()
 
+
 class Tag(models.Model):
-	name     = models.CharField(max_length=255, unique=True)
-	fullname = models.CharField(max_length=255)
+    name     = models.CharField(max_length=255, unique=True)
+    fullname = models.CharField(max_length=255)
 
-	@property
-	def count(self):
-		global _TagCountCache
-		if self.name in _TagCountCache:
-			count = _TagCountCache[self.name]
-		else:
-			count = App.objects.filter(active = True, tags = self).count()
-			_TagCountCache[self.name] = count
-		return count
+    @property
+    def count(self):
+        global _TagCountCache
+        if self.name in _TagCountCache:
+            count = _TagCountCache[self.name]
+        else:
+            count = App.objects.filter(active = True, tags = self).count()
+            _TagCountCache[self.name] = count
+        return count
 
-	search_schema = ('fullname', )
-	search_key = 'name'
+    search_schema = ('fullname', )
+    search_key = 'name'
 
-	def __unicode__(self):
-		return self.name
-	class Meta:
-		ordering = ["name"]
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ["name"]
+
 
 GENERIC_ICON_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
+
 
 def app_icon_path(app, filename):
     return filename
 
 class App(models.Model):
     name         = models.CharField(max_length=127, unique=True)
-    fullname     = models.CharField(max_length=127, unique=True)
+    Bundle_Name = models.CharField(max_length=127, unique=True)
     Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
@@ -99,7 +102,7 @@ class App(models.Model):
         return user in self.editors.all()
 
     def __str__(self):
-        return self.fullname
+        return self.Bundle_Name
 
     @property
     def stars_percentage(self):
@@ -131,17 +134,19 @@ class App(models.Model):
     def ordered_authors(self):
         return (a.author for a in OrderedAuthor.objects.filter(app = self))
 
-    search_schema = ('^fullname', 'description', 'details')
+    search_schema = ('^Bundle_Name', 'description', 'details')
     search_key = 'name'
 
     def __unicode__(self):
         return self.name
+
 
 @receiver(models.signals.pre_delete, sender=App)
 def delete_file(sender, instance, *args, **kwargs):
     """ Deletes Release files on `post_delete` """
     if instance.release_file:
         instance.release_file.delete()
+
 
 class OrderedAuthor(models.Model):
     author       = models.ForeignKey(Author,on_delete=models.CASCADE)
@@ -154,10 +159,13 @@ class OrderedAuthor(models.Model):
     class Meta:
         ordering = ["author_order"]
 
+
 VersionRE = re.compile(r'^(\d+)(?:\.(\d)+)?(?:\.(\d)+)?(?:\.([\w-]+))?$')
+
 
 def release_file_path(release, filename):
     return pathjoin(release.app.name, 'releases', release.version, filename)
+
 
 class Release(models.Model):
     app           = models.ForeignKey(App,on_delete=models.CASCADE)
@@ -196,7 +204,7 @@ class Release(models.Model):
         return reverse('release_download', args=[self.app.name, self.version])
 
     def __unicode__(self):
-        return self.app.fullname + ' ' + self.version
+        return self.app.Bundle_Name + ' ' + self.version
 
     def calc_checksum(self):
         cs = hashlib.sha512()
@@ -212,19 +220,18 @@ class Release(models.Model):
 
     def delete_files(self):
         self.release_file.delete()
-        if self.releaseapi_set.count() > 0:
-            api = self.releaseapi_set.get()
-            api.delete_files()
-            api.delete()
 
     class Meta:
         ordering = ['-created']
 
+
 def screenshot_path(screenshot, filename):
     return pathjoin(screenshot.app.name, 'screenshots', filename)
 
+
 def thumbnail_path(screenshot, filename):
     return pathjoin(screenshot.app.name, 'thumbnails', filename)
+
 
 class Screenshot(models.Model):
     app        = models.ForeignKey(App,on_delete=models.CASCADE)
@@ -232,4 +239,4 @@ class Screenshot(models.Model):
     thumbnail  = models.ImageField(upload_to=thumbnail_path)
 
     def __unicode__(self):
-        return '%s - %d' % (self.app.fullname, self.id)
+        return '%s - %d' % (self.app.Bundle_Name, self.id)
