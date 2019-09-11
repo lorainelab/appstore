@@ -59,8 +59,8 @@ def app_icon_path(app, filename):
 
 class App(models.Model):
     name         = models.CharField(max_length=127, unique=True)
-    Bundle_Name  = models.CharField(max_length=127, unique=True)
-    symbolicname = models.CharField(max_length=127, unique=True)
+    Bundle_Name = models.CharField(max_length=127, unique=True)
+    Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
     version       = models.TextField(blank=False)

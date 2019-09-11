@@ -39,7 +39,7 @@ def process_jar(jar_file, expect_app_name):
 
     is_osgi_bundle = True if manifest.get('Bundle-SymbolicName') else False
     parser_func = _parse_osgi_bundle if is_osgi_bundle else _parse_simple_app
-    symbolicname = manifest.get('Bundle-SymbolicName')[0]
+    bundle_symbolicName = manifest.get('Bundle-SymbolicName')[0]
     if manifest.get('Bundle-Description') is not None:
         details_dict['details'] = manifest.get('Bundle-Description')[0]
     else:
@@ -52,7 +52,7 @@ def process_jar(jar_file, expect_app_name):
     if expect_app_name and (not app_name == expect_app_name):
         raise ValueError('has app name as <tt>%s</tt> but must be <tt>%s</tt>' % (app_name, expect_app_name))
     details_dict['version'] = smart_text(app_ver, errors='replace')
-    details_dict['symbolicname'] = smart_text(symbolicname, errors='replace')
+    details_dict['bundle_symbolicName'] = smart_text(bundle_symbolicName, errors='replace')
     return details_dict
 
 
