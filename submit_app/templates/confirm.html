@@ -46,10 +46,10 @@
                 <button class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right"  data-trigger="toggle"
                         title="
                     {% if is_pending_replace %}
-                        This is a replacement jar file for pending App {{ pending.symbolicname }}
-                        version {{ pending.Bundle_Version }}.
+                        This is a replacement jar file for pending App {{ pending.Bundle_SymbolicName }}
+                        version {{ pending.version }}.
                     {% else %}
-                        This is a new version of a released App {{ pending.symbolicname }}.
+                        This is a new version of a released App {{ pending.Bundle_SymbolicName }}.
                         Currently, the highest version released in App Store is {{ pending.Bundle_Version }}.
                     {% endif %} ">
                      <i class="fa fa-info-circle" style="font-size: 30px"></i>
@@ -60,7 +60,7 @@
             <td>
                 <b>Bundle Name</b>
             </td>
-            <td>{{ pending.fullname }}
+            <td>{{ pending.Bundle_Name }}
                 <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
                      <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>
@@ -70,7 +70,7 @@
             <td>
                 <b>Bundle-Symbolic Name</b>
             </td>
-            <td>{{ pending.symbolicname }}
+            <td>{{ pending.Bundle_SymbolicName }}
                 <button id="tooltip-2" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
                      <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>

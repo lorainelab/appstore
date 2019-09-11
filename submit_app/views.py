@@ -56,7 +56,7 @@ def _user_cancelled(request, pending):
 
 
 def _user_accepted(request, pending):
-    app = get_object_or_none(App, name = fullname_to_name(pending.fullname))
+    app = get_object_or_none(App, name = fullname_to_name(pending.Bundle_Name))
     if app:
         if not app.is_editor(request.user):
             return HttpResponseForbidden('You are not authorized to add releases, because you are not an editor')
@@ -68,14 +68,14 @@ def _user_accepted(request, pending):
         pending.delete()
         return HttpResponseRedirect(reverse('app_page_edit', args=[app.name]) + '?upload_release=true')
     else:
-        return html_response('submit_done.html', {'app_name': pending.fullname}, request)
+        return html_response('submit_done.html', {'app_name': pending.Bundle_Name}, request)
 
 
 def confirm_submission(request, id):
     pending = get_object_or_404(AppPending, id=int(id))
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
-    pending_obj = AppPending.objects.filter(symbolicname=pending.symbolicname, Bundle_Version=pending.Bundle_Version)
+    pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, version=pending.Bundle_Version)
     is_pending_replace = True if pending_obj.count() > 1 else False
     action = request.POST.get('action')
     if action:
@@ -98,12 +98,11 @@ dir_path = os.path.dirname(os.path.abspath(__file__))
 
 def _create_pending(submitter, jar_details, release_file):
     pending = AppPending.objects.create(submitter       = submitter,
-                                        symbolicname    = jar_details['symbolicname'],
+                                        Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
                                         details         = base64.b64decode(jar_details['details']).decode('utf-8'),
-                                        fullname        = jar_details['fullname'],
+                                        Bundle_Name        = jar_details['Bundle_Name'],
                                         Bundle_Version         = jar_details['version'],
-                                        repository      = jar_details['repository'])
-
+                                        repository_xml      = jar_details['repository'])
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
@@ -126,10 +125,10 @@ def _replace_jar_details(request, pending_obj):
     existing_pending_obj = pending_obj[pending_obj.count() - 2]
     if latest_pending_obj and latest_pending_obj.submitter != request.user:
         raise ValueError('cannot be accepted because you are not an editor')
-    name = fullname_to_name(latest_pending_obj.fullname)
+    name = fullname_to_name(latest_pending_obj.Bundle_Name)
     existing_pending_obj.details = latest_pending_obj.details
     existing_pending_obj.repository = latest_pending_obj.repository
-    existing_pending_obj.fullname = latest_pending_obj.fullname
+    existing_pending_obj.Bundle_Name = latest_pending_obj.Bundle_Name
     existing_pending_obj.release_file = latest_pending_obj.release_file
     existing_pending_obj.save()
     latest_pending_obj.delete_files()
@@ -156,44 +155,28 @@ def _get_jar_file(release_file):
 
 
 def _send_email_for_pending(server_url, pending):
-    admin_url = reverse('admin:login', current_app=pending.fullname)
+    admin_url = reverse('admin:login', current_app=pending.Bundle_Name)
     msg = u"""
 The following app has been submitted:
     ID: {id}
-    Name: {fullname}
+    Name: {Bundle_Name}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
     Server Url: {server_url}{admin_url}
-""".format(id=pending.id, fullname=pending.fullname, version=pending.Bundle_Version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
-    send_mail('{fullname} App - Successfully Submitted.'.format(fullname=pending.fullname), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
+""".format(id=pending.id, Bundle_Name=pending.Bundle_Name, version=pending.Bundle_Version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
+    send_mail('{Bundle_Name} App - Successfully Submitted.'.format(Bundle_Name=pending.Bundle_Name), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 
 def _send_email_for_pending_user(pending):
     msg = u"""
 Thank you for submitting the app! {approve_text}
 The following app has been submitted:
-    Name: {fullname}
+    Name: {Bundle_Name}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
-""".format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',fullname = pending.fullname, version = pending.Bundle_Version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
-    send_mail('{fullname} App - Successfully Submitted.'.format(fullname = pending.fullname), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
+""".format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',Bundle_Name = pending.Bundle_Name, version = pending.Bundle_Version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
+    send_mail('{Bundle_Name} App - Successfully Submitted.'.format(Bundle_Name = pending.Bundle_Name), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
-
-def _verify_javadocs_jar(file):
-    error_msg = None
-    file.open(mode = 'rb')
-    try:
-        zip = ZipFile(file, 'r')
-        for name in zip.namelist():
-            pathpieces = name.split('/')
-            if name.startswith('/') or '..' in pathpieces:
-                error_msg = 'The zip archive has a file path that is illegal: %s' % name
-                break
-        zip.close()
-    except:
-        error_msg = 'The Javadocs Jar file you submitted is not a valid jar/zip file'
-    file.close()
-    return error_msg
 
 def _send_email_for_accepted_app(to_email, from_email, app_fullname, app_name, server_url):
     subject = u'IGB App Store - {app_fullname} Has Been Approved'.format(app_fullname = app_fullname)
@@ -232,15 +215,15 @@ def _get_server_url(request):
 
 
 def _pending_app_accept(pending, request):
-    name = fullname_to_name(pending.fullname)
+    name = fullname_to_name(pending.Bundle_Name)
     # we always create a new app, because only new apps require accepting
-    app = App.objects.create(fullname = pending.fullname, name = name)
+    app = App.objects.create(Bundle_Name = pending.Bundle_Name, name = name)
     app.active = True
-    app.symbolicname = pending.symbolicname
+    app.Bundle_SymbolicName = pending.Bundle_SymbolicName
     app.details = pending.details
     app.Bundle_Version = pending.Bundle_Version
     app.editors.add(pending.submitter)
-    app.repository = pending.repository
+    app.repository_xml = pending.repository_xml
     app.save()
 
     pending.make_release(app)
@@ -248,7 +231,7 @@ def _pending_app_accept(pending, request):
     pending.delete()
 
     server_url = _get_server_url(request)
-    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.fullname, app.name, server_url)
+    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.Bundle_Name, app.name, server_url)
 
 
 def _pending_app_decline(pending_app, request):
@@ -286,68 +269,24 @@ def pending_apps(request):
     return html_response('pending_apps.html', {'pending_apps': pending_apps}, request)
 
 
-def _get_deploy_url(groupId, artifactId, version):
-    return '/'.join((AppRepoUrl, groupId.replace('.', '/'), artifactId, version))
-
-
-def _url_exists(url):
-    try:
-        reader = urlopen(url)
-        if reader.getcode() == 200:
-            return True
-    except:
-        pass
-    return False
-
-
-def artifact_exists(request):
-    if request.method != 'POST':
-        return HttpResponseBadRequest('no data')
-    postLookup = request.POST.get
-    groupId, artifactId, version = postLookup('groupId'), postLookup('artifactId'), postLookup('version')
-    if not groupId or not artifactId or not version:
-        return HttpResponseBadRequest('groupId, artifactId, or version not specified')
-    deployUrl = _get_deploy_url(groupId, artifactId, version)
-    return json_response(_url_exists(deployUrl))
-
-#
-# 2.x plugin management page
-#
-
-
-_PluginXmlUrl = 'http://chianti.ucsd.edu/cyto_web/plugins/plugins.xml'
-
-
-def _forward_plugins_xml(request_post):
-    try:
-        reader = urlopen(_PluginXmlUrl)
-        if reader.getcode() != 200:
-            raise Error('retrieve failed')
-        r = HttpResponse(content_type = 'application/xml')
-        r.write(reader.read())
-        return r
-    except:
-        return HttpResponse('Unable to retrieve: %s' % PluginXmlUrl, content_type='text/plain', status=503)
-
-
 def _app_info(request_post):
-    fullname = request_post.get('app_fullname')
-    name = fullname_to_name(fullname)
+    Bundle_Name = request_post.get('app_fullname')
+    name = fullname_to_name(Bundle_Name)
     url = reverse('app_page', args=(name,))
     exists = App.objects.filter(name = name, active = True).count() > 0
     return json_response({'url': url, 'exists': exists})
 
 
 def _update_app_page(request_post):
-    fullname = request_post.get('fullname')
-    if not fullname:
-        return HttpResponseBadRequest('"fullname" not specified')
-    name = fullname_to_name(fullname)
+    Bundle_Name = request_post.get('Bundle_Name')
+    if not Bundle_Name:
+        return HttpResponseBadRequest('"Bundle_Name" not specified')
+    name = fullname_to_name(Bundle_Name)
     app = get_object_or_none(App, name = name)
     if app:
         app.active = True
     else:
-        app = App.objects.create(name = name, fullname = fullname)
+        app = App.objects.create(name = name, Bundle_Name = Bundle_Name)
 
     details = request_post.get('details')
     if details:

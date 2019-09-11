@@ -6,13 +6,13 @@ register = template.Library()
 @register.inclusion_tag('app_button.html')
 def app_button(app, order_index):
     try:
-        app.star_percentage = 100 * app.object.stars / 5 / app.object.votes if app.object.votes else 0
+        app.star_percentage = 100 * app.object.stars / 5
         c = {}
         c['app'] = app.object
         c['order_index'] = order_index
         return c
     except:
-        app.star_percentage = 100 * app.stars / 5 / app.votes if app.votes else 0 
+        app.star_percentage = 100 * app.stars / 5
         c = {}
         c['app'] = app
         c['order_index'] = order_index
@@ -43,7 +43,6 @@ def list_of_apps_search(apps, include_relevancy = False):
                     # button name       div attr name          attr type
     sort_criteria = (('name',           'object.fullname',            'str'),
                     ('downloads',      'object.downloads',           'int'),
-                    ('votes',          'object.votes',               'int'),
                     ('newest release', 'object.latest_release_date', 'date'))
     if (include_relevancy):
         sort_criteria = (('relevancy',  'order_index',  'int'), ) + sort_criteria
@@ -60,7 +59,6 @@ def list_of_apps(apps, include_relevancy = False):
                     # button name       div attr name          attr type
     sort_criteria = (('name',           'fullname',            'str'),
                      ('downloads',      'downloads',           'int'),
-                     ('votes',          'votes',               'int'),
                      ('newest release', 'latest_release_date', 'date'))
     if (include_relevancy):
         sort_criteria = (('relevancy',  'order_index',  'int'), ) + sort_criteria

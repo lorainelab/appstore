@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/base.css" />
 {% endblock %}
 
-{% block title %}- Edit {{ app.fullname }}{% endblock %}
+{% block title %}- Edit {{ app.Bundle_Name }}{% endblock %}
 
 {% block content %}
 {# app header #}
@@ -18,12 +18,12 @@
         {# App Name and Icon #}
         <div class="row">
             <div class="col-md-2">
-                <img class="appimg" id="app-icon" src="{{ app.icon_url }}" data-toggle="tooltip" title="Click here to choose another icon">
+                <img class="appimg" id="app-icon" src="{{ app.logo_url }}" data-toggle="tooltip" title="Click here to choose another icon">
             </div>
             <div class="col-md-10">
                 {# App Name and description #}
                 <h2 class="app-name-edit" data-toggle="tooltip" title="Your app name cannot be changed">
-                    {{ app.fullname }}
+                    {{ app.Bundle_Name }}
                 </h2>
                 <input class="form-control" type="text" id="app-description" placeholder="Enter a short description of your app here;"
                        value="{% if app.description %}{{ app.description|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}" />
@@ -179,7 +179,7 @@
                             <strong>Apps that depend on this release</strong>
                             <ul>
                                 {% for dependent in release.dependents.all %}
-                                <li><a href="{% url 'app_page' dependent.app.name %}" target="_blank">{{ dependent.app.fullname }}</a> {{ dependent.version }}</li>
+                                <li><a href="{% url 'app_page' dependent.app.name %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
                                 {% endfor %}
                             </ul>
                         </p>
@@ -229,16 +229,16 @@
 
             <div class="form-group margin-top" id="app-license-text">
                 <label>License: </label>
-                <input class="form-control" type="text" placeholder="License URL (http://...)" value="{% if app.license_text %}{{ app.license_text }}{% endif %}">
+                <input class="form-control" type="text" placeholder="License URL (http://...)" value="{% if app.license_url %}{{ app.license_url }}{% endif %}">
                 <input type="checkbox" {% if app.license_confirm %}checked{% endif %}> Require confirmation
             </div>
             <div class="form-group" id="app-website">
                 <label><i class="fa fa-home"></i> Website:</label>
-                <input class="form-control" type="text"  value="{% if app.website %}{{ app.website }}{% endif %}">
+                <input class="form-control" type="text"  value="{% if app.website_url %}{{ app.website_url }}{% endif %}">
             </div>
             <div class="form-group" id="app-tutorial">
                 <label><i class="fa fa-book"></i> Tutorial:</label>
-                <input class="form-control" type="text" value="{% if app.tutorial %}{{ app.tutorial }}{% endif %}">
+                <input class="form-control" type="text" value="{% if app.tutorial_url %}{{ app.tutorial_url }}{% endif %}">
             </div>
             <div class="form-group" id="app-citation" validate_regexp="^\d+$">
                 <label><i class="fa fa-heart"></i> Citation:</label>
@@ -247,15 +247,11 @@
             </div>
             <div class="form-group" id="app-coderepo">
                 <label><i class="fa fa-code-fork"></i> Code Repository:</label>
-                <input class="form-control" type="text" value="{% if app.coderepo %}{{ app.coderepo }}{% endif %}">
-            </div>
-            <div class="form-group"  id="app-automation">
-                <label><i class="fa fa-gear fa-spin"></i> Automation Support:</label>
-                <input class="form-control" type="text" value="{% if 'www' in app.automation %}{{ app.automation }}{% endif %}">
+                <input class="form-control" type="text" value="{% if app.code_repository_url %}{{ app.code_repository_url }}{% endif %}">
             </div>
             <div class="form-group" id="app-contact">
                 <label><i class="fa fa-envelope"></i> Contact Email:</label>
-                <input class="form-control" type="text" value="{% if app.contact %}{{ app.contact }}{% endif %}">
+                <input class="form-control" type="text" value="{% if app.contact_email %}{{ app.contact_email }}{% endif %}">
             </div>
         </div>
         {# end resources #}
@@ -421,7 +417,7 @@
 
         AppPageEdit.setup_details();
         AppPageEdit.set_app_page_url("{% url 'app_page' app.name %}");
-        AppPageEdit.set_loading_icon_url('{% get_static_prefix %}common/img/loading_small.gif');
+        AppPageEdit.set_loading_logo_url('{% get_static_prefix %}common/img/loading_small.gif');
 
         AppPageEdit.setup_add_editor_btn();
         {% for editor in app.editors.all %}
