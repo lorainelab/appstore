@@ -2,7 +2,7 @@
 <div class="wrap">
     <div class="box-part app_button"
             order_index="{{ order_index }}"
-            fullname="{{ app.fullname }}"
+            Bundle_Name="{{ app.Bundle_Name }}"
             downloads="{{ app.downloads }}"
             latest_release_date="{{ app.latest_release_date.isoformat }}"
             onClick="window.location='{% url 'app_page' app.name %}';">
@@ -13,7 +13,7 @@
             <div class="col-md-9">
                 <div class="row">
                     <div class="col-md-12">
-                        <h6 data-toggle="tooltip" data-title="{{ app.fullname }}">{{ app.fullname | truncatechars:40 }}</h6>
+                        <h6 data-toggle="tooltip" data-title="{{ app.Bundle_Name }}">{{ app.Bundle_Name | truncatechars:40 }}</h6>
                     </div>
                     {% if app.description %}
                     <div class="col-md-12 desc-spaced">
