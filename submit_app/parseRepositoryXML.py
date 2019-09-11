@@ -28,7 +28,7 @@ def writeToDatabase(host,user,passwd,database):
 		if mydb.is_connected():
 			root = readXML()
 			for resource in root.findall('resource'):
-				name = resource.attrib["bundle_symbolicName"]
+				name = resource.attrib["symbolicname"]
 				name = name.replace("-", "_")
 				name = name.replace(".", "_")
 				fullname = resource.attrib["presentationname"]

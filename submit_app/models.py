@@ -18,7 +18,7 @@ except ImportError:
 class AppPending(models.Model):
     submitter           = models.ForeignKey(User,on_delete=models.CASCADE)
     fullname            = models.CharField(max_length=127) # Bundle-Name
-    bundle_symbolicName        = models.CharField(max_length=127) # Bundle-SymbolicName
+    Bundle_SymbolicName        = models.CharField(max_length=127) # Bundle-SymbolicName
     details             = models.TextField(blank=True, null=True) # Bundle-Description
     version             = models.CharField(max_length=31) # Bundle-Version
     works_with          = models.CharField(max_length=31, null=True, blank=True, default="9.1.0")

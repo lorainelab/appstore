@@ -91,8 +91,8 @@ def generate_xml(dict_ver, tree, state):
         repository.set('lastmodified', dict_ver.lastmodified)
 
     resource = ET.SubElement(repository, 'resource')
-    resource.set('id', dict_ver.bundle_symbolicName + '\\' + dict_ver.version)
-    resource.set('bundle_symbolicName', dict_ver.bundle_symbolicName)
+    resource.set('id', dict_ver.Bundle_SymbolicName + '\\' + dict_ver.version)
+    resource.set('symbolicname', dict_ver.Bundle_SymbolicName)
     resource.set('presentationname', dict_ver.fullname)
     if state == 'pending':
         resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
@@ -111,8 +111,8 @@ def generate_xml(dict_ver, tree, state):
     capability.set('name', 'bundle')
 
     p = ET.SubElement(capability, 'p')
-    p.set('n', 'bundle_symbolicName')
-    p.set('v', dict_ver.bundle_symbolicName,)
+    p.set('n', 'symbolicname')
+    p.set('v', dict_ver.Bundle_SymbolicName,)
 
     p = ET.SubElement(capability, 'p')
     p.set('n', 'presentationname')
