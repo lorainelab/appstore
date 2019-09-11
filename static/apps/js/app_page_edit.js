@@ -119,7 +119,6 @@ var AppPageEdit = (function($)
         field_change($('#app-tutorial'), field_modified('tutorial'));
         field_change($('#app-citation'), field_modified('citation'));
         field_change($('#app-coderepo'), field_modified('coderepo'));
-	    field_change($('#app-automation'), field_modified('automation'));
         field_change($('#app-contact'), field_modified('contact'));
     }
 
@@ -680,8 +679,7 @@ var AppPageEdit = (function($)
         'tutorial': mk_field_save_action('Saving tutorial URL', 'save_tutorial', 'tutorial', $('#app-tutorial input')),
         'citation': mk_field_save_action('Saving citation URL', 'save_citation', 'citation', $('#app-citation input')),
         'coderepo': mk_field_save_action('Saving code repository URL', 'save_coderepo', 'coderepo', $('#app-coderepo input')),
-        'automation': mk_field_save_action('Saving automation URL', 'save_automation', 'automation', $('#app-automation input')),
-	'contact': mk_field_save_action('Saving contact email', 'save_contact', 'contact', $('#app-contact input')),
+	    'contact': mk_field_save_action('Saving contact email', 'save_contact', 'contact', $('#app-contact input')),
         'details': mk_field_save_action('Saving details', 'save_details', 'details', $('#app-details')),
         'tags': function() {
             var tags = $('#app-tags-list .app-tag-name');
