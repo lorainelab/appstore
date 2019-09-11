@@ -357,7 +357,7 @@ class _AppPageEditConfig:
 	app_description_maxlength = 140
 
 
-def _upload_icon(app, request):
+def _upload_logo(app, request):
 	f = request.FILES.get('file')
 	if not f:
 		raise ValueError('no file submitted')
@@ -365,7 +365,7 @@ def _upload_icon(app, request):
 		raise ValueError(
 			'image file is %d bytes but can be at most %d bytes' % (f.size, _AppPageEditConfig.max_img_size_b))
 	f = scale_img(f, f.name, _AppPageEditConfig.max_icon_dim_px, 'both')
-	app.icon.save(f.name, f)
+	app.logo.save(f.name, f)
 
 
 def _upload_screenshot(app, request):
@@ -509,16 +509,16 @@ def _delete_release(app, request):
 
 _AppEditActions = {
 	'save_description': _mk_basic_field_saver('description'),
-	'save_license_text': _mk_basic_field_saver('license_text'),
+	'save_license_url': _mk_basic_field_saver('license_url'),
 	'save_license_confirm': _mk_basic_field_saver('license_confirm', func=lambda s: s.lower() == 'true'),
-	'save_website': _mk_basic_field_saver('website'),
-	'save_tutorial': _mk_basic_field_saver('tutorial'),
+	'save_website_url': _mk_basic_field_saver('website_url'),
+	'save_tutorial_url': _mk_basic_field_saver('tutorial_url'),
 	'save_citation': _mk_basic_field_saver('citation'),
-	'save_coderepo': _mk_basic_field_saver('coderepo'),
-	'save_contact': _mk_basic_field_saver('contact'),
+	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
+	'save_contact_email': _mk_basic_field_saver('contact_email'),
 	'save_details': _mk_basic_field_saver('details'),
 	'save_tags': _save_tags,
-	'upload_icon': _upload_icon,
+	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
 	'delete_screenshot': _delete_screenshot,
 	'check_editor': _check_editor,

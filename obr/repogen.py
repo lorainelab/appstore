@@ -201,7 +201,7 @@ def initial_generation(dict_ver, state):
     :param state: Pending or Released ?
     :return: ElementTree
     """
-    element_tree = ET.fromstring(dict_ver.repository)
+    element_tree = ET.fromstring(dict_ver.repository_xml)
     current_resource = element_tree.find('resource')
     if state == 'pending':
         current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
@@ -224,7 +224,7 @@ def main(status):
             if i == 0:
                 gen_tree = initial_generation(all_entries[i], status)
             else:
-                tree = ET.fromstring(all_entries[i].repository)
+                tree = ET.fromstring(all_entries[i].repository_xml)
                 gen_tree = xml_generator(all_entries[i], gen_tree, tree, status)
         return gen_tree
     else:
