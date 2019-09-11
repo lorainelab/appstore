@@ -33,7 +33,7 @@ def submit_app(request):
                 pending = _create_pending(request.user, jar_details, f)
                 version_pattern ="^[0-9].[0-9].[0-9]+"
                 version_pattern = re.compile(version_pattern)
-                if not bool(version_pattern.match(jar_details['version'])):
+                if not bool(version_pattern.match(jar_details['Bundle_Version'])):
                     raise ValueError("The version is not in proper pattern. It should have 3 order version numbering "
                                      "(e.g: x.y.z)")
                 if jar_details['has_export_pkg']:
@@ -101,7 +101,7 @@ def _create_pending(submitter, jar_details, release_file):
                                         Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
                                         details         = base64.b64decode(jar_details['details']).decode('utf-8'),
                                         Bundle_Name        = jar_details['Bundle_Name'],
-                                        Bundle_Version         = jar_details['version'],
+                                        Bundle_Version         = jar_details['Bundle_Version'],
                                         repository_xml      = jar_details['repository'])
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
