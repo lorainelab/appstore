@@ -82,7 +82,6 @@ class App(models.Model):
     tutorial_url     = models.URLField(blank=True, null=True)
     citation     = models.CharField(max_length=31, blank=True, null=True)
     code_repository_url     = models.URLField(blank=True, null=True)
-    automation   = models.URLField(blank=True, null=True)
 
     contact_email      = models.EmailField(blank=True, null=True)
 

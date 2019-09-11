@@ -61,7 +61,7 @@ logger = logging.getLogger("app_page.html") %}
 				<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
 				{# End Helpdesk #}
 				{# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
-				{% if app.citation or  app.code_repository_url or app.automation %}
+				{% if app.citation or  app.code_repository_url %}
 				{# Citations #}
 				{% if app.citation %}
 				<span> | </span>

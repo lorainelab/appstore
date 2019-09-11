@@ -515,7 +515,6 @@ _AppEditActions = {
 	'save_tutorial_url': _mk_basic_field_saver('tutorial_url'),
 	'save_citation': _mk_basic_field_saver('citation'),
 	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
-	'save_automation': _mk_basic_field_saver('automation'),
 	'save_contact_email': _mk_basic_field_saver('contact_email'),
 	'save_details': _mk_basic_field_saver('details'),
 	'save_tags': _save_tags,
