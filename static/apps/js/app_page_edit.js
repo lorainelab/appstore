@@ -113,14 +113,13 @@ var AppPageEdit = (function($)
         }
 
         field_change($('#app-description'), field_modified('description'));
-        field_change($('#app-license-text input[type=text]'), field_modified('license_text'));
+        field_change($('#app-license-text input[type=text]'), field_modified('license_url'));
         $('#app-license-text input[type=checkbox]').click(field_modified('license_confirm'));
-        field_change($('#app-website'), field_modified('website'));
-        field_change($('#app-tutorial'), field_modified('tutorial'));
+        field_change($('#app-website'), field_modified('website_url'));
+        field_change($('#app-tutorial'), field_modified('tutorial_url'));
         field_change($('#app-citation'), field_modified('citation'));
-        field_change($('#app-coderepo'), field_modified('coderepo'));
-	    field_change($('#app-automation'), field_modified('automation'));
-        field_change($('#app-contact'), field_modified('contact'));
+        field_change($('#app-coderepo'), field_modified('code_repository_url'));
+        field_change($('#app-contact'), field_modified('contact_email'));
     }
 
     /* ===============================
@@ -133,7 +132,7 @@ var AppPageEdit = (function($)
 
         setup_image_chooser(icon_file_chooser_tag, function(file, img_url) {
             app_icon_tag.attr('src', img_url);
-            SaveActions['icon'] = file;
+            SaveActions['logo'] = file;
             save_btn_tag.removeClass('disabled');
         });
 
@@ -556,14 +555,14 @@ var AppPageEdit = (function($)
        =============================== */
 
     var app_page_url;
-    var loading_icon_url;
+    var loading_logo_url;
 
     function set_app_page_url(_app_page_url) {
         app_page_url = _app_page_url;
     }
 
-    function set_loading_icon_url(_loading_icon_url) {
-        loading_icon_url = _loading_icon_url;
+    function set_loading_logo_url(_loading_logo_url) {
+        loading_logo_url = _loading_logo_url;
     }
 
     function setup_cancel_btn() {
@@ -609,7 +608,7 @@ var AppPageEdit = (function($)
 
     function add_action_msg(msg) {
         var msg_tag = $('<p>').html(msg).appendTo(save_modal_body);
-        $('<img>').attr('src', loading_icon_url).appendTo(msg_tag);
+        $('<img>').attr('src', loading_logo_url).appendTo(msg_tag);
     }
 
     function finish_last_action_msg() {
@@ -666,7 +665,7 @@ var AppPageEdit = (function($)
     */
     var SaveActionsToAjax = {
         'description': mk_field_save_action('Saving description', 'save_description', 'description', $('#app-description')),
-        'license_text': mk_field_save_action('Saving license URL', 'save_license_text', 'license_text', $('#app-license-text input[type=text]')),
+        'license_url': mk_field_save_action('Saving license URL', 'save_license_url', 'license_url', $('#app-license-text input[type=text]')),
         'license_confirm': function() {
             return {
                 'msg': 'Saving license confirm',
@@ -676,12 +675,11 @@ var AppPageEdit = (function($)
                 }
             };
         },
-        'website': mk_field_save_action('Saving website URL', 'save_website', 'website', $('#app-website input')),
-        'tutorial': mk_field_save_action('Saving tutorial URL', 'save_tutorial', 'tutorial', $('#app-tutorial input')),
+        'website_url': mk_field_save_action('Saving website URL', 'save_website_url', 'website_url', $('#app-website input')),
+        'tutorial_url': mk_field_save_action('Saving tutorial URL', 'save_tutorial_url', 'tutorial_url', $('#app-tutorial input')),
         'citation': mk_field_save_action('Saving citation URL', 'save_citation', 'citation', $('#app-citation input')),
-        'coderepo': mk_field_save_action('Saving code repository URL', 'save_coderepo', 'coderepo', $('#app-coderepo input')),
-        'automation': mk_field_save_action('Saving automation URL', 'save_automation', 'automation', $('#app-automation input')),
-	'contact': mk_field_save_action('Saving contact email', 'save_contact', 'contact', $('#app-contact input')),
+        'code_repository_url': mk_field_save_action('Saving code repository URL', 'save_code_repository_url', 'code_repository_url', $('#app-coderepo input')),
+	    'contact_email': mk_field_save_action('Saving contact email', 'save_contact_email', 'contact_email', $('#app-contact input')),
         'details': mk_field_save_action('Saving details', 'save_details', 'details', $('#app-details')),
         'tags': function() {
             var tags = $('#app-tags-list .app-tag-name');
@@ -697,7 +695,7 @@ var AppPageEdit = (function($)
                 'data': data
             };
         },
-        'icon': mk_file_save_action('Uploading icon <tt>%s</tt>',  'upload_icon'),
+        'logo': mk_file_save_action('Uploading icon <tt>%s</tt>',  'upload_logo'),
         'screenshots': function(screenshots) {
             var ajax_maker = mk_file_save_action('Uploading screenshot <tt>%s</tt>', 'upload_screenshot');
             // We remove all undefined values from SaveActions.screenshots before converting
@@ -897,7 +895,7 @@ var AppPageEdit = (function($)
         'setup_screenshot_btns': setup_screenshot_btns,
         'setup_details': setup_details,
         'set_app_page_url': set_app_page_url,
-        'set_loading_icon_url': set_loading_icon_url,
+        'set_loading_logo_url': set_loading_logo_url,
         'setup_add_editor_btn': setup_add_editor_btn,
         'add_editor': add_editor,
         'setup_author_add_btn': setup_author_add_btn,

@@ -39,7 +39,7 @@ def process_jar(jar_file, expect_app_name):
 
     is_osgi_bundle = True if manifest.get('Bundle-SymbolicName') else False
     parser_func = _parse_osgi_bundle if is_osgi_bundle else _parse_simple_app
-    symbolicname = manifest.get('Bundle-SymbolicName')[0]
+    Bundle_SymbolicName = manifest.get('Bundle-SymbolicName')[0]
     if manifest.get('Bundle-Description') is not None:
         details_dict['details'] = manifest.get('Bundle-Description')[0]
     else:
@@ -48,11 +48,11 @@ def process_jar(jar_file, expect_app_name):
     app_name, app_ver, app_dependencies, has_export_pkg = parser_func(manifest)
     details_dict['has_export_pkg'] = has_export_pkg
 
-    details_dict['fullname'] = smart_text(app_name, errors='replace')
+    details_dict['Bundle_Name'] = smart_text(app_name, errors='replace')
     if expect_app_name and (not app_name == expect_app_name):
         raise ValueError('has app name as <tt>%s</tt> but must be <tt>%s</tt>' % (app_name, expect_app_name))
-    details_dict['version'] = smart_text(app_ver, errors='replace')
-    details_dict['symbolicname'] = smart_text(symbolicname, errors='replace')
+    details_dict['Bundle_Version'] = smart_text(app_ver, errors='replace')
+    details_dict['Bundle_SymbolicName'] = smart_text(Bundle_SymbolicName, errors='replace')
     return details_dict
 
 
@@ -107,6 +107,7 @@ def _get_name_and_version(manifest, name_attr, version_attr):
         raise ValueError('<tt>%s</tt> does not follow this format: <i>major</i>[.<i>minor</i>][.<i>patch</i>][.<i>tag</i>]' % version_attr)
 
     return app_name, app_version
+
 
 def _ver_tuple_to_str(tup):
     return tup[0] + ('.' + tup[1] if tup[1] else '') + ('.' + tup[2] if tup[2] else '') + ('.' + tup[3] if tup[3] else '')

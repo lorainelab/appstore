@@ -2,7 +2,7 @@ from apps.models import App
 from util.view_util import obj_to_dict, iter_to_dict, json_response
 
 def _app_to_obj(app):
-	result = obj_to_dict(app, ('fullname', 'description', 'icon_url',  'page_url', 'downloads', 'stars_percentage', 'votes', 'citation'))
+	result = obj_to_dict(app, ('fullname', 'description', 'icon_url',  'page_url', 'downloads', 'stars_percentage', 'citation'))
 	result['tags'] = [tag.fullname for tag in app.categories.all()]
 	result['releases'] = iter_to_dict(app.releases, ('version', 'created_iso', 'release_download_url', 'works_with', 'hexchecksum', 'notes'))
 	return result

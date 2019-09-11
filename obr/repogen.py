@@ -91,14 +91,14 @@ def generate_xml(dict_ver, tree, state):
         repository.set('lastmodified', dict_ver.lastmodified)
 
     resource = ET.SubElement(repository, 'resource')
-    resource.set('id', dict_ver.symbolicname + '\\' + dict_ver.version)
-    resource.set('symbolicname', dict_ver.symbolicname)
+    resource.set('id', dict_ver.Bundle_SymbolicName + '\\' + dict_ver.Bundle_Version)
+    resource.set('symbolicname', dict_ver.Bundle_SymbolicName)
     resource.set('presentationname', dict_ver.fullname)
     if state == 'pending':
         resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
     else:
-        resource.set('uri', '/media/' + get_fullname(dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.version + '/' + dict_ver.release_file_name)
-    resource.set('version', dict_ver.version)
+        resource.set('uri', '/media/' + get_fullname(dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.Bundle_Version + '/' + dict_ver.release_file_name)
+    resource.set('version', dict_ver.Bundle_Version)
 
     description = ET.SubElement(resource, 'description')
     temp = dict_ver.details.encode('utf-8')
@@ -112,7 +112,7 @@ def generate_xml(dict_ver, tree, state):
 
     p = ET.SubElement(capability, 'p')
     p.set('n', 'symbolicname')
-    p.set('v', dict_ver.symbolicname,)
+    p.set('v', dict_ver.Bundle_SymbolicName,)
 
     p = ET.SubElement(capability, 'p')
     p.set('n', 'presentationname')
@@ -120,7 +120,7 @@ def generate_xml(dict_ver, tree, state):
 
     p = ET.SubElement(capability, 'p')
     p.set('n', 'version')
-    p.set('v', dict_ver.version)
+    p.set('v', dict_ver.Bundle_Version)
 
     p = ET.SubElement(capability, 'p')
     p.set('n', 'manifestversion')
@@ -187,7 +187,7 @@ def xml_generator(dict_ver, gen_tree, tree, state):
     if state == 'pending':
         current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
     else:
-        current_resource.set('uri', '/media/' + get_fullname(dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.version +
+        current_resource.set('uri', '/media/' + get_fullname(dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.Bundle_Version +
                              '/' + dict_ver.release_file_name)
 
     super_tree.append(current_resource)
@@ -201,13 +201,13 @@ def initial_generation(dict_ver, state):
     :param state: Pending or Released ?
     :return: ElementTree
     """
-    element_tree = ET.fromstring(dict_ver.repository)
+    element_tree = ET.fromstring(dict_ver.repository_xml)
     current_resource = element_tree.find('resource')
     if state == 'pending':
         current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
     else:
         current_resource.set('uri', '/media/' + get_fullname(
-            dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.version + '/' + dict_ver.release_file_name)
+            dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.Bundle_Version + '/' + dict_ver.release_file_name)
     return element_tree
 
 
@@ -224,7 +224,7 @@ def main(status):
             if i == 0:
                 gen_tree = initial_generation(all_entries[i], status)
             else:
-                tree = ET.fromstring(all_entries[i].repository)
+                tree = ET.fromstring(all_entries[i].repository_xml)
                 gen_tree = xml_generator(all_entries[i], gen_tree, tree, status)
         return gen_tree
     else:
