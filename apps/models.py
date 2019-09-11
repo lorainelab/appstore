@@ -60,7 +60,7 @@ class App(models.Model):
     symbolicname = models.CharField(max_length=127, unique=True)
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
-    Bundle_Version       = models.TextField(blank=False)
+    Bundle_Version       = models.CharField(max_length=31, blank=False)
     tags         = models.ManyToManyField(Tag, blank=True)
 
     icon         = models.ImageField(blank=True, null=True)
