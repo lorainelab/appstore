@@ -75,7 +75,7 @@ def confirm_submission(request, id):
     pending = get_object_or_404(AppPending, id=int(id))
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
-    pending_obj = AppPending.objects.filter(symbolicname=pending.symbolicname, bundle_version=pending.bundle_version)
+    pending_obj = AppPending.objects.filter(symbolicname=pending.symbolicname, Bundle_Version=pending.Bundle_Version)
     is_pending_replace = True if pending_obj.count() > 1 else False
     action = request.POST.get('action')
     if action:
@@ -101,7 +101,7 @@ def _create_pending(submitter, jar_details, release_file):
                                         symbolicname    = jar_details['symbolicname'],
                                         details         = base64.b64decode(jar_details['details']).decode('utf-8'),
                                         fullname        = jar_details['fullname'],
-                                        bundle_version         = jar_details['version'],
+                                        Bundle_Version         = jar_details['version'],
                                         repository      = jar_details['repository'])
 
     file, file_name = _get_jar_file(release_file)
@@ -164,7 +164,7 @@ The following app has been submitted:
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
     Server Url: {server_url}{admin_url}
-""".format(id=pending.id, fullname=pending.fullname, version=pending.bundle_version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
+""".format(id=pending.id, fullname=pending.fullname, version=pending.Bundle_Version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
     send_mail('{fullname} App - Successfully Submitted.'.format(fullname=pending.fullname), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 
@@ -175,7 +175,7 @@ The following app has been submitted:
     Name: {fullname}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
-""".format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',fullname = pending.fullname, version = pending.bundle_version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
+""".format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',fullname = pending.fullname, version = pending.Bundle_Version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
     send_mail('{fullname} App - Successfully Submitted.'.format(fullname = pending.fullname), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 
@@ -238,7 +238,7 @@ def _pending_app_accept(pending, request):
     app.active = True
     app.symbolicname = pending.symbolicname
     app.details = pending.details
-    app.bundle_version = pending.bundle_version
+    app.Bundle_Version = pending.Bundle_Version
     app.editors.add(pending.submitter)
     app.repository = pending.repository
     app.save()
