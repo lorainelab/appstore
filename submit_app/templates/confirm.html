@@ -50,7 +50,7 @@
                         version {{ pending.version }}.
                     {% else %}
                         This is a new version of a released App {{ pending.Bundle_SymbolicName }}.
-                        Currently, the highest version released in App Store is {{ pending.version }}.
+                        Currently, the highest version released in App Store is {{ pending.Bundle_Version }}.
                     {% endif %} ">
                      <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>
@@ -80,7 +80,7 @@
             <td>
                 <b>Bundle Version</b>
             </td>
-            <td>{{ pending.version }}
+            <td>{{ pending.Bundle_Version }}
                 <button id="tooltip-3" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"  data-trigger="toggle" data-html="true">
                      <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>

@@ -33,7 +33,7 @@ def submit_app(request):
                 pending = _create_pending(request.user, jar_details, f)
                 version_pattern ="^[0-9].[0-9].[0-9]+"
                 version_pattern = re.compile(version_pattern)
-                if not bool(version_pattern.match(jar_details['version'])):
+                if not bool(version_pattern.match(jar_details['Bundle_Version'])):
                     raise ValueError("The version is not in proper pattern. It should have 3 order version numbering "
                                      "(e.g: x.y.z)")
                 if jar_details['has_export_pkg']:
@@ -75,7 +75,7 @@ def confirm_submission(request, id):
     pending = get_object_or_404(AppPending, id=int(id))
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
-    pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, version=pending.version)
+    pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, version=pending.Bundle_Version)
     is_pending_replace = True if pending_obj.count() > 1 else False
     action = request.POST.get('action')
     if action:
@@ -101,9 +101,8 @@ def _create_pending(submitter, jar_details, release_file):
                                         Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
                                         details         = base64.b64decode(jar_details['details']).decode('utf-8'),
                                         Bundle_Name        = jar_details['Bundle_Name'],
-                                        version         = jar_details['version'],
+                                        Bundle_Version         = jar_details['Bundle_Version'],
                                         repository_xml      = jar_details['repository'])
-
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
@@ -164,7 +163,7 @@ The following app has been submitted:
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
     Server Url: {server_url}{admin_url}
-""".format(id=pending.id, Bundle_Name=pending.Bundle_Name, version=pending.version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
+""".format(id=pending.id, Bundle_Name=pending.Bundle_Name, version=pending.Bundle_Version, submitter_name=pending.submitter.username, submitter_email=pending.submitter.email, server_url=server_url, admin_url=admin_url)
     send_mail('{Bundle_Name} App - Successfully Submitted.'.format(Bundle_Name=pending.Bundle_Name), msg, settings.EMAIL_ADDR, settings.CONTACT_EMAILS, fail_silently=False)
 
 
@@ -175,7 +174,7 @@ The following app has been submitted:
     Name: {Bundle_Name}
     Version: {version}
     Submitter: {submitter_name} {submitter_email}
-""".format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',Bundle_Name = pending.Bundle_Name, version = pending.version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
+""".format(approve_text="You'll be notified by email when your app has been approved." if pending.is_new_app else '',Bundle_Name = pending.Bundle_Name, version = pending.Bundle_Version, submitter_name = pending.submitter.username, submitter_email = pending.submitter.email)
     send_mail('{Bundle_Name} App - Successfully Submitted.'.format(Bundle_Name = pending.Bundle_Name), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 
@@ -222,7 +221,7 @@ def _pending_app_accept(pending, request):
     app.active = True
     app.Bundle_SymbolicName = pending.Bundle_SymbolicName
     app.details = pending.details
-    app.version = pending.version
+    app.Bundle_Version = pending.Bundle_Version
     app.editors.add(pending.submitter)
     app.repository_xml = pending.repository_xml
     app.save()
@@ -306,45 +305,3 @@ def _update_app_page(request_post):
 
     app.save()
     return json_response(True)
-
-
-"""
-def _url_exists(url):
-    try:
-        reader = urlopen(url)
-        if reader.getcode() == 200:
-            return True
-    except:
-        pass
-    return False
-
-
-def artifact_exists(request):
-    if request.method != 'POST':
-        return HttpResponseBadRequest('no data')
-    postLookup = request.POST.get
-    groupId, artifactId, version = postLookup('groupId'), postLookup('artifactId'), postLookup('version')
-    if not groupId or not artifactId or not version:
-        return HttpResponseBadRequest('groupId, artifactId, or version not specified')
-    deployUrl = _get_deploy_url(groupId, artifactId, version)
-    return json_response(_url_exists(deployUrl))
-
-#
-# 2.x plugin management page
-#
-
-
-_PluginXmlUrl = 'http://chianti.ucsd.edu/cyto_web/plugins/plugins.xml'
-
-
-def _forward_plugins_xml(request_post):
-    try:
-        reader = urlopen(_PluginXmlUrl)
-        if reader.getcode() != 200:
-            raise Error('retrieve failed')
-        r = HttpResponse(content_type = 'application/xml')
-        r.write(reader.read())
-        return r
-    except:
-        return HttpResponse('Unable to retrieve: %s' % PluginXmlUrl, content_type='text/plain', status=503)
-"""

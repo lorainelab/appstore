@@ -147,7 +147,7 @@
                     <div class="col-md-12 release" release_id="{{ release.id }}">
                         {# Release version #}
                         <h4 style="margin-top:10px;">
-                            {{ release.version }}
+                            {{ release.Bundle_Version }}
                             <small><abbr class="timeago"> {{ release.created_iso }} </abbr></small>
                             <button class="btn btn-light {% if release.dependents.count %} disabled {% endif %} release-delete" style="margin-top:15px;"><i class="fa fa-trash"></i> Delete</button>
                         </h4>

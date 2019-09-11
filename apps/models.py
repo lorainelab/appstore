@@ -63,7 +63,7 @@ class App(models.Model):
     Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
-    version       = models.TextField(blank=False)
+    Bundle_Version       = models.CharField(max_length=31, blank=False)
     tags         = models.ManyToManyField(Tag, blank=True)
 
     logo         = models.ImageField(blank=True, null=True)
@@ -161,12 +161,12 @@ VersionRE = re.compile(r'^(\d+)(?:\.(\d)+)?(?:\.(\d)+)?(?:\.([\w-]+))?$')
 
 
 def release_file_path(release, filename):
-    return pathjoin(release.app.name, 'releases', release.version, filename)
+    return pathjoin(release.app.name, 'releases', release.Bundle_Version, filename)
 
 
 class Release(models.Model):
     app           = models.ForeignKey(App,on_delete=models.CASCADE)
-    version       = models.CharField(max_length=31)
+    Bundle_Version       = models.CharField(max_length=31)
     works_with    = models.CharField(max_length=31)
     notes         = models.TextField(blank=True, null=True)
     created       = models.DateTimeField(auto_now_add=True)
@@ -179,7 +179,7 @@ class Release(models.Model):
 
     @property
     def version_tuple(self):
-        matched = VersionRE.match(self.version)
+        matched = VersionRE.match(self.Bundle_Version)
         if not matched:
             return None
         (major, minor, patch, tag) = matched.groups()
@@ -198,10 +198,10 @@ class Release(models.Model):
 
     @property
     def release_download_url(self):
-        return reverse('release_download', args=[self.app.name, self.version])
+        return reverse('release_download', args=[self.app.name, self.Bundle_Version])
 
     def __unicode__(self):
-        return self.app.Bundle_Name + ' ' + self.version
+        return self.app.Bundle_Name + ' ' + self.Bundle_Version
 
     def calc_checksum(self):
         cs = hashlib.sha512()
