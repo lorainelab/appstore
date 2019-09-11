@@ -45,8 +45,6 @@ logger = logging.getLogger("app_page.html") %}
 				{# Ratings #}
 				<span class="get-app-stars">{{ app.stars_percentage }}</span>
 				<x-star-rating></x-star-rating>
-				<br />
-				<span id="rating-count">Votes : {{ app.votes | escapejs }}</span>
 				{# End Ratings #}
 				{# Downloads #}
 				{% if app.has_releases %}
@@ -76,11 +74,6 @@ logger = logging.getLogger("app_page.html") %}
 				{% if app.code_repository_url %}
 				<a href="{{ app.code_repository_url }}" target="_blank">
 					<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
-				</a>
-				{% endif %}
-				{% if 'www' in app.automation %}
-				<a href="https://{{ app.automation }}" target="_blank">
-					<img src="{% get_static_prefix %}apps/img/automation.png" class="has-tooltip" data-toggle="tooltip" data-title="This app supports automation.">
 				</a>
 				{% endif %}
 				{# end badges #}
@@ -290,14 +283,6 @@ logger = logging.getLogger("app_page.html") %}
 				</li>
 				{% endif %}
 				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-				{% if 'www' in app.automation %}
-				<li>
-					<i class="fa fa-gear fa-spin" style="color:black"></i>
-					<a href="http://{{app.automation}}" target="_blank">
- 						Automation Support
-					</a>
-				</li>
-				{% endif %}
 
 				{% if app.contact_email %}
 				<li>
@@ -372,7 +357,7 @@ logger = logging.getLogger("app_page.html") %}
 </script>
 
 <script type="text/javascript">
-	AppPage.setup_install("{{ app.name | escapejs }}", "{{ app.symbolicname | escapejs }}",  "{{ repository_url | escapejs }}");
+	AppPage.setup_install("{{ app.name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}");
 
 
 	{% if app.details %}

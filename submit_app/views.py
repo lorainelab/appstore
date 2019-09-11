@@ -75,7 +75,7 @@ def confirm_submission(request, id):
     pending = get_object_or_404(AppPending, id=int(id))
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
-    pending_obj = AppPending.objects.filter(symbolicname=pending.symbolicname, version=pending.version)
+    pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, version=pending.version)
     is_pending_replace = True if pending_obj.count() > 1 else False
     action = request.POST.get('action')
     if action:
@@ -98,7 +98,7 @@ dir_path = os.path.dirname(os.path.abspath(__file__))
 
 def _create_pending(submitter, jar_details, release_file):
     pending = AppPending.objects.create(submitter       = submitter,
-                                        symbolicname    = jar_details['symbolicname'],
+                                        Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
                                         details         = base64.b64decode(jar_details['details']).decode('utf-8'),
                                         Bundle_Name        = jar_details['Bundle_Name'],
                                         version         = jar_details['version'],
@@ -220,7 +220,7 @@ def _pending_app_accept(pending, request):
     # we always create a new app, because only new apps require accepting
     app = App.objects.create(Bundle_Name = pending.Bundle_Name, name = name)
     app.active = True
-    app.symbolicname = pending.symbolicname
+    app.Bundle_SymbolicName = pending.Bundle_SymbolicName
     app.details = pending.details
     app.version = pending.version
     app.editors.add(pending.submitter)

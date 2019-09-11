@@ -188,17 +188,15 @@ def _app_rate(app, user, post):
 			raise ValueError()
 	except ValueError:
 		raise ValueError('rating is "%s" but must be an integer between 0 and 5' % rating_n)
-	app.votes += 1
 	app.stars += rating_n
 	app.save()
-	return obj_to_dict(app, ('votes', 'stars_percentage'))
+	return obj_to_dict(app, ('stars_percentage'))
 
 
 def _app_ratings_delete_all(app, user, post):
 	if not app.is_editor(user):
 		return HttpResponseForbidden()
 	app.stars = 0
-	app.votes = 0
 	app.save()
 
 

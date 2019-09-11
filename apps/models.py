@@ -59,8 +59,8 @@ def app_icon_path(app, filename):
 
 class App(models.Model):
     name         = models.CharField(max_length=127, unique=True)
-    Bundle_Name  = models.CharField(max_length=127, unique=True)
-    symbolicname = models.CharField(max_length=127, unique=True)
+    Bundle_Name = models.CharField(max_length=127, unique=True)
+    Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
     description  = models.CharField(max_length=255, blank=True, null=True)
     details      = models.TextField(blank=True, null=True)
     version       = models.TextField(blank=False)
@@ -87,11 +87,9 @@ class App(models.Model):
     contact_email      = models.EmailField(blank=True, null=True)
 
     stars        = models.PositiveIntegerField(default=0)
-    votes        = models.PositiveIntegerField(default=0)
     downloads    = models.PositiveIntegerField(default=0)
 
-    featured = models.BooleanField(default=False)
-    repository_xml = models.TextField(blank=True, null=True) ##OBR Index Repository XML
+    repository_xml = models.TextField(blank=True, null=True)    #OBR Index Repository XML
     active = models.BooleanField(default=False)
 
     def is_editor(self, user):
@@ -106,7 +104,7 @@ class App(models.Model):
 
     @property
     def stars_percentage(self):
-        return 100 * self.stars / self.votes / 5 if self.votes != 0 else 0
+        return 100 * self.stars / 5
 
     @property
     def logo_url(self):

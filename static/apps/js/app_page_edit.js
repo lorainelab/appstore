@@ -681,7 +681,7 @@ var AppPageEdit = (function($)
         'citation': mk_field_save_action('Saving citation URL', 'save_citation', 'citation', $('#app-citation input')),
         'code_repository_url': mk_field_save_action('Saving code repository URL', 'save_code_repository_url', 'code_repository_url', $('#app-coderepo input')),
         'automation': mk_field_save_action('Saving automation URL', 'save_automation', 'automation', $('#app-automation input')),
-	'contact_email': mk_field_save_action('Saving contact email', 'save_contact_email', 'contact_email', $('#app-contact input')),
+	    'contact_email': mk_field_save_action('Saving contact email', 'save_contact_email', 'contact_email', $('#app-contact input')),
         'details': mk_field_save_action('Saving details', 'save_details', 'details', $('#app-details')),
         'tags': function() {
             var tags = $('#app-tags-list .app-tag-name');
