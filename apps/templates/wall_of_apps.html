@@ -39,7 +39,7 @@
 				<td>
 					{% for app in apps %}
 						<a href="{% url 'app_page' app.name %}">
-							<i class="app-icon" rel="tooltip" title="{{ app.fullname }}" style="background-image: url({{ app.logo_url }});"></i>
+							<i class="app-icon" rel="tooltip" title="{{ app.Bundle_Name }}" style="background-image: url({{ app.icon_url }});"></i>
 						</a>
 					{% endfor %}
 				</td>
