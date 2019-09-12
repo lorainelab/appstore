@@ -17,14 +17,14 @@ except ImportError:
 
 class AppPending(models.Model):
     submitter           = models.ForeignKey(User,on_delete=models.CASCADE)
-    Bundle_Name = models.CharField(max_length=127)  # Bundle-Name
-    Bundle_SymbolicName        = models.CharField(max_length=127) # Bundle-SymbolicName
-    details             = models.TextField(blank=True, null=True) # Bundle-Description
+    Bundle_Name         = models.CharField(max_length=127)  # Bundle-Name
+    Bundle_SymbolicName = models.CharField(max_length=127) # Bundle-SymbolicName
+    Bundle_Description  = models.TextField(blank=True, null=True) # Bundle-Description
     Bundle_Version      = models.CharField(max_length=31) # Bundle-Version
     works_with          = models.CharField(max_length=31, null=True, blank=True, default="9.1.0")
     created             = models.DateTimeField(auto_now_add=True)
-    repository_xml         = models.TextField(blank=True, null=True) # OBR index file repository.xml
-    release_file_name = models.CharField(max_length=127) # ?
+    repository_xml      = models.TextField(blank=True, null=True) # OBR index file repository.xml
+    release_file_name   = models.CharField(max_length=127) # ?
     release_file        = models.FileField(upload_to='pending_releases') # ?
 
     def __str__(self):

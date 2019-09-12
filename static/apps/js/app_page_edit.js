@@ -112,7 +112,7 @@ var AppPageEdit = (function($)
             };
         }
 
-        field_change($('#app-description'), field_modified('description'));
+        field_change($('#app-description'), field_modified('short_title'));
         field_change($('#app-license-text input[type=text]'), field_modified('license_url'));
         $('#app-license-text input[type=checkbox]').click(field_modified('license_confirm'));
         field_change($('#app-website'), field_modified('website_url'));
@@ -349,8 +349,8 @@ var AppPageEdit = (function($)
 
     function setup_details() {
         field_change($('#app-details'), function() {
-            if (SaveActions['details']) return;
-            SaveActions['details'] = true;
+            if (SaveActions['Bundle_Description']) return;
+            SaveActions['Bundle_Description'] = true;
             save_btn_tag.removeClass('disabled');
         });
 
@@ -664,7 +664,7 @@ var AppPageEdit = (function($)
       }
     */
     var SaveActionsToAjax = {
-        'description': mk_field_save_action('Saving description', 'save_description', 'description', $('#app-description')),
+        'short_title': mk_field_save_action('Saving short title', 'save_short_title', 'short_title', $('#app-description')),
         'license_url': mk_field_save_action('Saving license URL', 'save_license_url', 'license_url', $('#app-license-text input[type=text]')),
         'license_confirm': function() {
             return {
@@ -680,7 +680,7 @@ var AppPageEdit = (function($)
         'citation': mk_field_save_action('Saving citation URL', 'save_citation', 'citation', $('#app-citation input')),
         'code_repository_url': mk_field_save_action('Saving code repository URL', 'save_code_repository_url', 'code_repository_url', $('#app-coderepo input')),
 	    'contact_email': mk_field_save_action('Saving contact email', 'save_contact_email', 'contact_email', $('#app-contact input')),
-        'details': mk_field_save_action('Saving details', 'save_details', 'details', $('#app-details')),
+        'Bundle_Description': mk_field_save_action('Saving bundle description', 'save_bundle_description', 'Bundle_Description', $('#app-details')),
         'tags': function() {
             var tags = $('#app-tags-list .app-tag-name');
             var data = new Object();
