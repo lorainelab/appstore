@@ -12,10 +12,8 @@ var AppPage = (function($) {
     ================================================================
     */
 
-    function get_app_info(app_symbolicName, repository_url, callback) {
+    function get_app_info(app_bundleSymbolicName, repository_url, callback) {
         var manageApp = 'http://127.0.0.1:7090/manageApp';
-
-        var xhr = createCORSRequest('POST', manageApp, null, app_symbolicName);
 
         if (!xhr) {
             return;
@@ -25,7 +23,7 @@ var AppPage = (function($) {
             if (xhr.readyState === 4 && xhr.status === 200 && callback) {
                 callback(JSON.parse(this.response), this.status);
             } else if(xhr.readyState === 4 && xhr.status === 0) {
-                get_old_app(app_symbolicName, function(app_status, is_running) {
+                get_old_app(app_bundleSymbolicName, function(app_status, is_running) {
 			        if (is_running == "200") {
 			            Msgs.add_msg('Please update to a newer version of IGB @ <a href="https://bioviz.org/download.html" target="_blank"> Click Here </a>',
 			             'info');
@@ -44,10 +42,10 @@ var AppPage = (function($) {
         }
     }
 
-    function get_old_app(app_symbolicName, callback) {
+    function get_old_app(app_bundleSymbolicName, callback) {
         var manageApp = 'http://127.0.0.1:7085/igbStatusCheck';
 
-        var xhr = createCORSRequest('GET', manageApp, null, app_symbolicName);
+        var xhr = createCORSRequest('GET', manageApp, null, app_bundleSymbolicName);
 
         if (!xhr) {
             return;
@@ -63,10 +61,10 @@ var AppPage = (function($) {
         }
     }
 
-    function install_app(app_symbolicName, action, callback) {
+    function install_app(app_bundleSymbolicName, action, callback) {
         var manageApp = 'http://127.0.0.1:7090/manageApp';
 
-        var xhr = createCORSRequest('POST', manageApp, action, app_symbolicName);
+        var xhr = createCORSRequest('POST', manageApp, action, app_bundleSymbolicName);
         if (!xhr) {
             return;
         }
@@ -132,19 +130,19 @@ var AppPage = (function($) {
 		setup_install_btn('btn-info', 'icon-install-install', 'Installing...',appVersion, igbVersion);
     }
 
-	function set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion) {
+	function set_install_btn_to_install(app_name, app_bundleSymbolicName, appVersion, igbVersion) {
 
 		setup_install_btn('btn-info', 'icon-install-install', 'Install', appVersion, igbVersion,
             function() {
                 set_install_btn_to_installing(appVersion, igbVersion);
-                install_app(app_symbolicName, "install", function(app_status, status) {
+                install_app(app_bundleSymbolicName, "install", function(app_status, status) {
                     if (status == "200" && app_status.status == "INSTALLED") {
                         Msgs.add_msg(app_name + ' has been installed! Go to IGB to use it.', 'success');
                         set_download_count('Installed');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
                         Msgs.add_msg('Could not install &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
-                        set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion);
+                        set_install_btn_to_install(app_name, app_bundleSymbolicName, appVersion, igbVersion);
                     }
                 });
             });
@@ -154,17 +152,17 @@ var AppPage = (function($) {
 		setup_install_btn('btn-warning', 'icon-install-upgrade', 'Upgrading...',appVersion, igbVersion);
     }
 
-	function set_install_btn_to_upgrade(app_name, app_symbolicName, appVersion, igbVersion) {
+	function set_install_btn_to_upgrade(app_name, app_bundleSymbolicName, appVersion, igbVersion) {
 		setup_install_btn('btn-warning', 'icon-install-upgrade', 'Upgrade',appVersion, igbVersion,
             function() {
                 set_install_btn_to_upgrading(appVersion, igbVersion);
-                install_app(app_symbolicName, "update", function(app_status, status) {
+                install_app(app_bundleSymbolicName, "update", function(app_status, status) {
                     if (status == "200" && app_status.status == "UPDATED") {
                         Msgs.add_msg(app_name + ' has been updated! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
                         Msgs.add_msg('Could not update &ldquo;' + app_name + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
-                        set_install_btn_to_install(app_name, app_symbolicName, appVersion, igbVersion);
+                        set_install_btn_to_install(app_name, app_bundleSymbolicName, appVersion, igbVersion);
                     }
                 });
             });
@@ -174,16 +172,16 @@ var AppPage = (function($) {
 		setup_install_btn('btn-success', 'icon-install-installed', 'Installed', appVersion, igbVersion);
 	}
 
-	function setup_install(app_name, app_symbolicName, repository_url) {
-		get_app_info(app_symbolicName, repository_url, function(app_status, is_running) {
+	function setup_install(app_name, app_bundleSymbolicName, repository_url) {
+		get_app_info(app_bundleSymbolicName, repository_url, function(app_status, is_running) {
 			if (is_running == "200") {
 					if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
-						set_install_btn_to_install(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
+						set_install_btn_to_install(app_name, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
 					} else if (app_status.status === 'INSTALLED') {
 						set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
 
 					} else if (app_status.status === 'TO_UPDATE') {
-                        set_install_btn_to_upgrade(app_name, app_symbolicName, app_status.appVersion, app_status.igbVersion);
+                        set_install_btn_to_upgrade(app_name, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
 					}
 			} else {
                 Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
@@ -194,17 +192,17 @@ var AppPage = (function($) {
 
 
     // Create and return an XHR object.
-    function createCORSRequest(method, url, action, app_symbolicName) {
+    function createCORSRequest(method, url, action, app_bundleSymbolicName) {
         if(action != null) {
             // POST Data
             formData = {
-                "symbolicName" : app_symbolicName,
+                "symbolicName" : app_bundleSymbolicName,
                 "action" : action
             };
         } else {
             // POST Data
             formData = {
-                "symbolicName" : app_symbolicName,
+                "symbolicName" : app_bundleSymbolicName,
                 "action" : "getInfo"
             };
         }
@@ -275,7 +273,6 @@ var AppPage = (function($) {
             $.post('', {'action': 'rate', 'rating': rating}, function(data) {
                 popover.off('click').popover('destroy').css('cursor', 'default');
                 popover.find('.rating-stars-filled').css('width', data.stars_percentage.toString() + '%');
-                $('#rating-count').text('(' + data.votes.toString() + ')');
                 popover.tooltip({'title': 'Your rating has been submitted. Thanks!'}).tooltip('show');
                 setTimeout(function() {
                     popover.tooltip('hide');
