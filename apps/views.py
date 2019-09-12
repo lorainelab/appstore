@@ -188,17 +188,15 @@ def _app_rate(app, user, post):
 			raise ValueError()
 	except ValueError:
 		raise ValueError('rating is "%s" but must be an integer between 0 and 5' % rating_n)
-	app.votes += 1
 	app.stars += rating_n
 	app.save()
-	return obj_to_dict(app, ('votes', 'stars_percentage'))
+	return obj_to_dict(app, ('stars_percentage'))
 
 
 def _app_ratings_delete_all(app, user, post):
 	if not app.is_editor(user):
 		return HttpResponseForbidden()
 	app.stars = 0
-	app.votes = 0
 	app.save()
 
 
@@ -261,7 +259,7 @@ def get_host_url(request):
 
 def app_page(request, app_name):
 	app = get_object_or_404(App, active=True, name=app_name)
-	decoded_details = app.details
+	decoded_details = app.Bundle_Description
 	# temporarily remove if condition if you want any user to rate
 	user = request.user if request.user.is_authenticated else None
 	if request.user.is_authenticated:
@@ -359,7 +357,7 @@ class _AppPageEditConfig:
 	app_description_maxlength = 140
 
 
-def _upload_icon(app, request):
+def _upload_logo(app, request):
 	f = request.FILES.get('file')
 	if not f:
 		raise ValueError('no file submitted')
@@ -367,7 +365,7 @@ def _upload_icon(app, request):
 		raise ValueError(
 			'image file is %d bytes but can be at most %d bytes' % (f.size, _AppPageEditConfig.max_img_size_b))
 	f = scale_img(f, f.name, _AppPageEditConfig.max_icon_dim_px, 'both')
-	app.icon.save(f.name, f)
+	app.logo.save(f.name, f)
 
 
 def _upload_screenshot(app, request):
@@ -510,18 +508,17 @@ def _delete_release(app, request):
 
 
 _AppEditActions = {
-	'save_description': _mk_basic_field_saver('description'),
-	'save_license_text': _mk_basic_field_saver('license_text'),
+	'save_short_title': _mk_basic_field_saver('short_title'),
+	'save_license_url': _mk_basic_field_saver('license_url'),
 	'save_license_confirm': _mk_basic_field_saver('license_confirm', func=lambda s: s.lower() == 'true'),
-	'save_website': _mk_basic_field_saver('website'),
-	'save_tutorial': _mk_basic_field_saver('tutorial'),
+	'save_website_url': _mk_basic_field_saver('website_url'),
+	'save_tutorial_url': _mk_basic_field_saver('tutorial_url'),
 	'save_citation': _mk_basic_field_saver('citation'),
-	'save_coderepo': _mk_basic_field_saver('coderepo'),
-	'save_automation': _mk_basic_field_saver('automation'),
-	'save_contact': _mk_basic_field_saver('contact'),
-	'save_details': _mk_basic_field_saver('details'),
+	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
+	'save_contact_email': _mk_basic_field_saver('contact_email'),
+	'save_bundle_description': _mk_basic_field_saver('Bundle_Description'),
 	'save_tags': _save_tags,
-	'upload_icon': _upload_icon,
+	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
 	'delete_screenshot': _delete_screenshot,
 	'check_editor': _check_editor,
