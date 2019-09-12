@@ -41,10 +41,10 @@ def process_jar(jar_file, expect_app_name):
     parser_func = _parse_osgi_bundle if is_osgi_bundle else _parse_simple_app
     Bundle_SymbolicName = manifest.get('Bundle-SymbolicName')[0]
     if manifest.get('Bundle-Description') is not None:
-        details_dict['details'] = manifest.get('Bundle-Description')[0]
+        details_dict['Bundle_Description'] = manifest.get('Bundle-Description')[0]
     else:
         # If no description it says "No Description" in base64 below.
-        details_dict['details'] = "Tm8gRGVzY3JpcHRpb24="
+        details_dict['Bundle_Description'] = "Tm8gRGVzY3JpcHRpb24="
     app_name, app_ver, app_dependencies, has_export_pkg = parser_func(manifest)
     details_dict['has_export_pkg'] = has_export_pkg
 

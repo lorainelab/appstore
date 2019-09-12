@@ -25,8 +25,8 @@
                 <h2 class="app-name-edit" data-toggle="tooltip" title="Your app name cannot be changed">
                     {{ app.Bundle_Name }}
                 </h2>
-                <input class="form-control" type="text" id="app-description" placeholder="Enter a short description of your app here;"
-                       value="{% if app.description %}{{ app.description|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}" />
+                <input class="form-control" type="text" id="app-description" placeholder="Enter a short description of your app here"
+                       value="{% if app.short_title %}{{ app.short_title|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}" />
             </div>
     {# End app header #}
         </div>
@@ -41,7 +41,7 @@
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="app-info-tab" data-toggle="tab" href="#app-info" role="tab" aria-controls="app-info" aria-selected="true">Details</a>
+                <a class="nav-link active" id="app-info-tab" data-toggle="tab" href="#app-info" role="tab" aria-controls="app-info" aria-selected="true">Bundle Description</a>
             </li>
             {% if app.has_releases %}
             <li class="nav-item">
@@ -91,15 +91,15 @@
 
                 <br />
 
-                {# Details #}
+                {# Bundle Description #}
                 <div class="row">
                     <div class="col-md-12">
-                        <h6 class="muted">DETAILS</h6>
+                        <h6 class="muted">Bundle Description</h6>
                     </div>
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <textarea id="app-details" class="col-md-12" rows="15">{% if app.details %}{{ app.details }}{% endif %}</textarea>
+                        <textarea id="app-details" class="col-md-12" rows="15">{% if app.Bundle_Description %}{{ app.Bundle_Description }}{% endif %}</textarea>
                     </div>
                     <div class="col-md-12 margin-top">
                         <h6 class="muted">PREVIEW</h6>
@@ -113,7 +113,7 @@
                         </div>
                     </div>
                 </div>
-                {# End Details #}
+                {# End Bundle Description #}
                 <hr />
                 {# authors #}
                 <div class="row"><div class="col-md-12"><h6 class="muted">AUTHORS</h6></div></div>

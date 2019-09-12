@@ -100,10 +100,10 @@ def generate_xml(dict_ver, tree, state):
         resource.set('uri', '/media/' + get_fullname(dict_ver.fullname) + '/' + 'releases' + '/' + dict_ver.Bundle_Version + '/' + dict_ver.release_file_name)
     resource.set('version', dict_ver.Bundle_Version)
 
-    description = ET.SubElement(resource, 'description')
-    temp = dict_ver.details.encode('utf-8')
-    description.text = base64.b64encode(temp).decode('utf-8')
-    # print(base64.b64encode(dict_ver.details.decode('utf-8')))
+    short_title = ET.SubElement(resource, 'description')
+    temp = dict_ver.Bundle_Description.encode('utf-8')
+    short_title.text = base64.b64encode(temp).decode('utf-8')
+    # print(base64.b64encode(dict_ver.Bundle_Description.decode('utf-8')))
     # size = SubElement(resource, 'size')
     # size.text = 'Bundle-Size'
 
