@@ -259,7 +259,7 @@ def get_host_url(request):
 
 def app_page(request, app_name):
 	app = get_object_or_404(App, active=True, name=app_name)
-	decoded_details = app.details
+	decoded_details = app.Bundle_Description
 	# temporarily remove if condition if you want any user to rate
 	user = request.user if request.user.is_authenticated else None
 	if request.user.is_authenticated:
@@ -508,7 +508,7 @@ def _delete_release(app, request):
 
 
 _AppEditActions = {
-	'save_description': _mk_basic_field_saver('description'),
+	'save_short_title': _mk_basic_field_saver('short_title'),
 	'save_license_url': _mk_basic_field_saver('license_url'),
 	'save_license_confirm': _mk_basic_field_saver('license_confirm', func=lambda s: s.lower() == 'true'),
 	'save_website_url': _mk_basic_field_saver('website_url'),
@@ -516,7 +516,7 @@ _AppEditActions = {
 	'save_citation': _mk_basic_field_saver('citation'),
 	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
 	'save_contact_email': _mk_basic_field_saver('contact_email'),
-	'save_details': _mk_basic_field_saver('details'),
+	'save_bundle_description': _mk_basic_field_saver('Bundle_Description'),
 	'save_tags': _save_tags,
 	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
