@@ -85,11 +85,11 @@ logger = logging.getLogger("app_page.html") %}
 				{# Editor menu #}
 				{% if is_editor %}
 				<div class="btn-group pull-right">
-					<a class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<button class="btn btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<i class="fa fa-pencil text-white"></i>
 						&nbsp;Editor Actions
 						<span class="caret"></span>
-					</a>
+					</button>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="{% url 'app_page_edit' app.name %}">Edit this page</a>
 						<div class="dropdown-divider"></div>
