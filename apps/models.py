@@ -61,8 +61,8 @@ class App(models.Model):
     name         = models.CharField(max_length=127, unique=True)
     Bundle_Name = models.CharField(max_length=127, unique=True)
     Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
-    description  = models.CharField(max_length=255, blank=True, null=True)
-    details      = models.TextField(blank=True, null=True)
+    short_title  = models.CharField(max_length=255, blank=True, null=True)
+    Bundle_Description = models.TextField(blank=True, null=True)
     Bundle_Version       = models.CharField(max_length=31, blank=False)
     tags         = models.ManyToManyField(Tag, blank=True)
 
@@ -131,7 +131,7 @@ class App(models.Model):
     def ordered_authors(self):
         return (a.author for a in OrderedAuthor.objects.filter(app = self))
 
-    search_schema = ('^Bundle_Name', 'description', 'details')
+    search_schema = ('^Bundle_Name', 'short_title', 'Bundle_Description')
     search_key = 'name'
 
     def __unicode__(self):

@@ -15,9 +15,9 @@
                     <div class="col-md-12">
                         <h6 data-toggle="tooltip" data-title="{{ app.Bundle_Name }}">{{ app.Bundle_Name | truncatechars:40 }}</h6>
                     </div>
-                    {% if app.description %}
+                    {% if app.short_title %}
                     <div class="col-md-12 desc-spaced">
-                        <p class="desc-box">{{ app.description }}</p>
+                        <p class="desc-box">{{ app.short_title }}</p>
                     </div>
                     {% endif %}
                      <div class="col-md-12">

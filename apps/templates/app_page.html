@@ -40,7 +40,7 @@ logger = logging.getLogger("app_page.html") %}
 				<h2 class="app-name" id="app-name">
 					{{ app.Bundle_Name }}
 				</h2>
-				<span class="app-def-desc">{% if app.description %}<b> {{ app.description }} </b>{% endif %}</span>
+				<span class="app-def-desc">{% if app.short_title %}<b> {{ app.short_title }} </b>{% endif %}</span>
 				<br />
 				{# Ratings #}
 				<span class="get-app-stars">{{ app.stars_percentage }}</span>
@@ -109,7 +109,7 @@ logger = logging.getLogger("app_page.html") %}
 		<!-- Nav tabs -->
 		<ul class="nav nav-tabs" id="myTab" role="tablist">
 			<li class="nav-item">
-				<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">Details</a>
+				<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">Bundle Description</a>
 			</li>
 			{% if app.has_releases %}
 			<li class="nav-item">
@@ -360,7 +360,7 @@ logger = logging.getLogger("app_page.html") %}
 	AppPage.setup_install("{{ app.name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}");
 
 
-	{% if app.details %}
+	{% if app.Bundle_Description %}
 	AppPage.setup_details();
 	{% endif %}
 

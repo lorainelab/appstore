@@ -99,7 +99,7 @@ dir_path = os.path.dirname(os.path.abspath(__file__))
 def _create_pending(submitter, jar_details, release_file):
     pending = AppPending.objects.create(submitter       = submitter,
                                         Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
-                                        details         = base64.b64decode(jar_details['details']).decode('utf-8'),
+                                        Bundle_Description     = base64.b64decode(jar_details['Bundle_Description']).decode('utf-8'),
                                         Bundle_Name        = jar_details['Bundle_Name'],
                                         Bundle_Version         = jar_details['Bundle_Version'],
                                         repository_xml      = jar_details['repository'])
@@ -126,7 +126,7 @@ def _replace_jar_details(request, pending_obj):
     if latest_pending_obj and latest_pending_obj.submitter != request.user:
         raise ValueError('cannot be accepted because you are not an editor')
     name = fullname_to_name(latest_pending_obj.Bundle_Name)
-    existing_pending_obj.details = latest_pending_obj.details
+    existing_pending_obj.Bundle_Description = latest_pending_obj.Bundle_Description
     existing_pending_obj.repository = latest_pending_obj.repository
     existing_pending_obj.Bundle_Name = latest_pending_obj.Bundle_Name
     existing_pending_obj.release_file = latest_pending_obj.release_file
@@ -220,7 +220,7 @@ def _pending_app_accept(pending, request):
     app = App.objects.create(Bundle_Name = pending.Bundle_Name, name = name)
     app.active = True
     app.Bundle_SymbolicName = pending.Bundle_SymbolicName
-    app.details = pending.details
+    app.Bundle_Description = pending.Bundle_Description
     app.Bundle_Version = pending.Bundle_Version
     app.editors.add(pending.submitter)
     app.repository_xml = pending.repository_xml
@@ -288,9 +288,9 @@ def _update_app_page(request_post):
     else:
         app = App.objects.create(name = name, Bundle_Name = Bundle_Name)
 
-    details = request_post.get('details')
-    if details:
-        app.details = details
+    Bundle_Description = request_post.get('Bundle_Description')
+    if Bundle_Description:
+        app.Bundle_Description = Bundle_Description
 
     author_count = request_post.get('author_count')
     if author_count:
