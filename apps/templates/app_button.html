@@ -3,22 +3,21 @@
     <div class="box-part app_button"
             order_index="{{ order_index }}"
             Bundle_Name="{{ app.Bundle_Name }}"
-            votes="{{ app.votes }}"
             downloads="{{ app.downloads }}"
             latest_release_date="{{ app.latest_release_date.isoformat }}"
             onClick="window.location='{% url 'app_page' app.name %}';">
         <div class="row">
             <div class="col-md-3">
-                <img src="{{ app.icon_url }}" class="custom-img">
+                <img src="{{ app.logo_url }}" class="custom-img">
             </div>
             <div class="col-md-9">
                 <div class="row">
                     <div class="col-md-12">
                         <h6 data-toggle="tooltip" data-title="{{ app.Bundle_Name }}">{{ app.Bundle_Name | truncatechars:40 }}</h6>
                     </div>
-                    {% if app.description %}
+                    {% if app.short_title %}
                     <div class="col-md-12 desc-spaced">
-                        <p class="desc-box">{{ app.description }}</p>
+                        <p class="desc-box">{{ app.short_title }}</p>
                     </div>
                     {% endif %}
                      <div class="col-md-12">

@@ -51,7 +51,7 @@ class Tag(models.Model):
         ordering = ["name"]
 
 
-GENERIC_ICON_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
+GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
 
 
 def app_icon_path(app, filename):
@@ -59,14 +59,14 @@ def app_icon_path(app, filename):
 
 class App(models.Model):
     name         = models.CharField(max_length=127, unique=True)
-    Bundle_Name  = models.CharField(max_length=127, unique=True)
-    symbolicname = models.CharField(max_length=127, unique=True)
-    description  = models.CharField(max_length=255, blank=True, null=True)
-    details      = models.TextField(blank=True, null=True)
-    version       = models.TextField(blank=False)
+    Bundle_Name = models.CharField(max_length=127, unique=True)
+    Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
+    short_title  = models.CharField(max_length=255, blank=True, null=True)
+    Bundle_Description = models.TextField(blank=True, null=True)
+    Bundle_Version       = models.CharField(max_length=31, blank=False)
     tags         = models.ManyToManyField(Tag, blank=True)
 
-    icon         = models.ImageField(blank=True, null=True)
+    logo         = models.ImageField(blank=True, null=True)
 
     authors      = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
     editors      = models.ManyToManyField(User, blank=True)
@@ -75,23 +75,20 @@ class App(models.Model):
     has_releases              = models.BooleanField(default=False)
     release_file    = models.FileField()
     release_file_name = models.CharField(max_length=127)
-    license_text    = models.URLField(blank=True, null=True)
+    license_url    = models.URLField(blank=True, null=True)
     license_confirm = models.BooleanField(default=False)
 
-    website      = models.URLField(blank=True, null=True)
-    tutorial     = models.URLField(blank=True, null=True)
+    website_url      = models.URLField(blank=True, null=True)
+    tutorial_url     = models.URLField(blank=True, null=True)
     citation     = models.CharField(max_length=31, blank=True, null=True)
-    coderepo     = models.URLField(blank=True, null=True)
-    automation   = models.URLField(blank=True, null=True)
+    code_repository_url     = models.URLField(blank=True, null=True)
 
-    contact      = models.EmailField(blank=True, null=True)
+    contact_email      = models.EmailField(blank=True, null=True)
 
     stars        = models.PositiveIntegerField(default=0)
-    votes        = models.PositiveIntegerField(default=0)
     downloads    = models.PositiveIntegerField(default=0)
 
-    featured = models.BooleanField(default=False)
-    repository = models.TextField(blank=True, null=True)
+    repository_xml = models.TextField(blank=True, null=True)    #OBR Index Repository XML
     active = models.BooleanField(default=False)
 
     def is_editor(self, user):
@@ -106,11 +103,11 @@ class App(models.Model):
 
     @property
     def stars_percentage(self):
-        return 100 * self.stars / self.votes / 5 if self.votes != 0 else 0
+        return 100 * self.stars / 5
 
     @property
-    def icon_url(self):
-        return self.icon.url if self.icon else GENERIC_ICON_URL
+    def logo_url(self):
+        return self.logo.url if self.logo else GENERIC_LOGO_URL
 
     @property
     def releases(self):
@@ -134,7 +131,7 @@ class App(models.Model):
     def ordered_authors(self):
         return (a.author for a in OrderedAuthor.objects.filter(app = self))
 
-    search_schema = ('^Bundle_Name', 'description', 'details')
+    search_schema = ('^Bundle_Name', 'short_title', 'Bundle_Description')
     search_key = 'name'
 
     def __unicode__(self):
@@ -164,25 +161,25 @@ VersionRE = re.compile(r'^(\d+)(?:\.(\d)+)?(?:\.(\d)+)?(?:\.([\w-]+))?$')
 
 
 def release_file_path(release, filename):
-    return pathjoin(release.app.name, 'releases', release.version, filename)
+    return pathjoin(release.app.name, 'releases', release.Bundle_Version, filename)
 
 
 class Release(models.Model):
     app           = models.ForeignKey(App,on_delete=models.CASCADE)
-    version       = models.CharField(max_length=31)
+    Bundle_Version       = models.CharField(max_length=31)
     works_with    = models.CharField(max_length=31)
     notes         = models.TextField(blank=True, null=True)
     created       = models.DateTimeField(auto_now_add=True)
     active        = models.BooleanField(default=True)
 
-    repository    = models.TextField(blank=True, null=True)
+    repository_xml    = models.TextField(blank=True, null=True) #OBR Index Repository XML
     release_file  = models.FileField(upload_to=release_file_path)
     release_file_name = models.CharField(max_length=127)
     hexchecksum   = models.CharField(max_length=511, blank=True, null=True)
 
     @property
     def version_tuple(self):
-        matched = VersionRE.match(self.version)
+        matched = VersionRE.match(self.Bundle_Version)
         if not matched:
             return None
         (major, minor, patch, tag) = matched.groups()
@@ -201,10 +198,10 @@ class Release(models.Model):
 
     @property
     def release_download_url(self):
-        return reverse('release_download', args=[self.app.name, self.version])
+        return reverse('release_download', args=[self.app.name, self.Bundle_Version])
 
     def __unicode__(self):
-        return self.app.Bundle_Name + ' ' + self.version
+        return self.app.Bundle_Name + ' ' + self.Bundle_Version
 
     def calc_checksum(self):
         cs = hashlib.sha512()

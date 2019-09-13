@@ -39,20 +39,20 @@ def process_jar(jar_file, expect_app_name):
 
     is_osgi_bundle = True if manifest.get('Bundle-SymbolicName') else False
     parser_func = _parse_osgi_bundle if is_osgi_bundle else _parse_simple_app
-    symbolicname = manifest.get('Bundle-SymbolicName')[0]
+    Bundle_SymbolicName = manifest.get('Bundle-SymbolicName')[0]
     if manifest.get('Bundle-Description') is not None:
-        details_dict['details'] = manifest.get('Bundle-Description')[0]
+        details_dict['Bundle_Description'] = manifest.get('Bundle-Description')[0]
     else:
         # If no description it says "No Description" in base64 below.
-        details_dict['details'] = "Tm8gRGVzY3JpcHRpb24="
+        details_dict['Bundle_Description'] = "Tm8gRGVzY3JpcHRpb24="
     app_name, app_ver, app_dependencies, has_export_pkg = parser_func(manifest)
     details_dict['has_export_pkg'] = has_export_pkg
 
     details_dict['Bundle_Name'] = smart_text(app_name, errors='replace')
     if expect_app_name and (not app_name == expect_app_name):
         raise ValueError('has app name as <tt>%s</tt> but must be <tt>%s</tt>' % (app_name, expect_app_name))
-    details_dict['version'] = smart_text(app_ver, errors='replace')
-    details_dict['symbolicname'] = smart_text(symbolicname, errors='replace')
+    details_dict['Bundle_Version'] = smart_text(app_ver, errors='replace')
+    details_dict['Bundle_SymbolicName'] = smart_text(Bundle_SymbolicName, errors='replace')
     return details_dict
 
 
