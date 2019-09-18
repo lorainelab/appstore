@@ -222,7 +222,7 @@ def main(status):
     if len(all_entries) > 0:
         for i in range(0, len(all_entries)):
             if i == 0:
-                gen_tree = initial_generation(all_entries[i], status)
+                gen_tree = ET.fromstring(all_entries[i].repository_xml)
             else:
                 tree = ET.fromstring(all_entries[i].repository_xml)
                 gen_tree = xml_generator(all_entries[i], gen_tree, tree, status)

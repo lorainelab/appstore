@@ -119,7 +119,7 @@ def app_stats_timeline(request, app_name):
     response = dict()
     for release in releases:
         dls = ReleaseDownloadsByDate.objects.filter(release = release)
-        response[release.version] = [[dl.when.isoformat(), dl.count] for dl in dls]
+        response[release.Bundle_Version] = [[dl.when.isoformat(), dl.count] for dl in dls]
     return json_response(response)
         
 def app_stats_geography_all(request, app_name):
