@@ -416,7 +416,7 @@
         {% endif %}
 
         AppPageEdit.setup_details();
-        AppPageEdit.set_app_page_url("{% url 'app_page' app.name %}");
+        AppPageEdit.set_app_page_url("{% url 'app_page' app.Bundle_SymbolicName %}");
         AppPageEdit.set_loading_logo_url('{% get_static_prefix %}common/img/loading_small.gif');
 
         AppPageEdit.setup_add_editor_btn();

@@ -5,7 +5,7 @@
             Bundle_Name="{{ app.Bundle_Name }}"
             downloads="{{ app.downloads }}"
             latest_release_date="{{ app.latest_release_date.isoformat }}"
-            onClick="window.location='{% url 'app_page' app.name %}';">
+            onClick="window.location='{% url 'app_page' app.Bundle_SymbolicName %}';">
         <div class="row">
             <div class="col-md-3">
                 <img src="{{ app.logo_url }}" class="custom-img">

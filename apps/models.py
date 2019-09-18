@@ -125,7 +125,7 @@ class App(models.Model):
 
     @property
     def page_url(self):
-        return reverse('app_page', args=[self.name])
+        return reverse('app_page', args=[self.Bundle_SymbolicName])
 
     @property
     def ordered_authors(self):
@@ -161,7 +161,7 @@ VersionRE = re.compile(r'^(\d+)(?:\.(\d)+)?(?:\.(\d)+)?(?:\.([\w-]+))?$')
 
 
 def release_file_path(release, filename):
-    return pathjoin(release.app.name, 'releases', release.Bundle_Version, filename)
+    return pathjoin(release.app.Bundle_SymbolicName, 'releases', release.Bundle_Version, filename)
 
 
 class Release(models.Model):
