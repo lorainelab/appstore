@@ -24,10 +24,10 @@
     <p></p>
     {% endfor %}
 
-    <h3>Tags</h3>
+    <h3>Categories</h3>
     {% for result in page.object_list %}
     <ul>
-        {% for tag in result.object.tags.all %}
+        {% for tag in result.object.categories.all %}
         <li>
             <a href="{% url 'tag_page' tag.name %}">{{ tag.name }}</a>
         </li>

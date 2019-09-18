@@ -7,7 +7,7 @@
 {{ object.votes }}
 {{ object.stars }}
 {{ object.latest_release_date }}
-{% for tag in object.tags.all %}
+{% for tag in object.categories.all %}
 {{ tag.name }}
 {% endfor %}
 {% for author in object.authors.all %}
