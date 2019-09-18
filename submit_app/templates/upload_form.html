@@ -11,9 +11,7 @@
 
 {% block more_head %}
     <style type="text/css">
-        #instructions { display: none; }
         #loading { display: none; }
-        #instructions li { margin-bottom: 1em; }
     </style>
 {% endblock %}
 
@@ -66,48 +64,13 @@ Upload your IGB App jar file here.
             <a  href="#" id = "doc_link"><u>Learn more</u></a>
         </div>
     </div>
-    <div id="instructions">
-        <div class="row">
-            <div class="col-md-12">
-                <br />
-                <h5>When you click Next, the App Store will check your jar's manifest file for the following things:</h5>
-            </div>
-        </div>
-        <div class="row require">
-            <div class="col-md-12 box-edit-info">
-                <h3>OSGi Bundles</h3>
-                    If you are submitting an OSGi bundle, your manifest must include the following:
-                <ul>
-                    <li>
-                        <tt>Bundle-SymbolicName</tt>&mdash;this can be anything, but it is needed by OSGi to uniquely identify the bundle</li>
-                    <li>
-                        <tt>Bundle-Name</tt>&mdash;this must match exactly the name of your app including spaces</li>
-                    <li>
-                        <tt>Bundle-Version</tt>&mdash;this must follow this form:
-                    <i>major</i>[.<i>minor</i>[.<i>tag</i>[.<i>patch</i>]]]
-                    (<i>major</i>, <i>minor</i>, and <i>tag</i> must be non-negative integers,
-                    and <i>patch</i> can be any string without spaces)</li>
-                    <li>
-                        <tt>Import-Package</tt>&mdash;imports at least one IGB bundle</li>
-                </ul>
-
-                <p>Example</p>
-                <ul>
-                    <li>Bundle-SymbolicName: com.example.myplugin</li>
-                    <li>Bundle-Name: My Example Plugin</li>
-                    <li>Bundle-Version: 1.4</li>
-                    <li>Import-Package: org.igb.application.swing;version="[3.0,4)", ...</li>
-                </ul>
-            </div>
-        </div>
-        <div class="row">
+    <div class="row">
             <div class="col-md-6">
                 <button type="submit" class="btn btn-success">Next</button>
                 <div id="loading">
                     <img src="{% get_static_prefix %}common/img/loading.gif">
                 </div>
             </div>
-        </div>
     </div>
 </form>
 <br />
@@ -131,10 +94,9 @@ Upload your IGB App jar file here.
     learn_more_dom.onclick = function() {
         learn_more_dom.href= getDocLink();
         learn_more_dom.setAttribute('target', '_blank')
-  };
+    };
 
     $(function() {
-        var instructions_tag = $('#instructions');
         var loading_tag = $('#loading');
         var file_field = $('form input[type=file]');
         var submit_btn = $('button[type=submit]');
@@ -143,17 +105,20 @@ Upload your IGB App jar file here.
         var url_value = $('#url_val');
 
         $('form').submit(function() {
-            submit_btn.hide();
-            loading_tag.show();
+            if(file_field.val() || url_value.val()){
+                submit_btn.hide();
+                loading_tag.show();
+            } else {
+                Msgs.add_msg('Please upload a file or Enter a URL', 'danger', 'rating');
+                return false;
+            }
         })
 
         delete_file_btn.attr('disabled', 'true');
         delete_path_btn.attr('disabled', 'true');
 
         file_field.change(function() {
-            instructions_tag.show('slow', 'linear');
             if (file_field.val()) {
-                submit_btn.removeAttr('disabled');
                 delete_file_btn.removeAttr('disabled');
             }
             else
@@ -165,26 +130,19 @@ Upload your IGB App jar file here.
                 if(keycode == '13'){
                     console.log(url_value);
                     if(url_value.val()) {
-                        instructions_tag.show('slow', 'linear');
-                        submit_btn.removeAttr('disabled');
                         delete_path_btn.removeAttr('disabled');
-                    } else
-                        submit_btn.attr('disabled', 'true');
+                    }
                 }
          });
 
          $('#delete_file_btn').click(function () {
             var file_field = $('form input[type=file]');
-            var instructions_tag = $('#instructions');
             file_field.replaceWith(file_field.val('').clone(true));
-            instructions_tag.hide();
         });
 
         $('#delete_path_btn').click(function () {
             var url_field = $('form input[type=text]');
-            var instructions_tag = $('#instructions');
             url_field.replaceWith(url_field.val('').clone(true));
-            instructions_tag.hide();
         });
 
     });

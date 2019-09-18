@@ -228,16 +228,16 @@
             <h6 class="muted panel-title">Resources</h6>
 
             <div class="form-group margin-top" id="app-license-text">
-                <label>License: </label>
+                <label>License URL: </label>
                 <input class="form-control" type="text" placeholder="License URL (http://...)" value="{% if app.license_url %}{{ app.license_url }}{% endif %}">
                 <input type="checkbox" {% if app.license_confirm %}checked{% endif %}> Require confirmation
             </div>
             <div class="form-group" id="app-website">
-                <label><i class="fa fa-home"></i> Website:</label>
+                <label><i class="fa fa-home"></i> Website URL:</label>
                 <input class="form-control" type="text"  value="{% if app.website_url %}{{ app.website_url }}{% endif %}">
             </div>
             <div class="form-group" id="app-tutorial">
-                <label><i class="fa fa-book"></i> Tutorial:</label>
+                <label><i class="fa fa-book"></i> Tutorial URL:</label>
                 <input class="form-control" type="text" value="{% if app.tutorial_url %}{{ app.tutorial_url }}{% endif %}">
             </div>
             <div class="form-group" id="app-citation" validate_regexp="^\d+$">
@@ -246,7 +246,7 @@
                 <span class="help-block">Example: <em>23595664</em></span>
             </div>
             <div class="form-group" id="app-coderepo">
-                <label><i class="fa fa-code-fork"></i> Code Repository:</label>
+                <label><i class="fa fa-code-fork"></i> Code Repository URL:</label>
                 <input class="form-control" type="text" value="{% if app.code_repository_url %}{{ app.code_repository_url }}{% endif %}">
             </div>
             <div class="form-group" id="app-contact">
