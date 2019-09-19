@@ -258,7 +258,7 @@ def get_host_url(request):
 
 
 def app_page(request, app_name):
-	app = get_object_or_404(App, active=True, name=app_name)
+	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
 	decoded_details = app.Bundle_Description
 	# temporarily remove if condition if you want any user to rate
 	user = request.user if request.user.is_authenticated else None
@@ -531,7 +531,7 @@ _AppEditActions = {
 
 @login_required
 def app_page_edit(request, app_name):
-	app = get_object_or_404(App, active=True, name=app_name)
+	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
 	if not app.is_editor(request.user):
 		return HttpResponseForbidden()
 
