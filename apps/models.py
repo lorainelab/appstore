@@ -54,8 +54,10 @@ class Tag(models.Model):
 GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
 
 
-def app_icon_path(app, filename):
-    return filename
+def logo_path(app, filename):
+    get_ext = filename.split('.')[-1]
+    return pathjoin(app.Bundle_SymbolicName, 'releases', app.Bundle_Version, 'logo',
+                    'logo_' + app.Bundle_SymbolicName + '-' + app.Bundle_Version + '.' + get_ext)
 
 class App(models.Model):
     name         = models.CharField(max_length=127, unique=True)
@@ -66,7 +68,7 @@ class App(models.Model):
     Bundle_Version       = models.CharField(max_length=31, blank=False)
     categories         = models.ManyToManyField(Tag, blank=True)
 
-    logo         = models.ImageField(blank=True, null=True)
+    logo         = models.ImageField(blank=True, null=True, upload_to=logo_path)
 
     authors      = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
     editors      = models.ManyToManyField(User, blank=True)
@@ -223,11 +225,15 @@ class Release(models.Model):
 
 
 def screenshot_path(screenshot, filename):
-    return pathjoin(screenshot.app.name, 'screenshots', filename)
+    get_ext = filename.split('.')[-1]
+    return pathjoin(screenshot.app.Bundle_SymbolicName, 'releases', screenshot.app.Bundle_Version, 'screenshots',
+                    filename + '_' +screenshot.app.Bundle_SymbolicName + '-' + screenshot.app.Bundle_Version + '.' + get_ext)
 
 
 def thumbnail_path(screenshot, filename):
-    return pathjoin(screenshot.app.name, 'thumbnails', filename)
+    get_ext = filename.split('.')[-1]
+    return pathjoin(screenshot.app.Bundle_SymbolicName, 'releases', screenshot.app.Bundle_Version, 'thumbnails',
+                    filename + '_' +screenshot.app.Bundle_SymbolicName + '-' + screenshot.app.Bundle_Version + '.' + get_ext)
 
 
 class Screenshot(models.Model):
