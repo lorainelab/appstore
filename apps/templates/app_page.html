@@ -50,7 +50,7 @@ logger = logging.getLogger("app_page.html") %}
 				{% if app.has_releases %}
 				<span class="app-usage-info-divider"></span>
 				{{ app.downloads }}
-				<a href="{% url 'app_stats' app.name %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
+				<a href="{% url 'app_stats' app.Bundle_SymbolicName %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
 					 Downloads
 				</a>
 				{% endif %}
