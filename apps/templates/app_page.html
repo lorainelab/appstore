@@ -187,7 +187,7 @@ logger = logging.getLogger("app_page.html") %}
 							<strong>Apps that depend on this release</strong>
 							<ul>
 								{% for dependent in release.dependents.all %}
-								<li><a href="{% url 'app_page' dependent.app.name %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
+								<li><a href="{% url 'app_page' dependent.app.Bundle_SymbolicName %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
 								{% endfor %}
 							</ul>
 						</p>

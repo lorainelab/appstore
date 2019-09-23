@@ -200,7 +200,7 @@ class Release(models.Model):
 
     @property
     def release_download_url(self):
-        return reverse('release_download', args=[self.app.name, self.Bundle_Version])
+        return reverse('release_download', args=[self.app.Bundle_SymbolicName, self.Bundle_Version])
 
     def __unicode__(self):
         return self.app.Bundle_Name + ' ' + self.Bundle_Version
