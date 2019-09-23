@@ -56,8 +56,8 @@ GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
 
 def logo_path(app, filename):
     get_ext = filename.split('.')[-1]
-    return pathjoin(app.Bundle_SymbolicName, 'releases', app.Bundle_Version, 'logo',
-                    'logo_' + app.Bundle_SymbolicName + '-' + app.Bundle_Version + '.' + get_ext)
+    return pathjoin(app.Bundle_SymbolicName, 'releases', app.Bundle_Version, app.Bundle_SymbolicName + '-' +
+                    app.Bundle_Version + '.' + get_ext)
 
 class App(models.Model):
     name         = models.CharField(max_length=127, unique=True)
