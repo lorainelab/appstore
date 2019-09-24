@@ -364,7 +364,6 @@ def _upload_logo(app, request):
 	if f.size > _AppPageEditConfig.max_img_size_b:
 		raise ValueError(
 			'image file is %d bytes but can be at most %d bytes' % (f.size, _AppPageEditConfig.max_img_size_b))
-	f = scale_img(f, f.name, _AppPageEditConfig.max_icon_dim_px, 'both')
 	app.logo.save(f.name, f)
 
 
