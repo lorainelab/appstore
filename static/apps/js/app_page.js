@@ -15,7 +15,7 @@ var AppPage = (function($) {
     function get_app_info(app_bundleSymbolicName, repository_url, callback) {
         var manageApp = 'http://127.0.0.1:7090/manageApp';
 
-         var xhr = createCORSRequest('POST', manageApp, null, app_bundleSymbolicName);
+        var xhr = createCORSRequest('POST', manageApp, null, app_bundleSymbolicName);
 
         if (!xhr) {
             return;
