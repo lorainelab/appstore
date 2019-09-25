@@ -159,6 +159,25 @@ logger = logging.getLogger("app_page.html") %}
 				</div>
 				{% endif %}
 				{# End Details #}
+
+				{# Authors #}
+				{% if app.authors.all %}
+				<div class="row">
+					<div class="span8">
+						Authors:
+						<ul>
+							{% for author in app.ordered_authors %}
+							<li>
+								<a href="{% url 'author_page' author.name %}">
+									{{ author.name }} {% if author.institution %} ({{ author.institution }}){% endif %}
+								</a>
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+				{% endif %}
+				{# End Authors #}
 			</div>
 		<div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
 			{% for release in app.releases %}
