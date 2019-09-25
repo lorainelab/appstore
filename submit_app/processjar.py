@@ -3,6 +3,7 @@ import requests, io
 from .mfparse import parse_manifest, max_of_lower_igb_pkg_versions, parse_app_dependencies
 from apps.models import App, Release, VersionRE
 from django.utils.encoding import smart_text
+from requests.exceptions import ConnectionError
 from util.view_util import get_object_or_none
 import logging, io, sys
 
@@ -14,10 +15,13 @@ logger = logging.getLogger(__name__)
 
 def process_jar(jar_file, expect_app_name):
     details_dict = {}
-    if isinstance(jar_file,str):
-        file_obj = requests.get(jar_file)
-    else:
-        file_obj = None
+    try:
+        if isinstance(jar_file,str):
+            file_obj = requests.get(jar_file)
+        else:
+            file_obj = None
+    except ConnectionError:
+        raise ValueError('%s cannot be reached after max retries.'%jar_file)
 
     try:
         if file_obj is not None:
