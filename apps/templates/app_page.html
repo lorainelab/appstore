@@ -357,7 +357,7 @@ logger = logging.getLogger("app_page.html") %}
 </script>
 
 <script type="text/javascript">
-	AppPage.setup_install("{{ app.name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}");
+	AppPage.setup_install("{{ app.Bundle_Name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}");
 
 
 	{% if app.Bundle_Description %}
