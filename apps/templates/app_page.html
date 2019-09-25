@@ -50,7 +50,7 @@ logger = logging.getLogger("app_page.html") %}
 				{% if app.has_releases %}
 				<span class="app-usage-info-divider"></span>
 				{{ app.downloads }}
-				<a href="{% url 'app_stats' app.name %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
+				<a href="{% url 'app_stats' app.Bundle_SymbolicName %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
 					 Downloads
 				</a>
 				{% endif %}
@@ -159,6 +159,25 @@ logger = logging.getLogger("app_page.html") %}
 				</div>
 				{% endif %}
 				{# End Details #}
+
+				{# Authors #}
+				{% if app.authors.all %}
+				<div class="row">
+					<div class="span8">
+						Authors:
+						<ul>
+							{% for author in app.ordered_authors %}
+							<li>
+								<a href="{% url 'author_page' author.name %}">
+									{{ author.name }} {% if author.institution %} ({{ author.institution }}){% endif %}
+								</a>
+							</li>
+							{% endfor %}
+						</ul>
+					</div>
+				</div>
+				{% endif %}
+				{# End Authors #}
 			</div>
 		<div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
 			{% for release in app.releases %}
@@ -187,7 +206,7 @@ logger = logging.getLogger("app_page.html") %}
 							<strong>Apps that depend on this release</strong>
 							<ul>
 								{% for dependent in release.dependents.all %}
-								<li><a href="{% url 'app_page' dependent.app.name %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
+								<li><a href="{% url 'app_page' dependent.app.Bundle_SymbolicName %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
 								{% endfor %}
 							</ul>
 						</p>
@@ -357,7 +376,7 @@ logger = logging.getLogger("app_page.html") %}
 </script>
 
 <script type="text/javascript">
-	AppPage.setup_install("{{ app.name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}");
+	AppPage.setup_install("{{ app.Bundle_Name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}");
 
 
 	{% if app.Bundle_Description %}
