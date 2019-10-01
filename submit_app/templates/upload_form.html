@@ -125,15 +125,11 @@ Upload your IGB App jar file here.
                 submit_btn.attr('disabled', 'true');
         });
 
-         url_value.keypress(function (event) {
-             var keycode = (event.keyCode ? event.keyCode : event.which);
-                if(keycode == '13'){
-                    console.log(url_value);
-                    if(url_value.val()) {
-                        delete_path_btn.removeAttr('disabled');
-                    }
-                }
-         });
+        url_value.change(function() {
+            if (url_value.val()) {
+                delete_path_btn.removeAttr('disabled');
+            }
+        });
 
          $('#delete_file_btn').click(function () {
             var file_field = $('form input[type=file]');
@@ -141,7 +137,7 @@ Upload your IGB App jar file here.
         });
 
         $('#delete_path_btn').click(function () {
-            var url_field = $('form input[type=text]');
+            var url_field = $('form input[id="url_val"]');
             url_field.replaceWith(url_field.val('').clone(true));
         });
 
