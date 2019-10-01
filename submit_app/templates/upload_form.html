@@ -30,7 +30,7 @@
 {% if error_msg %}
 <div class="col-md-12">
     <div class="alert alert-danger">
-        The file you submitted {% autoescape off %}{{ error_msg }}{% endautoescape %}
+        {% autoescape off %}{{ error_msg }}{% endautoescape %}
     </div>
 </div>
 {% endif %}
