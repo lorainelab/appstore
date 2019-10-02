@@ -32,30 +32,6 @@
             <b>You Submitted</b>
         </td>
        <td> {{ pending.release_file_name }}</td>
-    </tr>
-        <tr>
-            <td>
-                <b>Is this a new app?</b>
-            </td>
-            <td>
-                {% if is_pending_replace %}
-                    No
-                {% else %}
-                    Yes
-                {% endif %}
-                <button class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right"  data-trigger="toggle"
-                        title="
-                    {% if is_pending_replace %}
-                        This is a replacement jar file for pending App {{ pending.Bundle_SymbolicName }}
-                        version {{ pending.Bundle_Version }}.
-                    {% else %}
-                        This is a new version of a released App {{ pending.Bundle_SymbolicName }}.
-                        Currently, the highest version released in App Store is {{ pending.Bundle_Version }}.
-                    {% endif %} ">
-                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
-                </button>
-            </td>
-        </tr>
         <tr>
             <td>
                 <b>Bundle Name</b>
@@ -84,6 +60,14 @@
                 <button id="tooltip-3" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"  data-trigger="toggle" data-html="true">
                      <i class="fa fa-info-circle" style="font-size: 30px"></i>
                 </button>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <b>Summary</b>
+            </td>
+            <td>
+                {{ app_status }}
             </td>
         </tr>
     </table>
