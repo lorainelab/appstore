@@ -87,6 +87,7 @@ h4 a:active {
     display:none;
 }
 
+/* Use this only if needed | Used to Fix a element to a particular position */
 .wrap {
     position:relative;
     right: 0;
@@ -94,6 +95,7 @@ h4 a:active {
     bottom:0;
 }
 
+/* Apps Tile CSS */
 .box-part{
     background-color: whiteSmoke;
     border-radius:10px;
@@ -105,7 +107,6 @@ h4 a:active {
 }
 
 .box-part:hover {
-    position:absolute;
     z-index: 1;
     background: whiteSmoke;
     height: max-content;
