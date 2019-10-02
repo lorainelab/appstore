@@ -254,7 +254,7 @@ h4 a:active {
     margin-bottom: auto;
     margin-top: auto;
     height: 35px;
-    width: 200px;
+    width: 250px;
     background-color: #515151;
     border-radius: 30px;
     margin-right:15px;
@@ -268,10 +268,16 @@ h4 a:active {
     outline: 0;
     padding: 0 5px;
     height: 35px;
-    width: 200px;
+    width: 250px;
     border-radius: 30px;
     caret-color: orange;
 }
+
+.search_input:focus {
+    background-color:  #FFFFFF;
+    color: #000000;
+}
+
 
 /*Custom Star Element */
 
