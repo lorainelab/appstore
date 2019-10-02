@@ -52,6 +52,18 @@ INSTALLED_APPS = [
     'storages',
 ]
 
+# Signal Processor for Rebuilding Index
+
+HAYSTACK_CONNECTIONS = {
+    'default': {
+        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
+        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
+    },
+}
+
+HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
+
+
 # https://stackoverflow.com/questions/19256919/location-of-django-logs-and-errors
 # https://github.com/ianalexander/ianalexander/blob/master/content/blog/getting-started-with-django-logging-in-5-minutes.html
 LOGGING = {
@@ -224,10 +236,3 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # site specific settings
 # needed for /help/about
 GOOGLE_API_KEY=""
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.whoosh_backend.WhooshEngine',
-        'PATH': os.path.join(os.path.dirname(__file__), 'whoosh_index'),
-    },
-}
