@@ -18,7 +18,11 @@ from util.view_util import html_response, json_response, get_object_or_none
 from .models import AppPending
 from .processjar import process_jar
 
-
+REPLACEMENT_JAR_MSG = "This is a replacement jar file for a not yet released App that you or a colleague already uploaded previously but is still in our “pending apps” waiting area. If you choose to submit it, this new jar file will replace the one that was uploaded before"
+NEW_VERSION_MSG = "This is a new version of a released App. If you choose to submit it, your new version will appear right away in the App Store"
+ALL_NEW_APP = "This is an all-new App. No released or pending App in App Store has the same Bundle_SymbolicName. Congratulations on your App’s first release"
+ALREADY_RELEASED_APP = "Bundle_Version and Bundle_SymbolicName match an already-released App. We are sorry – this is not allowed! If you want users to get the new version, you must increase Bundle_Version. For example, if the released version is 1.0.0, the new version should be 1.0.1 or higher"
+NOT_YET_RELEASED_APP = "The jar file Bundle_SymbolicName matches a previously uploaded but not yet released App. The previously uploaded App’s Bundle_Version is different, however. Are you trying to release different versions of the same App. No problem!"
 # Presents an app submission form and accepts app submissions.
 @login_required
 def submit_app(request):
@@ -77,6 +81,7 @@ def confirm_submission(request, id):
         return HttpResponseRedirect('/')
     pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, Bundle_Version=pending.Bundle_Version)
     is_pending_replace = True if pending_obj.count() > 1 else False
+    app_status = _app_status(pending)
     action = request.POST.get('action')
     if action:
         latest_pending_obj_ = pending_obj[1] if is_pending_replace else pending_obj[0]
@@ -90,10 +95,29 @@ def confirm_submission(request, id):
             _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
     return html_response('confirm.html',{'pending': pending,
-                         'is_pending_replace': is_pending_replace}, request)
+                         'app_status': app_status}, request)
 
 # Get the Current Directory Path to Temporarily store the Zip File
 dir_path = os.path.dirname(os.path.abspath(__file__))
+
+
+def _app_status(pending):
+
+    pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
+    released_obj = App.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
+    if released_obj.count() == 1:
+        if released_obj[0].Bundle_Version == pending.Bundle_Version:
+            return ALREADY_RELEASED_APP
+        else:
+            return NEW_VERSION_MSG
+    elif pending_obj.count() > 1:
+        if pending_obj[0].Bundle_Version == pending.Bundle_Version:
+            return REPLACEMENT_JAR_MSG
+        else:
+            return NOT_YET_RELEASED_APP
+    else:
+        return ALL_NEW_APP
+
 
 
 def _create_pending(submitter, jar_details, release_file):
@@ -127,7 +151,7 @@ def _replace_jar_details(request, pending_obj):
         raise ValueError('cannot be accepted because you are not an editor')
     name = fullname_to_name(latest_pending_obj.Bundle_Name)
     existing_pending_obj.Bundle_Description = latest_pending_obj.Bundle_Description
-    existing_pending_obj.repository = latest_pending_obj.repository
+    existing_pending_obj.repository_xml = latest_pending_obj.repository_xml
     existing_pending_obj.Bundle_Name = latest_pending_obj.Bundle_Name
     existing_pending_obj.release_file = latest_pending_obj.release_file
     existing_pending_obj.save()
