@@ -16,7 +16,7 @@ logger = logging.getLogger(__name__)
 def process_jar(jar_file, expect_app_name):
     details_dict = {}
     try:
-        if isinstance(jar_file,str):
+        if isinstance(jar_file, str):
             file_obj = requests.get(jar_file)
         else:
             file_obj = None
@@ -24,11 +24,11 @@ def process_jar(jar_file, expect_app_name):
         raise ValueError('There is a problem with the Web address (URL) you entered: %s. Try checking it in a Web '
                          'browser to make sure it is available on-line.' % jar_file)
     except ConnectionError:
-        raise ValueError('%s cannot be reached after max retries.'%jar_file)
+        raise ValueError('%s cannot be reached after max retries.'% jar_file)
 
     try:
         if file_obj is not None:
-            if '<html>' in file_obj.content:
+            if type(file_obj.content) == 'str':
                 raise ValueError('There is a problem with the Web address (URL) you entered: %s. Try checking it in a '
                                  'Web browser to make sure it is available on-line.' % jar_file)
             else:
