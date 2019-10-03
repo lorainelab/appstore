@@ -132,7 +132,7 @@ h4 a:active {
     display: block;
     font-weight: 500;
     padding-bottom: 10px;
-    line-height: 1.6em;
+    line-height: 1.2em;
     visibility: visible;
 }
 
@@ -378,8 +378,8 @@ span.desc-box.small-visible {
     font-weight: 500;
     padding-bottom: 5px;
     display: block;
-    line-height: 1.5em;
-    height: 3em;
+    line-height: 1.2em;
+    height: 2.4em;
 	overflow: hidden;
 }
 
