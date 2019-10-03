@@ -137,7 +137,7 @@ h4 a:active {
 
 .desc-box {
     margin-right: 15px;
-    font-size: 14px;
+    font-size: 0.9em;
     text-align: justify;
 }
 
@@ -150,7 +150,7 @@ h4 a:active {
     height: 65px;
     background-repeat: no-repeat;
     background-size: contain;
-    margin: 5px 5px 5px 5px;
+    margin: 5px 10px 5px 10px;
 }
 
 .appimg{
@@ -308,4 +308,47 @@ x-star-rating > .star.full::after {
 
 .user-dropdown {
     cursor: pointer;
+}
+
+/*
+
+App tiles Updates
+
+*/
+
+.app-button-title {
+    padding-top: 5px;
+    color: #0066CC;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.box-part:hover .app-button-title {
+    color: #0056b3;
+}
+
+/* Extra Navigation Styling */
+
+.all-apps-title {
+    font-size : 20px;
+}
+
+.count{
+    visibility: hidden;
+    font-weight: bold;
+}
+
+.navigation-list li:hover {
+    background-color: #d4d4d4;
+}
+
+.navigation-list li:hover .count{
+    visibility: visible;
+}
+
+.navigation-list li > span {
+    padding-left: 5px;
+}
+.navigation-list li > span > a {
+    text-decoration: none;
 }
