@@ -159,12 +159,13 @@ logger = logging.getLogger("app_page.html") %}
 				<div class="col-md-12 app-details-custom" id="app-details-md">{{ decoded_details | markdown_parser | safe }}</div>
 			</div>
 			{% endif %}
+			{% endif %}
 			{# End Details #}
 
 			{# Authors #}
 			{% if app.authors.all %}
 			<div class="row">
-				<div class="span8">
+				<div class="col-md-8">
 					Authors:
 					<ul>
 						{% for author in app.ordered_authors %}
