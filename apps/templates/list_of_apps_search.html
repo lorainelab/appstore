@@ -1,16 +1,16 @@
 {% load static %}
 {% load app_buttons %}
 
+
 {% if apps_with_releases %}
-    <div class="col-md-12" id="apps-with-releases">
-        <br />
+    <div class="col-md-9" id="apps-with-releases">
         {% app_buttons apps_with_releases %}
     </div>
 {% endif %}
 
 {% if apps_without_releases %}
-    <div class="col-md-10">
-        {% app_buttons apps_without_releases %}
+    <div class="col-md-9">
+            {% app_buttons apps_without_releases %}
     </div>
 {% endif %}
 <br />
