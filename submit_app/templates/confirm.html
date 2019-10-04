@@ -4,15 +4,7 @@
 {% block title %}- Good news! Your App passed first level, automated review.{% endblock %}
 
 {% block more_head %}
-
-<style type="text/css">
-    form { display: inline; }
-    #loading { display: none; }
-    .tooltip-inner {
-        max-width: 300px !important;
-        width: 300px !important;
-    }
-</style>
+<link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}submit_app/css/app_summary.css"/>
 {% endblock %}
 
 {% block content %}
@@ -25,16 +17,16 @@
     <p>We found the following information about your app:</p>
 </div>
 
-<div class="col-md-8">
-    <table class="table">
+<div class="col-md-10">
+    <table class="table text-justify">
     <tr>
         <td>
-            <b>You Submitted</b>
+            <b>You Submitted:</b>
         </td>
        <td> {{ pending.release_file_name }}</td>
         <tr>
             <td>
-                <b>Bundle Name</b>
+                <b>Bundle Name:</b>
             </td>
             <td>{{ pending.Bundle_Name }}
                 <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
@@ -44,7 +36,7 @@
         </tr>
         <tr>
             <td>
-                <b>Bundle-Symbolic Name</b>
+                <b>Bundle-Symbolic Name:</b>
             </td>
             <td>{{ pending.Bundle_SymbolicName }}
                 <button id="tooltip-2" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
@@ -54,7 +46,7 @@
         </tr>
         <tr>
             <td>
-                <b>Bundle Version</b>
+                <b>Bundle Version:</b>
             </td>
             <td>{{ pending.Bundle_Version }}
                 <button id="tooltip-3" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"  data-trigger="toggle" data-html="true">
@@ -64,10 +56,10 @@
         </tr>
         <tr>
             <td>
-                <b>Summary</b>
+                <b>Summary:</b>
             </td>
             <td>
-                {{ app_status }}
+                {{ app_summary }}
             </td>
         </tr>
     </table>
@@ -124,22 +116,6 @@
         </form>
     </div>
 </div>
-
-<script type="text/javascript">
-var tooltip1 = "Bundle Name is a short, user-friendly name for your App. App Store and IGB App Manager displayBundle Name to users.See <a href='" + getDocLink() + "' target='_blank'>developer’s documentation</a>";
-var tooltip2 = "Bundle-SymbolicName and Bundle-Version uniquely identify an IGB App jar file within the IGB OSGi runtime. IGB needs Bundle-Version and Bundle-Symbolic Name to install and run your App. Users never see Bundle-SymbolicName, but IGB needs it to run your App. See <a href='" + getDocLink() + "' target='_blank'>developer’s documentation</a>";
-var tooltip3 = "Bundle-Version and Bundle-SymbolicName uniquely identify an IGB App jar file within the IGB OSGi runtime. IGB needs Bundle-Version and Bundle-Symbolic Name to install and run your App. Bundle-Version contain number and full-stop characters only, such as 0.0.1 or 6.1.0. See <a href='" + getDocLink() + "' target='_blank'>developer’s documentation</a>";
-
-document.getElementById("tooltip-1").title= tooltip1;
-document.getElementById("tooltip-2").title= tooltip2;
-document.getElementById("tooltip-3").title= tooltip3;
-
-$(function() {
-    $('form').submit(function() {
-        $('input[type=submit]').hide();
-        $('#loading').show();
-    });
-});
-</script>
+<script type="text/javascript" src="{% get_static_prefix %}submit_app/js/app_summary.js"></script>
 {% endblock %}
     
