@@ -233,7 +233,7 @@ var AppPageEdit = (function($)
     function setup_add_tag_btn() {
         add_tag_btn.popover({
             'container' : 'body',
-            'title': 'Select a Tag to Add',
+            'title': 'Select a Category to Add',
             'html': true,
             'content': $('#tag-add-popover-html').html(),
             'placement': 'bottom',
@@ -691,7 +691,7 @@ var AppPageEdit = (function($)
             });
 
             return {
-                'msg': 'Saving tags',
+                'msg': 'Saving categories',
                 'data': data
             };
         },
