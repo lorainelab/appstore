@@ -212,7 +212,7 @@ if USE_S3:
     AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY')
     AWS_S3_CUSTOM_DOMAIN = '%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
     AWS_S3_OBJECT_PARAMETERS = {
-        'CacheControl': 'max-age=86400',
+        'CacheControl': 'no-cache',
     }
     AWS_LOCATION = 'media'
     MEDIA_URL = 'https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN, AWS_LOCATION)
