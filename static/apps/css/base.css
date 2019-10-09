@@ -421,3 +421,8 @@ span.desc-box.long-visible{
 input[type=file]{
     color:transparent;
 }
+
+.block {
+    display: block;
+    min-height: 65px;
+}
