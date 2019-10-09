@@ -382,3 +382,7 @@ span.desc-box.long-visible{
     display: none;
     visibility: hidden;
 }
+
+.search-head {
+    font-weight: 500;
+}
