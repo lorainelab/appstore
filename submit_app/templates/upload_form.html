@@ -57,14 +57,13 @@
                     <a href="#" id="doc_link"><u>Learn more</u></a>
                 </div>
             </div>
-            <div class="row">
-                    <div class="col-md-6">
-                        <button type="submit" class="btn btn-success">Next</button>
-                        <div id="loading">
-                            <img src="{% get_static_prefix %}common/img/loading.gif">
-                        </div>
-                    </div>
-            </div>
+            <br />
+            <span class="center-button">
+                <button type="submit" class="btn btn-success big-button">Next</button>
+                <div id="loading">
+                    <img src="{% get_static_prefix %}common/img/loading.gif">
+                </div>
+            </span>
         </form>
     </div>
 </div>
@@ -97,7 +96,7 @@
         $('form input[type=file]').change(function() {
             if ($('form input[type=file]').val()) {
                 $('#delete_file_btn').removeAttr('disabled');
-                $('#input-file-label').text($('form input[type=file]').val().replace(/^.*[\\\/]/, ''));
+                $('#input-file-label').text($('form input[type=file]').val().replace(/^.*[\\\/]/, '').substring(0, 36 - 1));
             }
             else
                 $('button[type=submit]').attr('disabled', 'true');

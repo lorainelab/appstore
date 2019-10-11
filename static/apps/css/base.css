@@ -431,4 +431,5 @@ input[type=file]{
 .input-file-label {
     width: 30%;
     font-style: italic;
+    text-overflow:ellipsis;=
 }
