@@ -6,7 +6,7 @@ from apps.models import App, Release, Screenshot, Tag, Author
 from submit_app.models import AppPending
 
 def rm_empty_tags():
-	for tag in Tag.objects.all():
+	for tag in Category.objects.all():
 		if not App.objects.filter(categories = tag).count():
 			tag.delete()
 			yield tag.name
