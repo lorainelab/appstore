@@ -177,8 +177,7 @@ h4 a:active {
 }
 
 .app-name {
-    font-size: 1.5em;
-    margin: .75em 0
+    margin-bottom: .35em;
 }
 
 .app-name-pending {
@@ -431,5 +430,5 @@ input[type=file]{
 .input-file-label {
     width: 30%;
     font-style: italic;
-    text-overflow:ellipsis;=
+    text-overflow:ellipsis;
 }
