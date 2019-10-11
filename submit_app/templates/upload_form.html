@@ -32,16 +32,6 @@
             </h1>
         {% endif %}
     </div>
-
-    {% if error_msg %}
-    <div class="col-md-12">
-        <div class="alert alert-danger">
-            {% autoescape off %}{{ error_msg }}{% endautoescape %}
-        </div>
-    </div>
-    {% endif %}
-
-
 {{ doc_link }}
 <br/><br/>
     <div class="col-md-12">
@@ -52,7 +42,8 @@
             {% endif %}
             <div class="row">
                 <div class="col-md-12">
-                    <input type="file" name="file" id="input-file" style="width:50%">
+                    <input type="file" name="file" id="input-file">
+                    <label for="input-file" class="input-file-label text-muted" id="input-file-label"> No file selected </label>
                     &nbsp;<i id="delete_file_btn" class="fa fa-trash-o trash"></i>
                     <br />
                     <br />
@@ -67,9 +58,8 @@
                 </div>
             </div>
             <br />
-            <br />
             <span class="center-button">
-                <button type="submit" class="big-button btn btn-success">Next</button>
+                <button type="submit" class="btn btn-success big-button">Next</button>
                 <div id="loading">
                     <img src="{% get_static_prefix %}common/img/loading.gif">
                 </div>
@@ -90,50 +80,43 @@
     };
 
     $(function() {
-        var loading_tag = $('#loading');
-        var file_field = $('form input[type=file]');
-        var submit_btn = $('button[type=submit]');
-        var delete_file_btn = $('#delete_file_btn');
-        var delete_path_btn = $('#delete_path_btn');
-        var url_value = $('#url_val');
-
         $('form').submit(function() {
-            if(file_field.val() || url_value.val()){
-                submit_btn.hide();
-                loading_tag.show();
+            if($('form input[type=file]').val() || $('#url_val').val()){
+                $('button[type=submit]').hide();
+                $('#loading').show();
             } else {
                 Msgs.add_msg('Please upload a file or Enter a URL', 'danger', 'rating');
                 return false;
             }
         })
 
-        delete_file_btn.attr('disabled', 'true');
-        delete_path_btn.attr('disabled', 'true');
+        $('#delete_file_btn').attr('disabled', 'true');
+        $('#delete_path_btn').attr('disabled', 'true');
 
-        file_field.change(function() {
-            if (file_field.val()) {
-                delete_file_btn.removeAttr('disabled');
+        $('form input[type=file]').change(function() {
+            if ($('form input[type=file]').val()) {
+                $('#delete_file_btn').removeAttr('disabled');
+                $('#input-file-label').text($('form input[type=file]').val().replace(/^.*[\\\/]/, '').substring(0, 36 - 1));
             }
             else
-                submit_btn.attr('disabled', 'true');
+                $('button[type=submit]').attr('disabled', 'true');
         });
 
-        url_value.change(function() {
-            if (url_value.val()) {
-                delete_path_btn.removeAttr('disabled');
+        $('#url_val').change(function() {
+            if ($('#url_val').val()) {
+                $('#delete_path_btn').removeAttr('disabled');
             }
         });
 
          $('#delete_file_btn').click(function () {
-            var file_field = $('form input[type=file]');
-            file_field.replaceWith(file_field.val('').clone(true));
+            $('form input[type=file]').replaceWith($('form input[type=file]').val('').clone(true));
+            $('#input-file-label').text(' No file selected ');
         });
 
         $('#delete_path_btn').click(function () {
             var url_field = $('form input[id="url_val"]');
             url_field.replaceWith(url_field.val('').clone(true));
         });
-
     });
 </script>
 {% endblock %}

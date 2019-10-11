@@ -29,17 +29,17 @@ var AppPage = (function($) {
 			        if (is_running == "200") {
 			            Msgs.add_msg('Please update to a newer version of IGB @ <a href="https://bioviz.org/download.html" target="_blank"> Click Here </a>',
 			             'info');
-                        document.getElementById("app_status_block").style.display = "none";
+			             document.getElementById("app-install-btn").onclick = getIgb;
 			        } else {
-			            Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
-				        document.getElementById("app_status_block").style.display = "none";
+			            Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
+			            document.getElementById("app-install-btn").onclick = getIgb;
 			        }
 			    });
             } else if(xhr.readyState === 4 && xhr.status === 404) {
                 // Usually happens when Appstores OBR is not added to the IGB Desktop Apps Repository
                 Msgs.add_msg('Before IGB can load Apps, add this App Store to IGB. Open the App Manager (Tools menu) and click Manage Repositories.' +
                     ' Then click "Add" to add the URL ' + repository_url, 'info');
-                document.getElementById("app_status_block").style.display = "none";
+                document.getElementById("app-install-btn").set = getIgb;
           }
         }
     }
@@ -57,8 +57,8 @@ var AppPage = (function($) {
             if (xhr.readyState === 4 && xhr.status === 200 && callback) {
                 callback(this.response, this.status);
             } else if(xhr.readyState === 4 && xhr.status === 0 && callback) {
-                Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
-                document.getElementById("app_status_block").style.display = "none";
+                Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
+                document.getElementById("app-install-btn").onclick = getIgb;
             }
         }
     }
@@ -133,7 +133,6 @@ var AppPage = (function($) {
     }
 
 	function set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, appVersion, igbVersion) {
-
 		setup_install_btn('btn-info', 'icon-install-install', 'Install', appVersion, igbVersion,
             function() {
                 set_install_btn_to_installing(appVersion, igbVersion);
@@ -186,10 +185,14 @@ var AppPage = (function($) {
                         set_install_btn_to_upgrade(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
 					}
 			} else {
-                Msgs.add_msg('To install an App, start IGB version 9.1.0 or later.', 'info');
-                document.getElementById("app_status_block").style.display = "none";
+                Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
+                document.getElementById("app-install-btn").setOn = getIgb;
             }
 		});
+	}
+
+	function getIgb(){
+	    window.location.href = " https://bioviz.org";
 	}
 
 

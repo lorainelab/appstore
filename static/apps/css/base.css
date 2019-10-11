@@ -177,8 +177,7 @@ h4 a:active {
 }
 
 .app-name {
-    font-size: 1.5em;
-    margin: .75em 0
+    margin-bottom: .35em;
 }
 
 .app-name-pending {
@@ -418,11 +417,18 @@ span.desc-box.long-visible{
     font-size:18px;
 }
 
-input[type=file]{
-    color:transparent;
-}
-
 .block {
     display: block;
     min-height: 65px;
+}
+
+input[type=file]{
+    width:99px;
+    color:transparent;
+}
+
+.input-file-label {
+    width: 30%;
+    font-style: italic;
+    text-overflow:ellipsis;
 }
