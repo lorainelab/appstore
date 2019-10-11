@@ -27,7 +27,7 @@ class Author(models.Model):
 _TagCountCache = dict()
 
 
-class Tag(models.Model):
+class Category(models.Model):
     name     = models.CharField(max_length=255, unique=True)
     fullname = models.CharField(max_length=255)
 
@@ -49,6 +49,7 @@ class Tag(models.Model):
 
     class Meta:
         ordering = ["name"]
+        verbose_name_plural = "categories"
 
 
 GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
@@ -66,7 +67,7 @@ class App(models.Model):
     short_title  = models.CharField(max_length=255, blank=True, null=True)
     Bundle_Description = models.TextField(blank=True, null=True)
     Bundle_Version       = models.CharField(max_length=31, blank=False)
-    categories         = models.ManyToManyField(Tag, blank=True)
+    categories         = models.ManyToManyField(Category, blank=True)
 
     logo         = models.ImageField(blank=True, null=True, upload_to=logo_path)
 

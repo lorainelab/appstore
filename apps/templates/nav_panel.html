@@ -6,21 +6,22 @@
 <div class="row">
     <div class="col-md-3">
         <div class="navigation-panel">
+            {% ifequal navbar_selected_link "all" %}
+                <a href="{% url 'all_apps' %}">
+                    <span class="all-apps-title title active">All Apps</span>
+                </a>
+            {% else %}
+                <a href="{% url 'all_apps' %}">
+                    <span class="all-apps-title title">All Apps</span>
+                </a>
+            {% endifequal %}
             <h3>
                 <strong>Categories</strong>
             </h3>
             <div>
                 <ul class="navigation-list">
                     <li style="margin-bottom:15px;">
-                        {% ifequal navbar_selected_link "all" %}
-                            <a href="{% url 'all_apps' %}">
-                                <span class="title active">All Apps</span>
-                            </a>
-                        {% else %}
-                        <a href="{% url 'all_apps' %}">
-                            <span class="title">All Apps</span>
-                        </a>
-                        {% endifequal %}
+
                     </li>
                     {% for tag in top_tags %}
                         {% if tag.count > 0 %}

@@ -98,29 +98,43 @@ h4 a:active {
 /* Apps Tile CSS */
 .box-part{
     background-color: whiteSmoke;
-    border-radius:10px;
-    padding:10px 5px;
+    /* border-radius: 10px; */
+    padding:6px 14px;
     margin:10px 0px;
-    height: 100px;
+    height: 96px;
     cursor: pointer;
     overflow: hidden;
+    border: 0.5px solid #d6d6d6;
+    border: 0.5px solid #d6d6d6;
 }
 
 .box-part:hover {
+    position: absolute;
     z-index: 1;
     background: whiteSmoke;
     height: max-content;
     box-shadow: 0 0 1.7em rgba(0, 0, 0, 0.4);
     border: solid 1px rgba(0, 0, 0, 0.2);
+    width: 91.5%
 }
 
-.box-part:hover .test{
-    position: fixed;
-    bottom: 0;
+.box-part:hover .small-visible{
+    visibility: hidden;
+    display: none;
+}
+
+.box-part:hover .long-visible{
+    display: block;
+    font-weight: 500;
+    padding-bottom: 10px;
+    line-height: 1.2em;
+    visibility: visible;
 }
 
 .box-part:hover .stars {
     display: block;
+    padding-bottom: 5px;
+    padding-left: 10px;
 }
 
 .text{
@@ -132,13 +146,13 @@ h4 a:active {
 }
 
 .desc-spaced {
-    margin-top : 0px;
+    display: block;
+    margin-left : 10px;
 }
 
 .desc-box {
     margin-right: 15px;
-    font-size: 14px;
-    text-align: justify;
+    font-size: 0.9em;
 }
 
 .app-def-desc {
@@ -150,7 +164,7 @@ h4 a:active {
     height: 65px;
     background-repeat: no-repeat;
     background-size: contain;
-    margin: 5px 5px 5px 5px;
+    margin: 7px 7px 7px 0px;
 }
 
 .appimg{
@@ -254,30 +268,30 @@ h4 a:active {
     margin-bottom: auto;
     margin-top: auto;
     height: 35px;
-    width: 200px;
+    width: 250px;
     background-color: #515151;
     border-radius: 30px;
-    padding: 5px;
     margin-right:15px;
 }
 
+
 .search_input{
-    color: white;
+    background-color: #515151;
+    color:  white;
     border: 0;
     outline: 0;
-    background: none;
-    width: 0;
-    line-height: 10px;
-    transition: width 0.4s linear;
-}
-
-
-.search_input{
     padding: 0 5px;
-    width: 300px;
-    caret-color:red;
-    transition: width 0.4s linear;
+    height: 35px;
+    width: 250px;
+    border-radius: 30px;
+    caret-color: orange;
 }
+
+.search_input:focus {
+    background-color:  #FFFFFF;
+    color: #000000;
+}
+
 
 /*Custom Star Element */
 
@@ -308,4 +322,114 @@ x-star-rating > .star.full::after {
 
 .user-dropdown {
     cursor: pointer;
+}
+
+/*
+
+App tiles Updates
+
+*/
+
+.app-button-title {
+    padding-left: 10px;
+    padding-top: 5px;
+    color: #007bff;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.box-part:hover .app-button-title {
+    color: #004b9c;
+}
+
+/* Extra Navigation Styling */
+
+.all-apps-title {
+    font-size : 20px;
+}
+
+.count{
+    visibility: hidden;
+    font-weight: bold;
+}
+
+.navigation-list li:hover {
+    background-color: #d4d4d4;
+}
+
+.navigation-list li:hover .count{
+    visibility: visible;
+}
+
+.navigation-list li > span {
+    padding-left: 5px;
+}
+
+.navigation-list li > span > a {
+    text-decoration: none;
+}
+
+span.desc-box.small-visible {
+    font-weight: 500;
+    padding-bottom: 5px;
+    display: block;
+    line-height: 1.2em;
+    height: 2.4em;
+	overflow: hidden;
+}
+
+span.desc-box.long-visible{
+    display: none;
+    visibility: hidden;
+}
+
+.search-head {
+    font-weight: 500;
+}
+
+.transparent {
+    background-color: transparent;
+}
+
+.trash {
+    font-size: 20px;
+    color: black;
+}
+
+.custom-legend {
+    color: black;
+    font-size: 16px;
+}
+
+.custom-text {
+    margin-left: 15%;
+}
+
+.center-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60%;
+}
+
+.big-button {
+    width: 30%;
+    height: 45px;
+    font-size:18px;
+}
+
+.block {
+    display: block;
+    min-height: 65px;
+}
+
+input[type=file]{
+    width:99px;
+    color:transparent;
+}
+
+.input-file-label {
+    width: 30%;
+    font-style: italic;
+    text-overflow:ellipsis;=
 }
