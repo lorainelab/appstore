@@ -16,74 +16,58 @@
 {% endblock %}
 
 {% block content %}
-<div class="col-md-12">
-    {% if expect_app_name %}
-        <h1>
-            Submit a New Release
-            <small>{{ expect_app_name }}</small>
-        </h1>
-    {% else %}
-        <h1 class="text-success">Submit your App</h1>
-    {% endif %}
-</div>
-
-{% if error_msg %}
-<div class="col-md-12">
-    <div class="alert alert-danger">
-        {% autoescape off %}{{ error_msg }}{% endautoescape %}
+<div class="error-margin">
+    <div class="col-md-12">
+        {% if expect_app_name %}
+            <h1>
+                Submit a New Release
+                <small>{{ expect_app_name }}</small>
+            </h1>
+        {% else %}
+            <h1 class="text-success">Submit your App
+                <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle"
+                 title = "">
+                    <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                </button>
+            </h1>
+        {% endif %}
     </div>
-</div>
-{% endif %}
-<br />
-Upload your IGB App jar file here.
-<button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle"
-     title = "">
-    <i class="fa fa-question-circle" style="font-size: 30px"></i>
-</button>
 {{ doc_link }}
 <br/><br/>
-<form action="" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {% if expect_app_name %}
-    <input type="hidden" name="expect_app_name" value="{{ expect_app_name }}">
-    {% endif %}
-    <div class="row">
-        <div class="col-md-12">
-            <div>
-            <input type="file" name="file" id="input-file" class="span8" style="width:25%">
-             <button id="delete_file_btn" class="btn btn-light">
-                 <i class="fa fa-trash"></i>
-             </button>
-            <br/><label style="margin-left: 5%">or</label><br/>
-             Upload from URL : <input type="text" id="url_val" name = "url_val" style="width: 300px">
-                <button id="delete_path_btn" class="btn btn-light">
-                 <i class="fa fa-trash"></i>
-             </button>
-            </div>
-            <i style="color: #808080;margin-left:13%">Best for bitbucket pipeline users.</i>
-            <a  href="#" id = "doc_link"><u>Learn more</u></a>
-        </div>
-    </div>
-    <div class="row">
-            <div class="col-md-6">
-                <button type="submit" class="btn btn-success">Next</button>
-                <div id="loading">
-                    <img src="{% get_static_prefix %}common/img/loading.gif">
+    <div class="col-md-12">
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if expect_app_name %}
+            <input type="hidden" name="expect_app_name" value="{{ expect_app_name }}">
+            {% endif %}
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="file" name="file" id="input-file">
+                    <label for="input-file" class="input-file-label text-muted" id="input-file-label"> No file selected </label>
+                    &nbsp;<i id="delete_file_btn" class="fa fa-trash-o trash"></i>
+                    <br />
+                    <br />
+                    <label class="custom-legend">or</label>
+                    <br />
+                    <br />
+                    Enter Link&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="url_val" name = "url_val" size="50">
+                    &nbsp;<i id="delete_path_btn" class="fa fa-trash-o trash"></i>
+                    <br />
+                    <i class="text-muted custom-text">Best for bitbucket pipeline users.</i>
+                    <a href="#" id="doc_link"><u>Learn more</u></a>
                 </div>
             </div>
+            <div class="row">
+                    <div class="col-md-6">
+                        <button type="submit" class="btn btn-success">Next</button>
+                        <div id="loading">
+                            <img src="{% get_static_prefix %}common/img/loading.gif">
+                        </div>
+                    </div>
+            </div>
+        </form>
     </div>
-</form>
 <br />
-<div class="row">
-    <div class="col-md-12">
-        <br />
-        <span class="text-danger"><b> Notice: </b></span>
-
-        Uploading an app using certain browsers/OS combinations may cause a hang or timeout.
-        We have only seen this with linux distros so far. So, if your upload hangs, please
-        consider trying the upload from a different system.
-    </div>
-</div>
 
 <script type="text/javascript">
     var message = "IGB Apps are OSGi bundles, which are ordinary Java jar files with some extra meta-data that enables them to run within IGB’s OSGi run-time. An IGB App also needs an OBR index file named repository.xml. See <a href='" + getDocLink() + "'> developer’s documentation.</a>";
@@ -97,50 +81,43 @@ Upload your IGB App jar file here.
     };
 
     $(function() {
-        var loading_tag = $('#loading');
-        var file_field = $('form input[type=file]');
-        var submit_btn = $('button[type=submit]');
-        var delete_file_btn = $('#delete_file_btn');
-        var delete_path_btn = $('#delete_path_btn');
-        var url_value = $('#url_val');
-
         $('form').submit(function() {
-            if(file_field.val() || url_value.val()){
-                submit_btn.hide();
-                loading_tag.show();
+            if($('form input[type=file]').val() || $('#url_val').val()){
+                $('button[type=submit]').hide();
+                $('#loading').show();
             } else {
                 Msgs.add_msg('Please upload a file or Enter a URL', 'danger', 'rating');
                 return false;
             }
         })
 
-        delete_file_btn.attr('disabled', 'true');
-        delete_path_btn.attr('disabled', 'true');
+        $('#delete_file_btn').attr('disabled', 'true');
+        $('#delete_path_btn').attr('disabled', 'true');
 
-        file_field.change(function() {
-            if (file_field.val()) {
-                delete_file_btn.removeAttr('disabled');
+        $('form input[type=file]').change(function() {
+            if ($('form input[type=file]').val()) {
+                $('#delete_file_btn').removeAttr('disabled');
+                $('#input-file-label').text($('form input[type=file]').val().replace(/^.*[\\\/]/, ''));
             }
             else
-                submit_btn.attr('disabled', 'true');
+                $('button[type=submit]').attr('disabled', 'true');
         });
 
-        url_value.change(function() {
-            if (url_value.val()) {
-                delete_path_btn.removeAttr('disabled');
+        $('#url_val').change(function() {
+            if ($('#url_val').val()) {
+                $('#delete_path_btn').removeAttr('disabled');
             }
         });
 
          $('#delete_file_btn').click(function () {
-            var file_field = $('form input[type=file]');
-            file_field.replaceWith(file_field.val('').clone(true));
+            $('form input[type=file]').replaceWith($('form input[type=file]').val('').clone(true));
+            $('#input-file-label').text(' No file selected ');
         });
 
         $('#delete_path_btn').click(function () {
             var url_field = $('form input[id="url_val"]');
             url_field.replaceWith(url_field.val('').clone(true));
         });
-
     });
 </script>
 {% endblock %}

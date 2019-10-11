@@ -386,3 +386,49 @@ span.desc-box.long-visible{
 .search-head {
     font-weight: 500;
 }
+
+.transparent {
+    background-color: transparent;
+}
+
+.trash {
+    font-size: 20px;
+    color: black;
+}
+
+.custom-legend {
+    color: black;
+    font-size: 16px;
+}
+
+.custom-text {
+    margin-left: 15%;
+}
+
+.center-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60%;
+}
+
+.big-button {
+    width: 30%;
+    height: 45px;
+    font-size:18px;
+}
+
+.block {
+    display: block;
+    min-height: 65px;
+}
+
+input[type=file]{
+    width:99px;
+    color:transparent;
+}
+
+.input-file-label {
+    width: 30%;
+    font-style: italic;
+}
