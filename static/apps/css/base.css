@@ -418,11 +418,18 @@ span.desc-box.long-visible{
     font-size:18px;
 }
 
-input[type=file]{
-    color:transparent;
-}
-
 .block {
     display: block;
     min-height: 65px;
+}
+
+input[type=file]{
+    width:99px;
+    color:transparent;
+}
+
+.input-file-label {
+    width: 30%;
+    font-style: italic;
+    text-overflow:ellipsis;=
 }
