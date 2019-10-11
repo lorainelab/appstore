@@ -18,11 +18,14 @@ from util.view_util import html_response, json_response, get_object_or_none
 from .models import AppPending
 from .processjar import process_jar
 
-REPLACEMENT_JAR_MSG = "This is a replacement jar file for a not yet released App that you or a colleague already uploaded previously but is still in our “pending apps” waiting area. If you choose to submit it, this new jar file will replace the one that was uploaded before"
-NEW_VERSION_MSG = "This is a new version of a released App. If you choose to submit it, your new version will appear right away in the App Store"
-ALL_NEW_APP = "This is an all-new App. No released or pending App in App Store has the same Bundle_SymbolicName. Congratulations on your App’s first release"
-ALREADY_RELEASED_APP = "Bundle_Version and Bundle_SymbolicName match an already-released App. We are sorry – this is not allowed! If you want users to get the new version, you must increase Bundle_Version. For example, if the released version is 1.0.0, the new version should be 1.0.1 or higher"
-NOT_YET_RELEASED_APP = "The jar file Bundle_SymbolicName matches a previously uploaded but not yet released App. The previously uploaded App’s Bundle_Version is different, however. Are you trying to release different versions of the same App. No problem!"
+# IGBF-2026 start
+APP_REPLACEMENT_JAR_MSG = "This is a replacement jar file for a not yet released App that you or a colleague already uploaded previously but is still in our “pending apps” waiting area. If you choose to submit it, this new jar file will replace the one that was uploaded before."
+NEW_VERSION_APP_MSG = "This is a new version of a released App. If you choose to submit it, your new version will appear right away in the App Store."
+ALL_NEW_APP_MSG = "This is an all-new App. No released or pending App in App Store has the same Bundle_SymbolicName. Congratulations on your App’s first release."
+ALREADY_RELEASED_APP_MSG = "Bundle_Version and Bundle_SymbolicName match an already-released App. We are sorry – this is not allowed! If you want users to get the new version, you must increase Bundle_Version. For example, if the released version is 1.0.0, the new version should be 1.0.1 or higher."
+NOT_YET_RELEASED_APP_MSG = "The jar file Bundle_SymbolicName matches a previously uploaded but not yet released App. The previously uploaded App’s Bundle_Version is different, however. Are you trying to release different versions of the same App. No problem!"
+# IGBF-2026 end
+
 # Presents an app submission form and accepts app submissions.
 @login_required
 def submit_app(request):
@@ -81,7 +84,11 @@ def confirm_submission(request, id):
         return HttpResponseRedirect('/')
     pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, Bundle_Version=pending.Bundle_Version)
     is_pending_replace = True if pending_obj.count() > 1 else False
-    app_status = _app_status(pending)
+    # IGBF-2026 start
+    app_summary, is_app_submission_error = _app_summary(pending)
+    if is_app_submission_error:
+        return html_response('error.html', {'pending': pending, 'app_summary': app_summary}, request)
+    # IGBF-2026 end
     action = request.POST.get('action')
     if action:
         latest_pending_obj_ = pending_obj[1] if is_pending_replace else pending_obj[0]
@@ -94,12 +101,32 @@ def confirm_submission(request, id):
             _send_email_for_pending(server_url, latest_pending_obj_)
             _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
-    return html_response('confirm.html',{'pending': pending,
-                         'app_status': app_status}, request)
+    return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary}, request)
 
 # Get the Current Directory Path to Temporarily store the Zip File
 dir_path = os.path.dirname(os.path.abspath(__file__))
 
+# IGBF-2026 start
+def _app_summary(pending):
+
+    is_app_submission_error = False
+    app_summary = ALL_NEW_APP_MSG
+    pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
+    released_obj = App.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
+    if released_obj.count() == 1:
+        if released_obj[0].Bundle_Version == pending.Bundle_Version:
+            is_app_submission_error = True
+            app_summary = ALREADY_RELEASED_APP_MSG
+        else:
+            app_summary = NEW_VERSION_APP_MSG
+    elif pending_obj.count() > 1:
+        if pending_obj[0].Bundle_Version == pending.Bundle_Version:
+            app_summary = APP_REPLACEMENT_JAR_MSG
+        else:
+            app_summary = NOT_YET_RELEASED_APP_MSG
+
+    return app_summary, is_app_submission_error
+# IGBF-2026 end
 
 def _app_status(pending):
 
