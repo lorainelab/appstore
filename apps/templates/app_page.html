@@ -40,7 +40,7 @@ logger = logging.getLogger("app_page.html") %}
 				<h2 class="app-name" id="app-name">
 					{{ app.Bundle_Name }}
 				</h2>
-				<span class="app-def-desc">{% if app.short_title %}<b> {{ app.short_title }} </b>{% endif %}</span>
+				<span class="app-def-desc">{% if app.short_title %}{{ app.short_title }}{% endif %}</span>
 				<br />
 				{# Ratings #}
 				<span class="get-app-stars">{{ app.stars_percentage }}</span>
@@ -110,7 +110,7 @@ logger = logging.getLogger("app_page.html") %}
 	<!-- Nav tabs -->
 	<ul class="nav nav-tabs" id="myTab" role="tablist">
 		<li class="nav-item">
-			<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">Bundle Description</a>
+			<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">About this App</a>
 		</li>
 		{% if app.has_releases %}
 		<li class="nav-item">
@@ -186,11 +186,19 @@ logger = logging.getLogger("app_page.html") %}
 				<div class="col-md-12">
 					{# Release version #}
 					<br />
-					<h5>
-						Current Version :
-						<!-- Removed release.version argument href="% url 'release_download' app.name %-->
-						{{ release.Bundle_Version }}
-					</h5>
+					{% if forloop.first %}
+						<h5>
+							Current Version :
+							<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+							{{ release.Bundle_Version }}
+						</h5>
+					{% else %}
+						<h5>
+							Version :
+							<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+							{{ release.Bundle_Version }}
+						</h5>
+					{% endif %}
 					<p><strong>Release Date : </strong> {{ release.created_iso|date:"r" }}</p>
 					{# End Release version #}
 
@@ -231,9 +239,9 @@ logger = logging.getLogger("app_page.html") %}
 	{# 3.0 download panel #}
 	<div class="box-release-info" id="app_status_block">
 		<h6 class="panel-title text-muted">IGB</h6>
-		<button class="btn btn-large btn-block" id="app-install-btn">
-			<i></i> {# <-- download button icon will go here #}
-			<h4></h4> {# <-- download button text will go here #}
+		<button class="btn btn-large btn-block btn-info" id="app-install-btn">
+			<i class="icon-install-download"></i> {# <-- download button icon will go here #}
+			<h4> Get IGB</h4> {# <-- download button text will go here #}
 		</button>
 		<p id="app_version"></p>
 		{% if app.license_url %}
@@ -388,3 +396,4 @@ logger = logging.getLogger("app_page.html") %}
 	AppPage.setup_release_notes();
 </script>
 {% endblock %}
+</div>
