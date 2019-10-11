@@ -127,9 +127,11 @@ def _replace_jar_details(request, pending_obj):
         raise ValueError('cannot be accepted because you are not an editor')
     name = fullname_to_name(latest_pending_obj.Bundle_Name)
     existing_pending_obj.Bundle_Description = latest_pending_obj.Bundle_Description
-    existing_pending_obj.repository = latest_pending_obj.repository
+    existing_pending_obj.repository_xml = latest_pending_obj.repository_xml
     existing_pending_obj.Bundle_Name = latest_pending_obj.Bundle_Name
-    existing_pending_obj.release_file = latest_pending_obj.release_file
+    file_name = latest_pending_obj.Bundle_SymbolicName + "-" + latest_pending_obj.Bundle_Version + ".jar"
+    existing_pending_obj.release_file.delete()
+    existing_pending_obj.release_file.save(file_name, latest_pending_obj.release_file)
     existing_pending_obj.save()
     latest_pending_obj.delete_files()
     latest_pending_obj.delete()
