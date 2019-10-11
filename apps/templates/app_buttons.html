@@ -9,9 +9,18 @@
         {% endif %}
 
         {% if not forloop.counter|divisibleby:2 %}
-            <div class="col-md-6" id="left">
-            {% app_button app forloop.counter %}
-            </div>
+            {% if forloop.last %}
+                <div class="col-md-6" id="left">
+                {% app_button app forloop.counter %}
+                </div>
+                <div class="col-md-6 invisible" id="right">
+                {% app_button app forloop.counter %}
+                </div>
+            {% else %}
+                <div class="col-md-6" id="left">
+                {% app_button app forloop.counter %}
+                </div>
+            {% endif %}
         {% endif %}
     {% endfor %}
 </div>
