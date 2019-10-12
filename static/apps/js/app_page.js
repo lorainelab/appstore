@@ -192,7 +192,7 @@ var AppPage = (function($) {
 	}
 
 	function getIgb(){
-	    window.location.href = " https://bioviz.org";
+	    window.open('https://bioviz.org', '_blank');
 	}
 
 
