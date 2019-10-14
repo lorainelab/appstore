@@ -83,7 +83,7 @@
                 $('button[type=submit]').hide();
                 $('#loading').show();
             } else {
-                Msgs.add_msg('Please upload a file or Enter a URL', 'danger', 'rating');
+                Msgs.add_msg('Please upload a file or Enter a URL', 'danger');
                 return false;
             }
         })
@@ -94,7 +94,7 @@
         $('form input[type=file]').change(function() {
             if ($('form input[type=file]').val()) {
                 $('#delete_file_btn').removeAttr('disabled');
-                $('#input-file-label').text($('form input[type=file]').val().replace(/^.*[\\\/]/, '').substring(0, 36 - 1));
+                $('#input-file-label').text($('form input[type=file]').val().replace(/^.*[\\\/]/, ''));
             }
             else
                 $('button[type=submit]').attr('disabled', 'true');

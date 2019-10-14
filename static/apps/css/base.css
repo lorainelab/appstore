@@ -424,14 +424,14 @@ span.desc-box.long-visible{
 }
 
 input[type=file]{
-    width:99px;
+    width:110px;
     color:transparent;
 }
 
 .input-file-label {
-    width: 30%;
+    width: max-content;
     font-style: italic;
-    text-overflow:ellipsis;
+    margin-right: 10px;
 }
 
 .or-button {
