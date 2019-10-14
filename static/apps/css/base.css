@@ -409,6 +409,7 @@ span.desc-box.long-visible{
     align-items: center;
     justify-content: center;
     width: 60%;
+    padding-top: 5%;
 }
 
 .big-button {
@@ -431,4 +432,12 @@ input[type=file]{
     width: 30%;
     font-style: italic;
     text-overflow:ellipsis;
+}
+
+.or-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30%;
+    font-weight: 500;
 }
