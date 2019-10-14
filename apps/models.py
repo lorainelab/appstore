@@ -126,6 +126,9 @@ class App(models.Model):
             self.release_file.delete()
             self.delete()
 
+    def delete_logo(self):
+        self.logo.delete()
+
     @property
     def page_url(self):
         return reverse('app_page', args=[self.Bundle_SymbolicName])
@@ -146,7 +149,8 @@ def delete_file(sender, instance, *args, **kwargs):
     """ Deletes Release files on `post_delete` """
     if instance.release_file:
         instance.release_file.delete()
-
+    if instance.logo:
+        instance.logo.delete()
 
 class OrderedAuthor(models.Model):
     author       = models.ForeignKey(Author,on_delete=models.CASCADE)
