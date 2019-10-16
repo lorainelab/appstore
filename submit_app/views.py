@@ -128,25 +128,6 @@ def _app_summary(pending):
     return app_summary, is_app_submission_error
 # IGBF-2026 end
 
-def _app_status(pending):
-
-    pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
-    released_obj = App.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
-    if released_obj.count() == 1:
-        if released_obj[0].Bundle_Version == pending.Bundle_Version:
-            return ALREADY_RELEASED_APP
-        else:
-            return NEW_VERSION_MSG
-    elif pending_obj.count() > 1:
-        if pending_obj[0].Bundle_Version == pending.Bundle_Version:
-            return REPLACEMENT_JAR_MSG
-        else:
-            return NOT_YET_RELEASED_APP
-    else:
-        return ALL_NEW_APP
-
-
-
 def _create_pending(submitter, jar_details, release_file):
     pending = AppPending.objects.create(submitter       = submitter,
                                         Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
