@@ -19,11 +19,11 @@ from .models import AppPending
 from .processjar import process_jar
 
 # IGBF-2026 start
-APP_REPLACEMENT_JAR_MSG = "This is a replacement jar file for a not yet released App that you or a colleague already uploaded previously but is still in our “pending apps” waiting area. If you choose to submit it, this new jar file will replace the one that was uploaded before."
-NEW_VERSION_APP_MSG = "This is a new version of a released App. If you choose to submit it, your new version will appear right away in the App Store."
-ALL_NEW_APP_MSG = "This is an all-new App. No released or pending App in App Store has the same Bundle_SymbolicName. Congratulations on your App’s first release."
-ALREADY_RELEASED_APP_MSG = "Bundle_Version and Bundle_SymbolicName match an already-released App. We are sorry – this is not allowed! If you want users to get the new version, you must increase Bundle_Version. For example, if the released version is 1.0.0, the new version should be 1.0.1 or higher."
-NOT_YET_RELEASED_APP_MSG = "The jar file Bundle_SymbolicName matches a previously uploaded but not yet released App. The previously uploaded App’s Bundle_Version is different, however. Are you trying to release different versions of the same App. No problem!"
+APP_REPLACEMENT_JAR_MSG = "This is a <b>replacement jar file</b> for a not yet released App that you or a colleague already uploaded previously but is still in our “pending apps” waiting area. If you choose to submit it, this new jar file will replace the one that was uploaded before."
+NEW_VERSION_APP_MSG = "This is a <b>new version of a released App.</b> If you choose to submit it, your new version will appear right away in the App Store."
+ALL_NEW_APP_MSG = "This is an <b>all-new App.</b> No released or pending App in App Store has the same Bundle_SymbolicName. Congratulations on your App’s first release!"
+ALREADY_RELEASED_APP_MSG = "Bundle_Version and Bundle_SymbolicName match an <b>already-released App.</b> We are sorry – this is not allowed! If you want users to get the new version, you must increase Bundle_Version. For example, if the released version is 1.0.0, the new version should be 1.0.1 or higher."
+NOT_YET_RELEASED_APP_MSG = "The jar file Bundle_SymbolicName matches a previously uploaded but <b>not yet released App.</b> The previously uploaded App’s Bundle_Version is different, however. Are you trying to release different versions of the same App. No problem!"
 # IGBF-2026 end
 
 # Presents an app submission form and accepts app submissions.
@@ -115,16 +115,31 @@ def _app_summary(pending):
     released_obj = App.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
     if released_obj.count() == 1:
         if released_obj[0].Bundle_Version == pending.Bundle_Version:
+            # Bundle_SymbolicName matches both a released App and a released App version!This is not allowed
             is_app_submission_error = True
             app_summary = ALREADY_RELEASED_APP_MSG
+
         else:
+            # Bundle_SymbolicName matches a released App, but has a different release.
+            # A jar file with the same Bundle_SymbolicName and Bundle_Version
+            # are not also in “pending apps.”
             app_summary = NEW_VERSION_APP_MSG
+
     elif pending_obj.count() > 1:
         if pending_obj[0].Bundle_Version == pending.Bundle_Version:
+            # Bundle_SymbolicName and Bundle_Version are the same as a jar file in
+            # “pending apps.” User wants to replace a “pending app” jar file they uploaded
+            # before, possibly because we asked them to. That’s OK
             app_summary = APP_REPLACEMENT_JAR_MSG
+
         else:
+            #Bundle_SymbolicName matches another App that is in ”pending apps” but has a
+            # different Bundle_Version. There is no App with the same Bundle_SymbolicName
+            # in released Apps. User appears to be trying to release multiple
+            # versions of the same App. That’s OK
             app_summary = NOT_YET_RELEASED_APP_MSG
 
+    # Bundle_SymbolicName is entirely new not in pending or released apps. App Store has never seen it before
     return app_summary, is_app_submission_error
 # IGBF-2026 end
 

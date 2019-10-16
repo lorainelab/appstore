@@ -19,7 +19,7 @@
         <table class="table text-justify">
             <tr>
                 <td>
-                    <b>BundleName:</b>
+                    <b>Bundle-Name:</b>
                 </td>
                 <td>{{ pending.Bundle_Name }}
                     <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
@@ -52,7 +52,7 @@
                     <b>Summary:</b>
                 </td>
                 <td>
-                    {{ app_summary }}
+                    {{ app_summary | safe }}
                 </td>
             </tr>
         </table>
