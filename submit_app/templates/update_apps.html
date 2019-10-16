@@ -7,11 +7,18 @@
 
 <div class="row">
     <div class="col-md-12">
-        <h4>Your App [ {{ app_bundle_symbolic_name }} ]Has been updated !</h4>
+        <h4>{{ app_bundle_symbolic_name | title }} has been updated !</h4>
         <hr />
-        <button class="btn btn-success"> Go to your App </button>
-        <button class="btn btn-danger"> Check Releases </button>
-        <button class="btn btn-primary"> Go to Home Page </button>
+        <h6> What to do next:</h6>
+        <span>
+        <p>Go to your app using the link below and do the changes (if required.)</p>
+        <p>You can check if the latest release was uploaded.</p>
+        <p>Submit another app / Go to homepage</p>
+        </span>
+        <hr />
+        <a href="/apps/{{ app_bundle_symbolic_name }}"><button class="btn btn-success"> Go to your App </button></a>
+        <a href="/apps/{{ app_bundle_symbolic_name }}/#app=releases"><button class="btn btn-danger"> Check Releases </button></a>
+        <a href="/"><button class="btn btn-primary"> Go to Home Page </button></a>
     </div>
 </div>
 {% endblock %}
