@@ -9,62 +9,60 @@
 
 {% block content %}
 <div class="col-md-12">
-    <h2 class="text-warning font-weight-bold">Something is wrong. Please go back and try again.</h2>
+    <div class="col-md-12">
+        <h2 class="text-warning font-weight-bold">Something is wrong. Please go back and try again.</h2>
+    </div>
+    <div class="pt-4 col-md-12">
+        <p>We found the following information about your App:</p>
+    </div>
+    <div class="pl-5 col-md-12">
+        <table class="table text-justify">
+            <tr>
+                <td>
+                    <b>BundleName:</b>
+                </td>
+                <td>{{ pending.Bundle_Name }}
+                    <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
+                         <i class="fa fa-info-circle" style="font-size: 30px"></i>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Bundle-SymbolicName:</b>
+                </td>
+                <td>{{ pending.Bundle_SymbolicName }}
+                    <button id="tooltip-2" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
+                         <i class="fa fa-info-circle" style="font-size: 30px"></i>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Bundle-Version:</b>
+                </td>
+                <td>{{ pending.Bundle_Version }}
+                    <button id="tooltip-3" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"  data-trigger="toggle" data-html="true">
+                         <i class="fa fa-info-circle" style="font-size: 30px"></i>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Summary:</b>
+                </td>
+                <td>
+                    {{ app_summary }}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div class="col-md-12">
+        <p>
+           If you still need help after reading <a href="#">developer’s documentation </a>, post a question to <a href="#">this Google Group.</a>
+        </p>
+    </div>
 </div>
-
-
-<div class="pt-4 col-md-12">
-    <p>We found the following information about your app:</p>
-</div>
-
-<div class="pb-4 col-md-12 m-0">
-    <table class="table text-justify">
-        <tr>
-            <td>
-                <b>Bundle Name:</b>
-            </td>
-            <td>{{ pending.Bundle_Name }}
-                <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
-                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
-                </button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Bundle-Symbolic Name:</b>
-            </td>
-            <td>{{ pending.Bundle_SymbolicName }}
-                <button id="tooltip-2" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
-                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
-                </button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Bundle Version:</b>
-            </td>
-            <td>{{ pending.Bundle_Version }}
-                <button id="tooltip-3" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"  data-trigger="toggle" data-html="true">
-                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
-                </button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Summary:</b>
-            </td>
-            <td>
-                {{ app_summary }}
-            </td>
-        </tr>
-    </table>
-</div>
-<div class="col-md-12">
-    <p>
-       If you still need help after reading <a href="#">developer’s documentation </a>, post a question to <a href="#">this Google Group.</a>
-    </p>
-</div>
-
 <script type="text/javascript" src="{% get_static_prefix %}submit_app/js/app_summary.js"></script>
 {% endblock %}
     
