@@ -125,16 +125,9 @@ def _replace_jar_details(request, pending_obj):
     existing_pending_obj = pending_obj[pending_obj.count() - 2]
     if latest_pending_obj and latest_pending_obj.submitter != request.user:
         raise ValueError('cannot be accepted because you are not an editor')
-    name = fullname_to_name(latest_pending_obj.Bundle_Name)
-    existing_pending_obj.Bundle_Description = latest_pending_obj.Bundle_Description
-    existing_pending_obj.repository_xml = latest_pending_obj.repository_xml
-    existing_pending_obj.Bundle_Name = latest_pending_obj.Bundle_Name
-    file_name = latest_pending_obj.Bundle_SymbolicName + "-" + latest_pending_obj.Bundle_Version + ".jar"
-    existing_pending_obj.release_file.delete()
-    existing_pending_obj.release_file.save(file_name, latest_pending_obj.release_file)
-    existing_pending_obj.save()
-    latest_pending_obj.delete_files()
-    latest_pending_obj.delete()
+    existing_pending_obj.release_file = ""
+    existing_pending_obj.delete()
+    latest_pending_obj.save()
 
 
 def _get_jar_file(release_file):
