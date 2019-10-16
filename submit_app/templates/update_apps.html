@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} - Add Apps to IGB {% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4>Your App [ {{ app_bundle_symbolic_name }} ]Has been updated !</h4>
+        <hr />
+        <button class="btn btn-success"> Go to your App </button>
+        <button class="btn btn-danger"> Check Releases </button>
+        <button class="btn btn-primary"> Go to Home Page </button>
+    </div>
+</div>
+{% endblock %}
