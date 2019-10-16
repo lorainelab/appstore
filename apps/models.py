@@ -27,7 +27,7 @@ class Author(models.Model):
 _TagCountCache = dict()
 
 
-class Tag(models.Model):
+class Category(models.Model):
     name     = models.CharField(max_length=255, unique=True)
     fullname = models.CharField(max_length=255)
 
@@ -49,6 +49,7 @@ class Tag(models.Model):
 
     class Meta:
         ordering = ["name"]
+        verbose_name_plural = "categories"
 
 
 GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
@@ -66,7 +67,7 @@ class App(models.Model):
     short_title  = models.CharField(max_length=255, blank=True, null=True)
     Bundle_Description = models.TextField(blank=True, null=True)
     Bundle_Version       = models.CharField(max_length=31, blank=False)
-    categories         = models.ManyToManyField(Tag, blank=True)
+    categories         = models.ManyToManyField(Category, blank=True)
 
     logo         = models.ImageField(blank=True, null=True, upload_to=logo_path)
 
@@ -125,6 +126,9 @@ class App(models.Model):
             self.release_file.delete()
             self.delete()
 
+    def delete_logo(self):
+        self.logo.delete()
+
     @property
     def page_url(self):
         return reverse('app_page', args=[self.Bundle_SymbolicName])
@@ -145,7 +149,8 @@ def delete_file(sender, instance, *args, **kwargs):
     """ Deletes Release files on `post_delete` """
     if instance.release_file:
         instance.release_file.delete()
-
+    if instance.logo:
+        instance.logo.delete()
 
 class OrderedAuthor(models.Model):
     author       = models.ForeignKey(Author,on_delete=models.CASCADE)

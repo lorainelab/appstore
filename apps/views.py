@@ -10,7 +10,7 @@ from django.utils.text import unescape_entities
 from util.view_util import json_response, html_response, obj_to_dict, get_object_or_none
 from util.img_util import scale_img
 from util.id_util import fullname_to_name
-from apps.models import Tag, App, Author, OrderedAuthor, Screenshot, Release
+from apps.models import Category, App, Author, OrderedAuthor, Screenshot, Release
 from django.core.paginator import Paginator
 # Returns a unicode string encoded in a cookie
 import logging
@@ -36,7 +36,7 @@ class _NavPanelConfig:
 
 
 def _all_tags_of_count(min_count):
-	return filter(lambda tag: tag.count >= min_count, Tag.objects.all())
+	return filter(lambda tag: tag.count >= min_count, Category.objects.all())
 
 
 _NavPanelContextCache = None
@@ -50,7 +50,7 @@ def _nav_panel_context(request):
 	sorted_tags = sorted(all_tags, key=lambda tag: tag.count)
 	sorted_tags.reverse()
 	try:
-		tag = get_object_or_404(Tag, name='collections')
+		tag = get_object_or_404(Category, name='collections')
 		idx = sorted_tags.index(tag)
 		sorted_tags.pop(idx)
 		sorted_tags.insert(0, tag)
@@ -148,7 +148,7 @@ def wall_of_apps(request):
 
 
 def apps_with_tag(request, tag_name):
-	tag = get_object_or_404(Tag, name=tag_name)
+	tag = get_object_or_404(Category, name=tag_name)
 	apps = App.objects.filter(active=True, categories=tag).order_by('name')
 	c = {
 		'tag': tag,
@@ -341,10 +341,9 @@ def _save_tags(app, request):
 		if not tag:
 			raise ValueError('expected ' + tag_key)
 		tags.append(tag)
-
 	app.categories.clear()
 	for tag in tags:
-		tag_obj, _ = Tag.objects.get_or_create(fullname=tag, name=fullname_to_name(tag))
+		tag_obj, _ = Category.objects.get_or_create(fullname=tag, name=fullname_to_name(tag))
 		app.categories.add(tag_obj)
 
 	_flush_tag_caches()
@@ -364,6 +363,7 @@ def _upload_logo(app, request):
 	if f.size > _AppPageEditConfig.max_img_size_b:
 		raise ValueError(
 			'image file is %d bytes but can be at most %d bytes' % (f.size, _AppPageEditConfig.max_img_size_b))
+	app.delete_logo()
 	app.logo.save(f.name, f)
 
 
@@ -550,7 +550,7 @@ def app_page_edit(request, app_name):
 		if request.is_ajax():
 			return json_response(result)
 
-	all_tags = [tag.fullname for tag in Tag.objects.all()]
+	all_tags = [tag.fullname for tag in Category.objects.all()]
 	c = {
 		'app': app,
 		'all_tags': all_tags,
