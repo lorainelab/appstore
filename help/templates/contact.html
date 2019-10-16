@@ -1,60 +1,57 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %} - Contact Us{% endblock %}
+{% block title %} - Get Help{% endblock %}
 
 {% block content %}
-<div class="row">
-	<div class="span12">
-		<div class="page-header">
-			<h1>Contact Us</h1>
-		</div>
-	</div>
-</div>
+    <div class="row">
+        <div class="span12">
+            <div class="page-header">
+                <h1 class="font-weight-bold">Get Help</h1>
+            </div>
+        </div>
+    </div>
+    <hr>
+    <div class="span6 offset1">
+        <p>
+            For questions about developing IGB Apps, post to <a target="_blank"
+                                                                href="https://groups.google.com/forum/#!forum/igb-app-developers">IGB
+            App Developers Group</a>.
+            <br>
+            For questions about using Integrated Genome Browser, post to the
+            <a target="_blank"
+               href=" https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk">IGB
+                Help Desk</a>.
+        </p>
 
-<div class="row" style="margin-bottom: 3em;">
-	<div class="span6 offset1">
-    <p>
-    <strong>Do you have a question about an app or IGB?
-    <br>
-    You can post your question on the
-    <a target="_blank" href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk">IGB Help Desk</a>.
-    </strong>
-    </p>
+        <p>
+            However, if you have a question about or feedback for the App Store,
+            let us know<a href="#" onclick="$('form').fadeIn('slow');$(this).fadeOut();"> by clicking here</a>.
+        </p>
+    </div>
 
-    <p style="margin-top: 5em;">
-    However, if you have a question about or feedback for the App Store,
-    let us know<a href="#" onclick="$('form').fadeIn('slow');$(this).fadeOut();"> by clicking here</a>.
-    </p>
-	</div>
-</div>
-
-<div class="row">
-	<div class="span6">
-		<form method="post" action="" class="form-horizontal" style="display: none;">
-			{% csrf_token %}
-			<fieldset>
-				<div class="control-group {% if error_from %}error{% endif %}">
-					<label class="control-label" for="user_email">From</label>
-					<div class="controls">
-						<input type="text" class="input-xlarge" id="user_email" name="user_email" placeholder="Enter your email address here" value="{% if user_email %}{{ user_email }}{% endif %}">
-					</div>
-				</div>
-				<div class="control-group {% if error_message %}error{% endif %}">
-					<label class="control-label" for="subject">Message</label>
-					<div class="controls">
-						<textarea class="input-xlarge" rows="10" id="message" name="message">{% if message %}{{ message }}{% endif %}</textarea>
-					</div>
-				</div>
-				<div class="control-group {% if error_no_robot %}error{% endif %}">
-					<label class="control-label" for="subject"><img src="{% get_static_prefix %}help/img/arithmetic_question{% if error_no_robot %}_error{% endif %}.png"></label>
-					<div class="controls">
-						<input type="text" class="input-xlarge" name="no_robot" id="no_robot" placeholder="So we know you aren't a robot">
-					</div>
-				</div>
-        <button type="submit" class="btn btn-primary pull-right">Send</button>
-			</fieldset>
-		</form>
-	</div>
-</div>
+    <div class="container">
+        <form method="post" action="" style="display: none;">
+            {% csrf_token %}
+            <div class="form-group {% if error_from %}error{% endif %}">
+                <label for="user_email">Email address:</label>
+                <input type="email" class="form-control" id="user_email" name="user_email"
+                       placeholder="Enter your email address here"
+                       value="{% if user_email %}{{ user_email }}{% endif %}">
+            </div>
+            <div class="form-group {% if error_message %}error{% endif %}">
+                <label for="subject">Message</label>
+                <textarea class="form-control" rows="10" id="message" name="message">{% if message %}
+                    {{ message }}{% endif %}</textarea>
+            </div>
+            <div class="form-group {% if error_no_robot %}error{% endif %}">
+                <label for="subject"><img
+                        src="{% get_static_prefix %}help/img/arithmetic_question{% if error_no_robot %}_error{% endif %}.png"></label>
+                <input class="form-control" type="text" name="no_robot" id="no_robot"
+                       placeholder="So we know you aren't a robot">
+            </div>
+            <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+    </div>
+    <hr>
 {% endblock %}
