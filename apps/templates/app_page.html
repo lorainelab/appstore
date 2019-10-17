@@ -189,13 +189,11 @@ logger = logging.getLogger("app_page.html") %}
 					{% if forloop.first %}
 						<h5>
 							Current Version :
-							<!-- Removed release.version argument href="% url 'release_download' app.name %-->
 							{{ release.Bundle_Version }}
 						</h5>
 					{% else %}
 						<h5>
 							Version :
-							<!-- Removed release.version argument href="% url 'release_download' app.name %-->
 							{{ release.Bundle_Version }}
 						</h5>
 					{% endif %}
@@ -249,9 +247,6 @@ logger = logging.getLogger("app_page.html") %}
 		<br />
 		{% endif %}
 		<strong class="custom-font">Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a>
-		<!--
-		<strong class="custom-font">Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a>
-		-->
 	</div>
 
 	{# end 3.0 download panel #}

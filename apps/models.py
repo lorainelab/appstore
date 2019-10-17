@@ -61,7 +61,6 @@ def logo_path(app, filename):
                     app.Bundle_Version + '.' + get_ext)
 
 class App(models.Model):
-    name         = models.CharField(max_length=127, unique=True)
     Bundle_Name = models.CharField(max_length=127, unique=True)
     Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
     short_title  = models.CharField(max_length=255, blank=True, null=True)
@@ -141,7 +140,7 @@ class App(models.Model):
     search_key = 'name'
 
     def __unicode__(self):
-        return self.name
+        return self.Bundle_Name
 
 
 @receiver(models.signals.pre_delete, sender=App)
@@ -158,7 +157,7 @@ class OrderedAuthor(models.Model):
     author_order = models.PositiveSmallIntegerField(default = 0)
 
     def __unicode__(self):
-        return unicode(self.author_order) + ': ' + self.app.name + ' by ' + self.author.name
+        return unicode(self.author_order) + ': ' + self.app.Bundle_Name + ' by ' + self.author.name
 
     class Meta:
         ordering = ["author_order"]
