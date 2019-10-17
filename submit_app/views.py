@@ -107,6 +107,7 @@ def _create_pending(submitter, jar_details, release_file):
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
+    pending.logo = ""
     pending.save()
     if isinstance(release_file, str):
         os.remove(dir_path + file_name)
@@ -301,3 +302,5 @@ def _update_app_page(request_post):
 
     app.save()
     return json_response(True)
+
+
