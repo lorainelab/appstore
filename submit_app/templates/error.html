@@ -10,13 +10,19 @@
 {% block content %}
 <div class="col-md-12">
     <div class="col-md-12">
-        <h2 class="text-warning font-weight-bold">Something is wrong. Please go back and try again.</h2>
+        <h2 class="text-warning-color font-weight-bold">Something is wrong. Please go back and try again.</h2>
     </div>
     <div class="pt-4 col-md-12">
         <p>We found the following information about your App:</p>
     </div>
     <div class="pl-5 col-md-12">
         <table class="table text-justify">
+            <tr>
+                 <td>
+                    <b>You submitted:</b>
+                 </td>
+            <td> {{ pending.release_file_name }}</td>
+            </tr>
             <tr>
                 <td>
                     <b>Bundle-Name:</b>

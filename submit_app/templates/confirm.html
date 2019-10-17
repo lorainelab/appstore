@@ -111,7 +111,7 @@
         <form action="{% url 'confirm-submission' pending.id %}" method="post">
              {% csrf_token %}
              <input type="hidden" name="action" value="cancel">
-             <input type="submit" class="btn btn-outline-dark ml-5" value="No. Cancel submission and go back" style="font-size:15px;">
+             <input type="submit" class="btn-sm btn btn-outline-dark ml-5" value="No. Cancel submission and go back">
         </form>
         <div id="loading">
             <img src="{% get_static_prefix %}common/img/loading.gif">
