@@ -37,8 +37,8 @@ def writeToDatabase(host,user,passwd,database):
 				active = 1
 				has_releases = 1
 				mycursor = mydb.cursor()
-				sql = """REPLACE INTO apps_app (name, fullname, details, has_releases, active) VALUES (%s, %s, %s, %s, %s)"""
-				val = (name, fullname, details, int(has_releases), int(active))
+				sql = """REPLACE INTO apps_app (fullname, details, has_releases, active) VALUES (%s, %s, %s, %s)"""
+				val = (fullname, details, int(has_releases), int(active))
 				mycursor.execute(sql, val)
 				mydb.commit()
 			print("Data is inserted/updated in database")	

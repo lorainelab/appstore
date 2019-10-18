@@ -56,7 +56,7 @@ def _user_cancelled(request, pending):
 
 
 def _user_accepted(request, pending):
-    app = get_object_or_none(App, name = fullname_to_name(pending.Bundle_Name))
+    app = get_object_or_none(App, Bundle_SymbolicName = pending.Bundle_SymbolicName)
     if app:
         if not app.is_editor(request.user):
             return HttpResponseForbidden('You are not authorized to add releases, because you are not an editor')
@@ -177,9 +177,9 @@ The following app has been submitted:
     send_mail('{Bundle_Name} App - Successfully Submitted.'.format(Bundle_Name = pending.Bundle_Name), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 
-def _send_email_for_accepted_app(to_email, from_email, app_fullname, app_name, server_url):
-    subject = u'IGB App Store - {app_fullname} Has Been Approved'.format(app_fullname = app_fullname)
-    app_url = reverse('app_page', args=[app_name])
+def _send_email_for_accepted_app(to_email, from_email, Bundle_Name, server_url):
+    subject = u'IGB App Store - {Bundle_Name} Has Been Approved'.format(Bundle_Name = Bundle_Name)
+    app_url = reverse('app_page', args=[Bundle_Name])
     msg = u"""Your app has been approved! Here is your app page:
 
   {server_url}{app_url}
@@ -214,9 +214,12 @@ def _get_server_url(request):
 
 
 def _pending_app_accept(pending, request):
-    name = fullname_to_name(pending.Bundle_Name)
-    # we always create a new app, because only new apps require accepting
-    app = App.objects.create(Bundle_Name = pending.Bundle_Name, name = name)
+    # we always create a new app, because only new apps require accepting (old cytoscape behavior)
+    """
+          Update existing released app with Bundle_Name and different version and create new app if the
+        app is not yet released
+    """
+    app, _ = App.objects.get_or_create(Bundle_Name=pending.Bundle_Name)
     app.active = True
     app.Bundle_SymbolicName = pending.Bundle_SymbolicName
     app.Bundle_Description = pending.Bundle_Description
@@ -230,7 +233,7 @@ def _pending_app_accept(pending, request):
     pending.delete()
 
     server_url = _get_server_url(request)
-    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.Bundle_Name, app.name, server_url)
+    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.Bundle_Name, server_url)
 
 
 def _pending_app_decline(pending_app, request):
@@ -270,9 +273,8 @@ def pending_apps(request):
 
 def _app_info(request_post):
     Bundle_Name = request_post.get('app_fullname')
-    name = fullname_to_name(Bundle_Name)
-    url = reverse('app_page', args=(name,))
-    exists = App.objects.filter(name = name, active = True).count() > 0
+    url = reverse('app_page', args=(Bundle_Name,))
+    exists = App.objects.filter(Bundle_Name = Bundle_Name, active = True).count() > 0
     return json_response({'url': url, 'exists': exists})
 
 
@@ -280,12 +282,11 @@ def _update_app_page(request_post):
     Bundle_Name = request_post.get('Bundle_Name')
     if not Bundle_Name:
         return HttpResponseBadRequest('"Bundle_Name" not specified')
-    name = fullname_to_name(Bundle_Name)
-    app = get_object_or_none(App, name = name)
+    app = get_object_or_none(App, Bundle_Name = Bundle_Name)
     if app:
         app.active = True
     else:
-        app = App.objects.create(name = name, Bundle_Name = Bundle_Name)
+        app = App.objects.create(Bundle_Name = Bundle_Name)
 
     Bundle_Description = request_post.get('Bundle_Description')
     if Bundle_Description:
