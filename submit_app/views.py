@@ -66,7 +66,9 @@ def _user_accepted(request, pending):
         pending.make_release(app)
         pending.delete_files()
         pending.delete()
-        return html_response('update_apps.html', {'app_bundle_symbolic_name': app.Bundle_SymbolicName}, request)
+        return html_response('update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
+                                                  'Bundle_Name': app.Bundle_Name,
+                                                  'Bundle_Version': app.Bundle_Version}, request)
         #return HttpResponseRedirect(reverse('app_page_edit', args=[app.Bundle_SymbolicName]) + '?upload_release=true') # For Future Reference
     else:
         return html_response('submit_done.html', {'app_name': pending.Bundle_Name}, request)
