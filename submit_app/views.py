@@ -73,7 +73,10 @@ def _user_accepted(request, pending):
         pending.make_release(app)
         pending.delete_files()
         pending.delete()
-        return HttpResponseRedirect(reverse('app_page_edit', args=[app.Bundle_SymbolicName]) + '?upload_release=true')
+        return html_response('update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
+                                                  'Bundle_Name': app.Bundle_Name,
+                                                  'Bundle_Version': app.Bundle_Version}, request)
+        #return HttpResponseRedirect(reverse('app_page_edit', args=[app.Bundle_SymbolicName]) + '?upload_release=true') # For Future Reference
     else:
         return html_response('submit_done.html', {'app_name': pending.Bundle_Name}, request)
 
@@ -162,6 +165,7 @@ def _create_pending(submitter, jar_details, release_file):
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
+    pending.logo = ""
     pending.save()
     if isinstance(release_file, str):
         os.remove(dir_path + file_name)
@@ -357,3 +361,5 @@ def _update_app_page(request_post):
 
     app.save()
     return json_response(True)
+
+

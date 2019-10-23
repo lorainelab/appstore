@@ -357,6 +357,7 @@ class _AppPageEditConfig:
 
 
 def _upload_logo(app, request):
+	release = Release.objects.get(app=app, Bundle_Version=app.Bundle_Version)
 	f = request.FILES.get('file')
 	if not f:
 		raise ValueError('no file submitted')
@@ -364,7 +365,10 @@ def _upload_logo(app, request):
 		raise ValueError(
 			'image file is %d bytes but can be at most %d bytes' % (f.size, _AppPageEditConfig.max_img_size_b))
 	app.delete_logo()
+	release.delete_logo()
 	app.logo.save(f.name, f)
+	release.logo = app.logo
+	release.save()
 
 
 def _upload_screenshot(app, request):
