@@ -51,6 +51,7 @@ class AppPending(models.Model):
         release.active = True
         release.created = datetime.datetime.today()
         release.Bundle_Description = app.Bundle_Description
+        app.Bundle_Version = release.Bundle_Version
         release.repository_xml = self.repository_xml
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
