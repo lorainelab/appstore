@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %} - Add Apps to IGB {% endblock %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        <h4><h4>Congratulations! Version {{ Bundle_Version }} of {{ Bundle_Name | title }} App is now available for users to install.</h4></h4>
+        <hr />
+        <h6> What to do next:</h6>
+        <span>
+        <ul>
+            <li>Visit your <a href="/apps/{{ Bundle_SymbolicName }}">App's home page</a> in App Store.</li>
+            <li>Install this version from IGB App Store.</li>
+            <li>Check the <strong>Release History</strong> tab.</li>
+            <li>Upload a new logo if you like.</li>
+        </ul>
+        </span>
+        <hr />
+        <a href="/apps/{{ Bundle_SymbolicName }}"><button class="btn btn-success"> Go to your App </button></a>
+        <a href="/apps/{{ Bundle_Version }}/#app-releases"><button class="btn btn-info"> Check Release History</button></a>
+        <a href="/"><button class="btn btn-primary"> Go to Home Page </button></a>
+    </div>
+</div>
+{% endblock %}
