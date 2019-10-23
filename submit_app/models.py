@@ -37,8 +37,7 @@ class AppPending(models.Model):
 
     @property
     def is_new_app(self):
-        name = fullname_to_name(self.Bundle_Name)
-        return get_object_or_none(App, name = name) == None
+        return get_object_or_none(App, Bundle_SymbolicName = self.Bundle_SymbolicName) == None
 
     class Meta:
         ordering = ['created']
@@ -54,6 +53,7 @@ class AppPending(models.Model):
         release.repository_xml = self.repository_xml
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
+        release.save()
         app.release_file = release.release_file
         app.release_file_name = basename(app.release_file.name)
         app.save()

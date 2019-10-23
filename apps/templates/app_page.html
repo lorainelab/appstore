@@ -184,50 +184,41 @@ logger = logging.getLogger("app_page.html") %}
 		{% for release in app.releases %}
 			<div class="row">
 				<div class="col-md-12">
-					{# Release version #}
-					<br />
-					{% if forloop.first %}
-						<h5>
-							Current Version :
-							<!-- Removed release.version argument href="% url 'release_download' app.name %-->
-							{{ release.Bundle_Version }}
-						</h5>
-					{% else %}
-						<h5>
-							Version :
-							<!-- Removed release.version argument href="% url 'release_download' app.name %-->
-							{{ release.Bundle_Version }}
-						</h5>
-					{% endif %}
-					<p><strong>Release Date : </strong> {{ release.created_iso|date:"r" }}</p>
-					{# End Release version #}
+					<div class="row">
+						<div class="col-md-3 img-div" style="background-image: url('{{release.logo_url}}');background-size: contain; margin-top: 30px;"></div>
+						<div class="col-md-9">
+							{# Release version #}
+							<br />
+							{% if forloop.first %}
+								<h5>
+									Current Version :
+									<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+									{{ release.Bundle_Version }}
+								</h5>
+							{% else %}
+								<h5>
+									Version :
+									<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+									{{ release.Bundle_Version }}
+								</h5>
+							{% endif %}
+							<p><strong>Release Date : </strong> {{ release.created_iso|date:"r" }}</p>
+							{# End Release version #}
 
-					{# Works with #}
-					<p>
-						<strong>Works with</strong> IGB
-						{{ release.works_with }}
-					</p>
-					{# End Works with #}
-
-					{# Release dependencies #}
-					{% if release.dependents.count %}
-					<p>
-						<strong>Apps that depend on this release</strong>
-						<ul>
-							{% for dependent in release.dependents.all %}
-							<li><a href="{% url 'app_page' dependent.app.Bundle_SymbolicName %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
-							{% endfor %}
-						</ul>
-					</p>
-					{% endif %}
-					{# End Release dependencies #}
-
-					{% if release.notes %}
-					<p><strong>Release Notes</strong></p>
-					<div class="app-release-notes">{{ release.notes }}</div>
-					{% endif %}
-					{# End Release #}
-					<hr>
+							{# Works with #}
+							<p>
+								<strong>Works with</strong> IGB
+								{{ release.works_with }}
+							</p>
+							{# End Works with #}
+							{% if release.notes %}
+							<p><strong>Release Notes</strong></p>
+							<div class="app-release-notes">{{ release.notes }}</div>
+							{% endif %}
+							{# End Release #}
+						</div>
+					</div>
+					<hr />
 				</div>
 			</div>
 			{% endfor %} {# end looping thru each release #}
@@ -249,9 +240,6 @@ logger = logging.getLogger("app_page.html") %}
 		<br />
 		{% endif %}
 		<strong class="custom-font">Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a>
-		<!--
-		<strong class="custom-font">Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a>
-		-->
 	</div>
 
 	{# end 3.0 download panel #}
@@ -394,6 +382,13 @@ logger = logging.getLogger("app_page.html") %}
 	{% endif %}
 
 	AppPage.setup_release_notes();
+
+	// Javascript to enable link to tab
+	var url = document.location.toString();
+	if (url.match('#')) {
+		$('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
+	}
+
 </script>
 {% endblock %}
 </div>
