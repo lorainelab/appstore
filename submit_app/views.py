@@ -114,6 +114,7 @@ def _app_summary(pending):
 
     is_app_submission_error = False
     app_summary = ALL_NEW_APP_MSG
+    is_app_status_set = False;
     pending_objs = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
     released_objs = App.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
     if released_objs.count() >= 1:
@@ -121,16 +122,15 @@ def _app_summary(pending):
             if released_obj.Bundle_Version == pending.Bundle_Version:
                 # Bundle_SymbolicName matches both a released App and a released App version!This is not allowed
                 is_app_submission_error = True
+                is_app_status_set = True
                 app_summary = ALREADY_RELEASED_APP_MSG
                 break
-
-            else:
-                # Bundle_SymbolicName matches a released App, but has a different release.
-                # A jar file with the same Bundle_SymbolicName and Bundle_Version
-                # are not also in “pending apps.”
-                app_summary = NEW_VERSION_APP_MSG
-                break
-
+        if (not is_app_status_set):
+            # Bundle_SymbolicName matches a released App, but has a different release.
+            # A jar file with the same Bundle_SymbolicName and Bundle_Version
+            # are not also in “pending apps.”
+            app_summary = NEW_VERSION_APP_MSG
+           
     elif pending_objs.count() >= 1:
         i = 0
         while i < len(pending_objs)-1:
@@ -139,17 +139,16 @@ def _app_summary(pending):
                 # “pending apps.” User wants to replace a “pending app” jar file they uploaded
                 # before, possibly because we asked them to. That’s OK
                 app_summary = APP_REPLACEMENT_JAR_MSG
+                is_app_status_set = True
                 break
-
-            else:
-                #Bundle_SymbolicName matches another App that is in ”pending apps” but has a
-                # different Bundle_Version. There is no App with the same Bundle_SymbolicName
-                # in released Apps. User appears to be trying to release multiple
-                # versions of the same App. That’s OK
-                app_summary = NOT_YET_RELEASED_APP_MSG
-                break
-
             i += 1
+        if(not is_app_status_set):
+            # Bundle_SymbolicName matches another App that is in ”pending apps” but has a
+            # different Bundle_Version. There is no App with the same Bundle_SymbolicName
+            # in released Apps. User appears to be trying to release multiple
+            # versions of the same App. That’s OK
+            app_summary = NOT_YET_RELEASED_APP_MSG
+
 
     # Bundle_SymbolicName is entirely new not in pending or released apps. App Store has never seen it before
     return app_summary, is_app_submission_error
