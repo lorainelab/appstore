@@ -178,7 +178,8 @@ class Release(models.Model):
     created       = models.DateTimeField(auto_now_add=True)
     active        = models.BooleanField(default=True)
     logo    = models.ImageField(blank=True, null=True)
-    repository_xml    = models.TextField(blank=True, null=True) #OBR Index Repository XML
+    Bundle_Description = models.TextField(blank=True, null=True)  # To keep track of Descriptions Version wise
+    repository_xml    = models.TextField(blank=True, null=True)  # OBR Index Repository XML
     release_file  = models.FileField(upload_to=release_file_path)
     release_file_name = models.CharField(max_length=127)
     hexchecksum   = models.CharField(max_length=511, blank=True, null=True)
@@ -193,7 +194,7 @@ class Release(models.Model):
         major = int(major)
         minor = int(minor) if minor else None
         patch = int(patch) if patch else None
-        return (major, minor, patch, tag)
+        return major, minor, patch, tag
 
     @property
     def created_iso(self):

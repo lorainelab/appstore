@@ -50,13 +50,16 @@ class AppPending(models.Model):
         release.works_with = self.works_with
         release.active = True
         release.created = datetime.datetime.today()
+        release.Bundle_Description = app.Bundle_Description
         release.repository_xml = self.repository_xml
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
+        release.calc_checksum()
         release.save()
         app.release_file = release.release_file
         app.release_file_name = basename(app.release_file.name)
         app.save()
+
         if not app.has_releases:
             app.has_releases = True
         app.latest_release_date = release.created
