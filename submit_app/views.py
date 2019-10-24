@@ -90,6 +90,8 @@ def confirm_submission(request, id):
     # IGBF-2026 start
     app_summary, is_app_submission_error = _app_summary(pending)
     if is_app_submission_error:
+        pending.delete_files()
+        pending.delete()
         return html_response('error.html', {'pending': pending, 'app_summary': app_summary}, request)
     # IGBF-2026 end
     action = request.POST.get('action')
@@ -117,7 +119,7 @@ def _app_summary(pending):
     is_app_status_set = False
     pending_objs = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
     released_objs = App.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
-    if released_objs.count() >= 1:
+    if released_objs.count() > 0:
         for released_obj in released_objs:
             if released_obj.Bundle_Version == pending.Bundle_Version:
                 is_app_submission_error = True
