@@ -59,7 +59,9 @@ class AppPending(models.Model):
         release.save()
         app.release_file = release.release_file
         app.release_file_name = basename(app.release_file.name)
+        release.release_file_name = basename(release.release_file.name)
         app.save()
+        release.save()
 
         if not app.has_releases:
             app.has_releases = True
