@@ -83,7 +83,13 @@ def _user_accepted(request, pending):
 
 
 def confirm_submission(request, id):
-    pending = get_object_or_404(AppPending, id=int(id))
+    context = dict()
+    pending = get_object_or_none(AppPending, id=int(id))
+    if pending is None:
+        context['error_msg'] = str("Sorry, this App is not longer in our system because too much time has passed since "
+                                   "you first uploaded it. No problem! Please try again.")
+        return html_response('upload_form.html', context, request)
+
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
     pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, Bundle_Version=pending.Bundle_Version)
@@ -91,8 +97,6 @@ def confirm_submission(request, id):
     # IGBF-2026 start
     app_summary, is_app_submission_error = _app_summary(pending)
     if is_app_submission_error:
-        pending.delete_files()
-        pending.delete()
         return html_response('error.html', {'pending': pending, 'app_summary': app_summary}, request)
     # IGBF-2026 end
     action = request.POST.get('action')
@@ -101,6 +105,8 @@ def confirm_submission(request, id):
         if action == 'cancel':
             return _user_cancelled(request, latest_pending_obj_)
         elif action == 'accept':
+            pending.submitter_approved = True
+            pending.save()
             if pending_obj.count() > 1:
                 _replace_jar_details(request, pending_obj)
             server_url = _get_server_url(request)
@@ -118,7 +124,7 @@ def _app_summary(pending):
     is_app_submission_error = False
     app_summary = ALL_NEW_APP_MSG
     is_app_status_set = False
-    pending_objs = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
+    pending_objs = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, submitter_approved=True)
     released_objs = App.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
     if released_objs.count() > 0:
         for released_obj in released_objs:
@@ -311,7 +317,7 @@ def pending_apps(request):
         if request.is_ajax():
             return json_response(True)
 
-    pending_apps = AppPending.objects.all()
+    pending_apps = AppPending.objects.all().filter(submitter_approved=True)
     return html_response('pending_apps.html', {'pending_apps': pending_apps}, request)
 
 
