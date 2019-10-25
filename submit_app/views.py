@@ -78,17 +78,19 @@ def _user_accepted(request, pending):
                                                   'Bundle_Version': app.Bundle_Version}, request)
         #return HttpResponseRedirect(reverse('app_page_edit', args=[app.Bundle_SymbolicName]) + '?upload_release=true') # For Future Reference
     else:
+        pending.submitter_approved = True
+        pending.save()
         return html_response('submit_done.html', {'app_name': pending.Bundle_Name}, request)
 
 
 def confirm_submission(request, id):
     context = dict()
-    pending = get_object_or_none(AppPending, id=int(id))
+    pending = get_object_or_none(AppPending, id=int(id) )
     if pending is None:
         context['error_msg'] = str("Sorry, this App is not longer in our system because too much time has passed since "
                                    "you first uploaded it. No problem! Please try again.")
         return html_response('upload_form.html', context, request)
-
+    
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
     pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, Bundle_Version=pending.Bundle_Version)
@@ -104,8 +106,6 @@ def confirm_submission(request, id):
         if action == 'cancel':
             return _user_cancelled(request, latest_pending_obj_)
         elif action == 'accept':
-            pending.submitter_approved = True
-            pending.save()
             if pending_obj.count() > 1:
                 _replace_jar_details(request, pending_obj)
             server_url = _get_server_url(request)
