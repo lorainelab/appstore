@@ -1,0 +1,18 @@
+ form { display: inline; }
+    #loading { display: none; }
+    .tooltip-inner {
+        max-width: 300px !important;
+        width: 300px !important;
+    }
+
+ tbody tr td:first-child {
+  width: 30%;
+}
+
+.text-warning-color {
+    color: #ff6600;
+}
+
+.btn-font-size {
+    font-size:14px!important;
+}
