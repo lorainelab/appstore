@@ -312,7 +312,11 @@ def _parse_iso_date(string):
 
 
 def _mk_basic_field_saver(field, func=None):
-	def saver(app, request):
+	"""
+	Basic Field Saver for Different Fields in App Edit Page
+	Helper Function to Help Edit the Page
+	"""
+	def saver(app, release, request):
 		value = request.POST.get(field)
 		if value == None:
 			raise ValueError('no %s specified' % field)
@@ -321,6 +325,25 @@ def _mk_basic_field_saver(field, func=None):
 		elif func:
 			value = func(value)
 		setattr(app, field, value)
+
+	return saver
+
+
+def _mk_desc_field_saver(field, func=None):
+	"""
+	Basic Field Saver for Description Field in App Edit Page
+	Helper Function to Help Edit the Description of a particular release
+	"""
+	def saver(app, release, request):
+		value = request.POST.get(field)
+		if value == None:
+			raise ValueError('no %s specified' % field)
+		if value == '':
+			value = None
+		elif func:
+			value = func(value)
+		setattr(app, field, value)
+		setattr(release, field, value)
 
 	return saver
 
@@ -519,7 +542,7 @@ _AppEditActions = {
 	'save_citation': _mk_basic_field_saver('citation'),
 	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
 	'save_contact_email': _mk_basic_field_saver('contact_email'),
-	'save_bundle_description': _mk_basic_field_saver('Bundle_Description'),
+	'save_bundle_description': _mk_desc_field_saver('Bundle_Description'),
 	'save_tags': _save_tags,
 	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
@@ -531,13 +554,25 @@ _AppEditActions = {
 	'delete_release': _delete_release,
 }
 
+"""
+Flow: app_page_edit -> result[following code] -> _AppEditActions -> Find Action ->
+			Go to the Function -> Do Processing -> Return -> Save App -> Save Releases
+"""
+
 
 @login_required
 def app_page_edit(request, app_name):
+	"""
+	On Click : Save
+	Function Call: app_page_edit
+	Request: HTTP Request
+	Request Content: action from one of the actions above.
+	app_name: Bundle Symbolic Name
+	"""
 	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
+	release = get_object_or_404(Release, app=app, Bundle_Version=app.Bundle_Version)
 	if not app.is_editor(request.user):
 		return HttpResponseForbidden()
-
 	if request.method == 'POST':
 		action = request.POST.get('action')
 		if not action:
@@ -545,12 +580,16 @@ def app_page_edit(request, app_name):
 		if not action in _AppEditActions:
 			return HttpResponseBadRequest('action "%s" invalid--must be: %s' % (action, ', '.join(_AppEditActions)))
 		try:
-			result = _AppEditActions[action](app, request)
+			"""
+			Result gets the App and Release Value
+			"""
+			result = _AppEditActions[action](app, release, request)
 		except ValueError as e:
 			return HttpResponseBadRequest(str(e))
 		except App.DoesNotExist:
 			return HttpResponseRedirect('all/')
 		app.save()
+		release.save()
 		if request.is_ajax():
 			return json_response(result)
 

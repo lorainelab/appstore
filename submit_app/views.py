@@ -2,6 +2,7 @@ import base64
 import re
 import os
 from os.path import basename
+from platform import release
 from urllib.request import urlopen
 from zipfile import ZipFile
 
@@ -323,6 +324,7 @@ def _app_info(request_post):
 
 def _update_app_page(request_post):
     Bundle_Name = request_post.get('Bundle_Name')
+    release_info = Release.objects.get(Bundle_Name=Bundle_Name)
     if not Bundle_Name:
         return HttpResponseBadRequest('"Bundle_Name" not specified')
     app = get_object_or_none(App, Bundle_Name = Bundle_Name)
