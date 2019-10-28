@@ -26,6 +26,7 @@ class AppPending(models.Model):
     repository_xml      = models.TextField(blank=True, null=True) # OBR index file repository.xml
     release_file_name   = models.CharField(max_length=127) # ?
     release_file        = models.FileField(upload_to='pending_releases') # ?
+    submitter_approved  = models.BooleanField(default=False)
 
     def __str__(self):
         return self.Bundle_Name
