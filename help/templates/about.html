@@ -2,46 +2,31 @@
 
 {% block title %} - About{% endblock %}
 {% block content %}
-	<div class="row">
-		<div class="span12">
-			<div class="page-header">
-				<h1>About</h1>
+		<div class="row">
+			<div class="col-md-12">
+				<h2>About Integrated Genome Browser App Store</h2>
+				<hr />
+				<blockquote style="margin-left: 3em; margin-top: 2em; margin-bottom: 2em;">
+						<p class="text-justify">Integrated Genome Browser (IGB) is a fast, flexible, and free desktop genome browser implemented in the Java programming language.
+							IGB has hundreds of features, notably super-fast zooming and beautiful, highly interactive graphics.
+						</p>
+						<p class="text-justify">
+							IGB is also a platform for developers to experiment with new ways of visualizing genomic data. By developed IGB Apps, developers can create new features for IGB without needing to
+							change the IGB code itself. Inspired by the Cytoscape project, we developed this IGB App Store for developers to distribute new IGB Apps and to help users find and install them.</a>!
+						</p>
+				</blockquote>
+				<hr />
 			</div>
-		</div>
-	</div>
-
-	<div class="row">
-		<div class="span12">
-			<h2>Integrated Genome Browser and IGB Apps</h2>
-			<div class="row">
-				<div class="span12">
-					<p>Integrated Genome Browser (IGB) is a highly configurable,
-						interactive and fast open source desktop genome browser.
-						IGB provides hundreds of features, from opening and viewing
-					data files to performing visual analytics functions on loaded
-					data.
-					</p>
-					<p>
-						Now, IGB is also a platform for developers to experiment
-					with new ways of visualizating genomic data. Inspired by
-					the Cytoscape project, we developed this site to help developers
-					distribute new IGB Apps and to help users find Apps that will
-					help them in their work.</p>
-					<p>If you have ideas about how we
-					improve this site, please <a href="{% url 'contact' %}">let us know</a>!
-					</p>
-				</div>
-			</div>
-			<h2>Cite us!</h2>
-			Was Integrated Genome Browser or an IGB App helpful in your work? If yes,
+		<div class="col-md-12">
+			<h2>How to cite IGB</h2>
+			Was Integrated Genome Browser helpful? If yes,
 			please cite us:
 			<blockquote style="margin-left: 3em; margin-top: 2em;">
 				<a href="https://www.ncbi.nlm.nih.gov/pubmed/27153568" target="_blank" style="font-weight: bold;">Integrated genome browser: visual analytics platform for genomics</a>
 				<br>
-				by Nowlan H. Freese, David C. Norris, and Ann E. Loraine<br>
+				by by Nowlan H. Freese, David C. Norris, and Ann E. Loraine<br>
 				Bioinformatics. Jul 15;32(14):2089-95.</a>
 			</blockquote>
 		</div>
-	</div>
-
+		</div>
 {% endblock %}
