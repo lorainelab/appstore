@@ -312,6 +312,10 @@ def _parse_iso_date(string):
 
 
 def _mk_basic_field_saver(field, func=None):
+	"""
+	Basic Field Saver for Different Fields in App Edit Page
+	Helper Function to Help Edit the Page
+	"""
 	def saver(app, release, request):
 		value = request.POST.get(field)
 		if value == None:
@@ -324,7 +328,12 @@ def _mk_basic_field_saver(field, func=None):
 
 	return saver
 
+
 def _mk_desc_field_saver(field, func=None):
+	"""
+	Basic Field Saver for Description Field in App Edit Page
+	Helper Function to Help Edit the Description of a particular release
+	"""
 	def saver(app, release, request):
 		value = request.POST.get(field)
 		if value == None:
@@ -545,9 +554,21 @@ _AppEditActions = {
 	'delete_release': _delete_release,
 }
 
+"""
+Flow: app_page_edit -> result[following code] -> _AppEditActions -> Find Action ->
+			Go to the Function -> Do Processing -> Return -> Save App -> Save Releases
+"""
+
 
 @login_required
 def app_page_edit(request, app_name):
+	"""
+	On Click : Save
+	Function Call: app_page_edit
+	Request: HTTP Request
+	Request Content: action from one of the actions above.
+	app_name: Bundle Symbolic Name
+	"""
 	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
 	release = get_object_or_404(Release, app=app, Bundle_Version=app.Bundle_Version)
 	if not app.is_editor(request.user):
@@ -559,6 +580,9 @@ def app_page_edit(request, app_name):
 		if not action in _AppEditActions:
 			return HttpResponseBadRequest('action "%s" invalid--must be: %s' % (action, ', '.join(_AppEditActions)))
 		try:
+			"""
+			Result gets the App and Release Value
+			"""
 			result = _AppEditActions[action](app, release, request)
 		except ValueError as e:
 			return HttpResponseBadRequest(str(e))
