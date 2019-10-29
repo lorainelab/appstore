@@ -40,7 +40,7 @@ logger = logging.getLogger("app_page.html") %}
 				<h2 class="app-name" id="app-name">
 					{{ app.Bundle_Name }}
 				</h2>
-				<span class="app-def-desc">{% if app.short_title %}<b> {{ app.short_title }} </b>{% endif %}</span>
+				<span class="app-def-desc">{% if app.short_title %}{{ app.short_title }}{% endif %}</span>
 				<br />
 				{# Ratings #}
 				<span class="get-app-stars">{{ app.stars_percentage }}</span>
@@ -50,7 +50,7 @@ logger = logging.getLogger("app_page.html") %}
 				{% if app.has_releases %}
 				<span class="app-usage-info-divider"></span>
 				{{ app.downloads }}
-				<a href="{% url 'app_stats' app.name %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
+				<a href="{% url 'app_stats' app.Bundle_SymbolicName %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
 					 Downloads
 				</a>
 				{% endif %}
@@ -104,200 +104,217 @@ logger = logging.getLogger("app_page.html") %}
 	</div>
 	<br />
 {# Main app page content #}
-<div class="row custom-margin">
-	<div class="col-md-9">
-		<!-- Nav tabs -->
-		<ul class="nav nav-tabs" id="myTab" role="tablist">
-			<li class="nav-item">
-				<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">Bundle Description</a>
+	<div class="col-md-12">
+		<div class="row custom-margin">
+<div class="col-md-9">
+	<!-- Nav tabs -->
+	<ul class="nav nav-tabs" id="myTab" role="tablist">
+		<li class="nav-item">
+			<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">About this App</a>
+		</li>
+		{% if app.has_releases %}
+		<li class="nav-item">
+			<a class="nav-link" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
+		</li>
+		{% endif %}
+	</ul>
+	<!-- Tab panes -->
+	<div class="tab-content">
+		<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab">
+			{# Categories #}
+			{% if app.categories.all %}
+			<br />
+			<div class="row">
+				<div class="col-md-12">
+					Categories:
+					{% for tag in app.categories.all %}
+					<a class="link" href="{% url 'tag_page' tag.name %}">{{ tag.fullname }}</a>{% if not forloop.last %}, {% endif %}
+					{% endfor %}
+				</div>
+			</div>
+			{% endif %}
+			{# End Categories #}
+
+			<br />
+
+			{# Screenshots #}
+			{% if app.screenshot_set.all %}
+			<div class="row">
+				<div class="col-md-12" id="app-screenshots">
+					{% for screenshot in app.screenshot_set.all %}
+					<a href="{{ screenshot.screenshot.url }}" data-toggle="lightbox" data-gallery="screen-gallery">
+						<img src="{{ screenshot.thumbnail.url }}" class="img-fluid"/>
+					</a>
+					{% endfor %}
+				</div>
+			</div>
+			{% endif %}
+			{# End Screenshots #}
+
+			<br />
+
+			{# Details #}
+			{% if decoded_details %}
+			<div class="row">
+				<div class="col-md-12 app-details-custom" id="app-details-md">{{ decoded_details | markdown_parser | safe }}</div>
+			</div>
+			{% endif %}
+			{# End Details #}
+
+			{# Authors #}
+			{% if app.authors.all %}
+			<div class="row">
+				<div class="col-md-8">
+					Authors:
+					<ul>
+						{% for author in app.ordered_authors %}
+						<li>
+							<a href="{% url 'author_page' author.name %}">
+								{{ author.name }} {% if author.institution %} ({{ author.institution }}){% endif %}
+							</a>
+						</li>
+						{% endfor %}
+					</ul>
+				</div>
+			</div>
+			{% endif %}
+			{# End Authors #}
+		</div>
+	<div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
+		{% for release in app.releases %}
+			<div class="row">
+				<div class="col-md-12">
+					<div class="row">
+						<div class="col-md-3 img-div" style="background-image: url('{{release.logo_url}}');background-size: contain; margin-top: 30px;"></div>
+						<div class="col-md-9">
+							{# Release version #}
+							<br />
+							{% if forloop.first %}
+								<h5>
+									Current Version :
+									<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+									{{ release.Bundle_Version }}
+								</h5>
+							{% else %}
+								<h5>
+									Version :
+									<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+									{{ release.Bundle_Version }}
+								</h5>
+							{% endif %}
+							<p><strong>Release Date : </strong> {{ release.created_iso|date:"r" }}</p>
+							{# End Release version #}
+
+							{# Works with #}
+							<p>
+								<strong>Works with</strong> IGB
+								{{ release.works_with }}
+							</p>
+							{# End Works with #}
+							{% if release.notes %}
+							<p><strong>Release Notes</strong></p>
+							<div class="app-release-notes">{{ release.notes }}</div>
+							{% endif %}
+							{# End Release #}
+						</div>
+					</div>
+					<hr />
+				</div>
+			</div>
+			{% endfor %} {# end looping thru each release #}
+		</div>
+	</div>
+</div>
+{# Right-hand panels #}
+<div class="col-md-3">
+	{# 3.0 download panel #}
+	<div class="box-release-info" id="app_status_block">
+		<h6 class="panel-title text-muted">IGB</h6>
+		<button class="btn btn-large btn-block btn-info" id="app-install-btn">
+			<i class="icon-install-download"></i> {# <-- download button icon will go here #}
+			<h4> Get IGB</h4> {# <-- download button text will go here #}
+		</button>
+		<p id="app_version"></p>
+		{% if app.license_url %}
+		<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
+		<br />
+		{% endif %}
+		<strong class="custom-font">Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a>
+	</div>
+
+	{# end 3.0 download panel #}
+
+	{# app resources #}
+	<div class="alert alert-warning box-resource">
+		<ul class="nav nav-list">
+		<h5>RESOURCES</h5>
+
+			<li>
+				<i class="fa fa-question-circle"></i>
+				<a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
+					Ask a question
+				</a>
 			</li>
-			{% if app.has_releases %}
-			<li class="nav-item">
-				<a class="nav-link" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
+
+			<li>
+				<i class="fa fa-comments"></i>
+				<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank">
+					Search helpdesk
+				</a>
+			</li>
+
+			{% if app.website_url %}
+			<li>
+				<i class="fa fa-home"></i>
+				<a href="{{ app.website_url }}" target="_blank" style="padding-right:50px;">
+					Website
+				</a>
+			</li>
+			{% endif %}
+
+			{% if app.tutorial_url %}
+			<li>
+				<i class="fa fa-book"></i>
+				<a href="{{ app.tutorial_url }}" target="_blank">
+					Tutorial
+				</a>
+			</li>
+			{% endif %}
+
+			{% if app.citation %}
+			<li>
+				<i class="fa fa-heart"></i>
+				<a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ app.citation }}" target="_blank">
+					Cite this App
+				</a>
+			</li>
+			{% endif %}
+
+			{% if app.code_repository_url %}
+			<li>
+				<i class="fa fa-code-fork"></i>
+				<a href="{{ app.code_repository_url }}" target="_blank">
+					&nbsp;&nbsp;Code Repository
+				</a>
+			</li>
+			{% endif %}
+			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+			{% if app.contact_email %}
+			<li>
+				<i class="fa fa-envelope"></i>
+				<a href="mailto:{{ app.contact_email }}" target="_blank">
+					 E-mail
+				</a>
 			</li>
 			{% endif %}
 		</ul>
-		<!-- Tab panes -->
-		<div class="tab-content">
-			<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab">
-				{# Categories #}
-				{% if app.categories.all %}
-				<br />
-				<div class="row">
-					<div class="col-md-12">
-						Categories:
-						{% for tag in app.categories.all %}
-						<a class="link" href="{% url 'tag_page' tag.name %}">{{ tag.fullname }}</a>{% if not forloop.last %}, {% endif %}
-						{% endfor %}
-					</div>
-				</div>
-				{% endif %}
-				{# End Categories #}
-
-				<br />
-
-				{# Screenshots #}
-				{% if app.screenshot_set.all %}
-				<div class="row">
-					<div class="col-md-12" id="app-screenshots">
-						{% for screenshot in app.screenshot_set.all %}
-						<a href="{{ screenshot.screenshot.url }}" data-toggle="lightbox" data-gallery="screen-gallery">
-							<img src="{{ screenshot.thumbnail.url }}" class="img-fluid"/>
-						</a>
-						{% endfor %}
-					</div>
-				</div>
-				{% endif %}
-				{# End Screenshots #}
-
-				<br />
-
-				{# Details #}
-				{% if decoded_details %}
-				<div class="row">
-					<div class="col-md-12 app-details-custom" id="app-details-md">{{ decoded_details | markdown_parser | safe }}</div>
-				</div>
-				{% endif %}
-				{# End Details #}
-			</div>
-		<div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
-			{% for release in app.releases %}
-				<div class="row">
-					<div class="col-md-12">
-						{# Release version #}
-						<br />
-						<h5>
-							Current Version :
-							<!-- Removed release.version argument href="% url 'release_download' app.name %-->
-							{{ release.Bundle_Version }}
-						</h5>
-						<p><strong>Release Date : </strong> {{ release.created_iso|date:"r" }}</p>
-						{# End Release version #}
-
-						{# Works with #}
-						<p>
-							<strong>Works with</strong> IGB
-							{{ release.works_with }}
-						</p>
-						{# End Works with #}
-
-						{# Release dependencies #}
-						{% if release.dependents.count %}
-						<p>
-							<strong>Apps that depend on this release</strong>
-							<ul>
-								{% for dependent in release.dependents.all %}
-								<li><a href="{% url 'app_page' dependent.app.name %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
-								{% endfor %}
-							</ul>
-						</p>
-						{% endif %}
-						{# End Release dependencies #}
-
-						{% if release.notes %}
-						<p><strong>Release Notes</strong></p>
-						<div class="app-release-notes">{{ release.notes }}</div>
-						{% endif %}
-						{# End Release #}
-						<hr>
-					</div>
-				</div>
-				{% endfor %} {# end looping thru each release #}
-			</div>
-		</div>
 	</div>
-	{# Right-hand panels #}
-	<div class="col-md-3">
-		{# 3.0 download panel #}
-		<div class="box-release-info" id="app_status_block">
-			<h6 class="panel-title text-muted">IGB</h6>
-			<button class="btn btn-large btn-block" id="app-install-btn">
-				<i></i> {# <-- download button icon will go here #}
-				<h4></h4> {# <-- download button text will go here #}
-			</button>
-			<p id="app_version"></p>
-			{% if app.license_url %}
-			<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
-			<br />
-			{% endif %}
-			<strong class="custom-font">Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a>
-			<!--
-			<strong class="custom-font">Download Stats</strong> <a href="{% url 'app_stats' app.name %}" target="_blank">Click here</a>
-			-->
-		</div>
-
-		{# end 3.0 download panel #}
-
-		{# app resources #}
-		<div class="alert alert-warning box-resource">
-			<ul class="nav nav-list">
-			<h5>RESOURCES</h5>
-
-				<li>
-					<i class="fa fa-question-circle"></i>
-					<a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
-						Ask a question
-					</a>
-				</li>
-
-				<li>
-					<i class="fa fa-comments"></i>
-					<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank">
-						Search helpdesk
-					</a>
-				</li>
-
-				{% if app.website_url %}
-				<li>
-					<i class="fa fa-home"></i>
-					<a href="{{ app.website_url }}" target="_blank" style="padding-right:50px;">
-						Website
-					</a>
-				</li>
-				{% endif %}
-
-				{% if app.tutorial_url %}
-				<li>
-					<i class="fa fa-book"></i>
-					<a href="{{ app.tutorial_url }}" target="_blank">
-						Tutorial
-					</a>
-				</li>
-				{% endif %}
-
-				{% if app.citation %}
-				<li>
-					<i class="fa fa-heart"></i>
-					<a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ app.citation }}" target="_blank">
-						Cite this App
-					</a>
-				</li>
-				{% endif %}
-
-				{% if app.code_repository_url %}
-				<li>
-					<i class="fa fa-code-fork"></i>
-					<a href="{{ app.code_repository_url }}" target="_blank">
-						&nbsp;&nbsp;Code Repository
-					</a>
-				</li>
-				{% endif %}
-				<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
-				{% if app.contact_email %}
-				<li>
-					<i class="fa fa-envelope"></i>
-					<a href="mailto:{{ app.contact_email }}" target="_blank">
-						 E-mail
-					</a>
-				</li>
-				{% endif %}
-			</ul>
-		</div>
-		{# end app resources #}
-	</div>
-	{# end right-hand panels #}
+	{# end app resources #}
 </div>
+{# end right-hand panels #}
+</div>
+	</div>
 {# end main app page content #}
 
 {# Delete all ratings modal dialog #}
@@ -357,7 +374,7 @@ logger = logging.getLogger("app_page.html") %}
 </script>
 
 <script type="text/javascript">
-	AppPage.setup_install("{{ app.name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}");
+	AppPage.setup_install("{{ app.Bundle_Name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}");
 
 
 	{% if app.Bundle_Description %}
@@ -365,5 +382,13 @@ logger = logging.getLogger("app_page.html") %}
 	{% endif %}
 
 	AppPage.setup_release_notes();
+
+	// Javascript to enable link to tab
+	var url = document.location.toString();
+	if (url.match('#')) {
+		$('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
+	}
+
 </script>
 {% endblock %}
+</div>

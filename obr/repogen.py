@@ -7,9 +7,11 @@ from django.conf import settings
 from xml.etree import ElementTree as ET
 import re
 import base64
-from submit_app.models import AppPending
-from apps.models import App
 
+from django.shortcuts import get_object_or_404
+
+from submit_app.models import AppPending
+from apps.models import App, Release
 
 """
 These function will not be used, we can clean this once the work flow is defined and stable.
@@ -184,11 +186,12 @@ def xml_generator(dict_ver, gen_tree, tree, state):
     cur_tree = tree
 
     current_resource = cur_tree.find('resource')
+    curr_desc = current_resource.find('description')
+    curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
     if state == 'pending':
         current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
     else:
-        current_resource.set('uri', '/media/' + get_bundle_symbolic_name(dict_ver.Bundle_SymbolicName) + '/' + 'releases' + '/' + dict_ver.Bundle_Version +
-                             '/' + dict_ver.release_file_name)
+        current_resource.set('uri', '/media/' + str(dict_ver.release_file))
 
     super_tree.append(current_resource)
     return super_tree
@@ -203,11 +206,12 @@ def initial_generation(dict_ver, state):
     """
     element_tree = ET.fromstring(dict_ver.repository_xml)
     current_resource = element_tree.find('resource')
+    curr_desc = current_resource.find('description')
     if state == 'pending':
         current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
     else:
-        current_resource.set('uri', '/media/' + get_bundle_symbolic_name(
-            dict_ver.Bundle_SymbolicName) + '/' + 'releases' + '/' + dict_ver.Bundle_Version + '/' + dict_ver.release_file_name)
+        current_resource.set('uri', '/media/' + str(dict_ver.release_file))
+        curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
     return element_tree
 
 
@@ -215,7 +219,7 @@ def main(status):
     if status == 'pending':
         all_entries = AppPending.objects.all()
     else:
-        all_entries = App.objects.all()
+        all_entries = Release.objects.all()
 
     gen_tree = ""
 

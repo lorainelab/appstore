@@ -233,7 +233,7 @@ var AppPageEdit = (function($)
     function setup_add_tag_btn() {
         add_tag_btn.popover({
             'container' : 'body',
-            'title': 'Select a Tag to Add',
+            'title': 'Select a Category to Add',
             'html': true,
             'content': $('#tag-add-popover-html').html(),
             'placement': 'bottom',
@@ -691,7 +691,7 @@ var AppPageEdit = (function($)
             });
 
             return {
-                'msg': 'Saving tags',
+                'msg': 'Saving categories',
                 'data': data
             };
         },
@@ -867,11 +867,49 @@ var AppPageEdit = (function($)
 
         if (!all_valid)
             Msgs.add_msg('Whoops! Please fix the fields in red. Once you\'re done, click Save again.', 'danger', 'save');
+        try {
+            var invalid_input_str = validateUrls();
+            if (invalid_input_str != "") {
+                throw (invalid_input_str.split(", ").length > 1) ? invalid_input_str + " are invalid" : invalid_input_str + " is invalid";
+            }
+        } catch (error) {
+            Msgs.add_msg(error, 'danger', 'save');
+            return false;
+        }
         return all_valid;
     }
 
+    /**
+     * The function validates the License, website, tutorial and code repository url fields.
+     *
+     * @returns {string}
+     */
+    function validateUrls() {
+
+        var url_array = [$('#app-website input[type=text]').val(), $('#app-license-text input[type=text]').val(),
+            $('#app-tutorial input[type=text]').val(), $('#app-coderepo input[type=text]').val()];
+
+        var label_array = [$('#app-website label').text(), $('#app-license-text label').text(),
+            $('#app-tutorial label').text(), $('#app-coderepo label').text()];
+
+        var invalid_input_str = "";
+
+        for (var i = 0; i < url_array.length; i++) {
+            if (url_array[i] == "") {
+                continue;
+            }
+            try {
+                new URL(url_array[i]);
+            } catch (e) {
+                invalid_input_str += invalid_input_str.length > 0 ? ", " + label_array[i].replace(":", "") :
+                    label_array[i].replace(":", "");
+            }
+        }
+        return invalid_input_str;
+    }
+
     function setup_save_btn() {
-        $('#save-btn').click(function() {
+        $('#save-btn').click(function () {
             if ($(this).hasClass('disabled'))
                 return;
 

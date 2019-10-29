@@ -2,6 +2,7 @@ import base64
 import re
 import os
 from os.path import basename
+from platform import release
 from urllib.request import urlopen
 from zipfile import ZipFile
 
@@ -18,6 +19,13 @@ from util.view_util import html_response, json_response, get_object_or_none
 from .models import AppPending
 from .processjar import process_jar
 
+# IGBF-2026 start
+APP_REPLACEMENT_JAR_MSG = "This is a <b>replacement jar file</b> for a not yet released App that you or a colleague already uploaded previously but is still in our “pending apps” waiting area. If you choose to submit it, this new jar file will replace the one that was uploaded before."
+NEW_VERSION_APP_MSG = "This is a <b>new version of a released App.</b> If you choose to submit it, your new version will appear right away in the App Store."
+ALL_NEW_APP_MSG = "This is an <b>all-new App.</b> No released or pending App in App Store has the same Bundle_SymbolicName. Congratulations on your App’s first release!"
+ALREADY_RELEASED_APP_MSG = "Bundle_Version and Bundle_SymbolicName match an <b>already-released App.</b> We are sorry – this is not allowed! If you want users to get the new version, you must increase Bundle_Version. For example, if the released version is 1.0.0, the new version should be 1.0.1 or higher."
+NOT_YET_RELEASED_APP_MSG = "The jar file Bundle_SymbolicName matches a previously uploaded but <b>not yet released App.</b> The previously uploaded App’s Bundle_Version is different, however. Are you trying to release different versions of the same App. No problem!"
+# IGBF-2026 end
 
 # Presents an app submission form and accepts app submissions.
 @login_required
@@ -56,7 +64,7 @@ def _user_cancelled(request, pending):
 
 
 def _user_accepted(request, pending):
-    app = get_object_or_none(App, name = fullname_to_name(pending.Bundle_Name))
+    app = get_object_or_none(App, Bundle_SymbolicName = pending.Bundle_SymbolicName)
     if app:
         if not app.is_editor(request.user):
             return HttpResponseForbidden('You are not authorized to add releases, because you are not an editor')
@@ -66,17 +74,33 @@ def _user_accepted(request, pending):
         pending.make_release(app)
         pending.delete_files()
         pending.delete()
-        return HttpResponseRedirect(reverse('app_page_edit', args=[app.name]) + '?upload_release=true')
+        return html_response('update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
+                                                  'Bundle_Name': app.Bundle_Name,
+                                                  'Bundle_Version': app.Bundle_Version}, request)
+        #return HttpResponseRedirect(reverse('app_page_edit', args=[app.Bundle_SymbolicName]) + '?upload_release=true') # For Future Reference
     else:
+        pending.submitter_approved = True
+        pending.save()
         return html_response('submit_done.html', {'app_name': pending.Bundle_Name}, request)
 
 
 def confirm_submission(request, id):
-    pending = get_object_or_404(AppPending, id=int(id))
+    context = dict()
+    pending = get_object_or_none(AppPending, id=int(id) )
+    if pending is None:
+        context['error_msg'] = str("Sorry, this App is not longer in our system because too much time has passed since "
+                                   "you first uploaded it. No problem! Please try again.")
+        return html_response('upload_form.html', context, request)
+    
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
     pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, Bundle_Version=pending.Bundle_Version)
     is_pending_replace = True if pending_obj.count() > 1 else False
+    # IGBF-2026 start
+    app_summary, is_app_submission_error = _app_summary(pending)
+    if is_app_submission_error:
+        return html_response('error.html', {'pending': pending, 'app_summary': app_summary}, request)
+    # IGBF-2026 end
     action = request.POST.get('action')
     if action:
         latest_pending_obj_ = pending_obj[1] if is_pending_replace else pending_obj[0]
@@ -89,12 +113,41 @@ def confirm_submission(request, id):
             _send_email_for_pending(server_url, latest_pending_obj_)
             _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
-    return html_response('confirm.html',{'pending': pending,
-                         'is_pending_replace': is_pending_replace}, request)
+    return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary}, request)
 
 # Get the Current Directory Path to Temporarily store the Zip File
 dir_path = os.path.dirname(os.path.abspath(__file__))
 
+# IGBF-2026 start
+def _app_summary(pending):
+
+    is_app_submission_error = False
+    app_summary = ALL_NEW_APP_MSG
+    is_app_status_set = False
+    pending_objs = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, submitter_approved=True)
+    released_objs = App.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
+    if released_objs.count() > 0:
+        for released_obj in released_objs:
+            if released_obj.Bundle_Version == pending.Bundle_Version:
+                is_app_submission_error = True
+                is_app_status_set = True
+                app_summary = ALREADY_RELEASED_APP_MSG
+                break
+        if (not is_app_status_set):
+            app_summary = NEW_VERSION_APP_MSG
+    if pending_objs.count() > 1:
+        i = 0
+        while i < len(pending_objs)-1:
+            if pending_objs[i].Bundle_Version == pending.Bundle_Version:
+                app_summary = APP_REPLACEMENT_JAR_MSG
+                is_app_status_set = True
+                break
+            i += 1
+        if(not is_app_status_set):
+            app_summary = NOT_YET_RELEASED_APP_MSG
+
+    return app_summary, is_app_submission_error
+# IGBF-2026 end
 
 def _create_pending(submitter, jar_details, release_file):
     pending = AppPending.objects.create(submitter       = submitter,
@@ -106,6 +159,7 @@ def _create_pending(submitter, jar_details, release_file):
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
+    pending.logo = ""
     pending.save()
     if isinstance(release_file, str):
         os.remove(dir_path + file_name)
@@ -125,14 +179,9 @@ def _replace_jar_details(request, pending_obj):
     existing_pending_obj = pending_obj[pending_obj.count() - 2]
     if latest_pending_obj and latest_pending_obj.submitter != request.user:
         raise ValueError('cannot be accepted because you are not an editor')
-    name = fullname_to_name(latest_pending_obj.Bundle_Name)
-    existing_pending_obj.Bundle_Description = latest_pending_obj.Bundle_Description
-    existing_pending_obj.repository = latest_pending_obj.repository
-    existing_pending_obj.Bundle_Name = latest_pending_obj.Bundle_Name
-    existing_pending_obj.release_file = latest_pending_obj.release_file
-    existing_pending_obj.save()
-    latest_pending_obj.delete_files()
-    latest_pending_obj.delete()
+    existing_pending_obj.release_file = ""
+    existing_pending_obj.delete()
+    latest_pending_obj.save()
 
 
 def _get_jar_file(release_file):
@@ -178,9 +227,9 @@ The following app has been submitted:
     send_mail('{Bundle_Name} App - Successfully Submitted.'.format(Bundle_Name = pending.Bundle_Name), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 
-def _send_email_for_accepted_app(to_email, from_email, app_fullname, app_name, server_url):
-    subject = u'IGB App Store - {app_fullname} Has Been Approved'.format(app_fullname = app_fullname)
-    app_url = reverse('app_page', args=[app_name])
+def _send_email_for_accepted_app(to_email, from_email, Bundle_Name, server_url):
+    subject = u'IGB App Store - {Bundle_Name} Has Been Approved'.format(Bundle_Name = Bundle_Name)
+    app_url = reverse('app_page', args=[Bundle_Name])
     msg = u"""Your app has been approved! Here is your app page:
 
   {server_url}{app_url}
@@ -215,9 +264,12 @@ def _get_server_url(request):
 
 
 def _pending_app_accept(pending, request):
-    name = fullname_to_name(pending.Bundle_Name)
-    # we always create a new app, because only new apps require accepting
-    app = App.objects.create(Bundle_Name = pending.Bundle_Name, name = name)
+    # we always create a new app, because only new apps require accepting (old cytoscape behavior)
+    """
+          Update existing released app with Bundle_Name and different version and create new app if the
+        app is not yet released
+    """
+    app, _ = App.objects.get_or_create(Bundle_Name=pending.Bundle_Name)
     app.active = True
     app.Bundle_SymbolicName = pending.Bundle_SymbolicName
     app.Bundle_Description = pending.Bundle_Description
@@ -231,7 +283,7 @@ def _pending_app_accept(pending, request):
     pending.delete()
 
     server_url = _get_server_url(request)
-    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.Bundle_Name, app.name, server_url)
+    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.Bundle_Name, server_url)
 
 
 def _pending_app_decline(pending_app, request):
@@ -265,28 +317,27 @@ def pending_apps(request):
         if request.is_ajax():
             return json_response(True)
 
-    pending_apps = AppPending.objects.all()
+    pending_apps = AppPending.objects.all().filter(submitter_approved=True)
     return html_response('pending_apps.html', {'pending_apps': pending_apps}, request)
 
 
 def _app_info(request_post):
     Bundle_Name = request_post.get('app_fullname')
-    name = fullname_to_name(Bundle_Name)
-    url = reverse('app_page', args=(name,))
-    exists = App.objects.filter(name = name, active = True).count() > 0
+    url = reverse('app_page', args=(Bundle_Name,))
+    exists = App.objects.filter(Bundle_Name = Bundle_Name, active = True).count() > 0
     return json_response({'url': url, 'exists': exists})
 
 
 def _update_app_page(request_post):
     Bundle_Name = request_post.get('Bundle_Name')
+    release_info = Release.objects.get(Bundle_Name=Bundle_Name)
     if not Bundle_Name:
         return HttpResponseBadRequest('"Bundle_Name" not specified')
-    name = fullname_to_name(Bundle_Name)
-    app = get_object_or_none(App, name = name)
+    app = get_object_or_none(App, Bundle_Name = Bundle_Name)
     if app:
         app.active = True
     else:
-        app = App.objects.create(name = name, Bundle_Name = Bundle_Name)
+        app = App.objects.create(Bundle_Name = Bundle_Name)
 
     Bundle_Description = request_post.get('Bundle_Description')
     if Bundle_Description:
@@ -305,3 +356,5 @@ def _update_app_page(request_post):
 
     app.save()
     return json_response(True)
+
+

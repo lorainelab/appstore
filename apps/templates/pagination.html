@@ -11,13 +11,8 @@
                         <i class="fas fa-angle-double-left"></i>
                     </a>
                 </li>
-                {% else %}
-                <li class="page-item">
-                    <a href="#" class="page-link">
-                        <i class="fa fa-angle-double-left"></i>
-                    </a>
-                </li>
                 {% endif %}
+                {% if downloaded_apps_pg.paginator.num_pages > 1 %}
                 {% for num in downloaded_apps_pg.paginator.page_range %}
                 {% if downloaded_apps_pg.number == num %}
                 <li class="page-item">
@@ -29,19 +24,14 @@
                     </li>
                 {% endif %}
                 {% endfor %}
+                {% endif %}
                 {% if downloaded_apps_pg.has_next %}
                     <li class="page-item">
                         <a href="/community_fav/{{ downloaded_apps_pg.next_page_number }}" class="page-link">
                             <i class="fas fa-angle-double-right"></i>
                         </a>
                     </li>
-                {% else %}
-                    <li class="page-item">
-                        <a href="#" class="page-link">
-                            <i class="fa fa-angle-double-right"></i>
-                        </a>
-                    </li>
-            {% endif %}
+                {% endif %}
             </ul>
         </nav>
     </div>

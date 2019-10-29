@@ -42,7 +42,6 @@
             width: 1000px;
           }
         }
-
         </style>
     <!-- Custom styles for this template -->
     <link href="{% get_static_prefix %}apps/css/base.css" rel="stylesheet">
@@ -62,7 +61,7 @@
                     </ul>
                     <form role="search" action="{% url 'haystack_search' %}" method="get">
                             <div class="searchbar">
-                                <input class="search_input" type="text" placeholder="Search Apps ..." name="q" aria-label="Search" value="{{ search_query }}">
+                                <input class="search_input" type="text" placeholder="Search the App Store" name="q" aria-label="Search" value="{{ search_query }}">
                             </div>
                     </form>
                     {# User menu #}
@@ -85,11 +84,15 @@
             </div>
         </nav>
         {# Content Area for Base Template | all the extended code will visible here  #}
-        <div class="container" style="margin-top: 20px; margin-bottom: 5%;">
+        <div class="container" style="margin-top: 10px; margin-bottom: 5%;">
             <div class="row">
-                <div class="col-md-2"></div>
-                <div class="col-md-8" id="alerts"></div>
-                <div class="col-md-2"></div>
+                <div class="col-md-12 block" id="alerts">
+                    {% if error_msg %}
+                    <div class="alert alert-danger">
+                        {% autoescape off %}{{ error_msg }}{% endautoescape %}
+                    </div>
+                    {% endif %}
+                </div>
             </div>
             <!-- Example row of columns -->
                 {# Content #}
@@ -101,7 +104,7 @@
                 <div class="row">
                     <div class="col-12 col-md">
                         <a class="text-muted custom-link" href="{% url 'about' %}">About</a> &bull;
-                        <a class="text-muted custom-link" href="{% url 'contact' %}">Contact</a> &bull;
+                        <a class="text-muted custom-link" href="{% url 'contact' %}">Get Help</a> &bull;
                         <a class="text-muted custom-link" href="{% url 'wall_of_apps' %}">Wall of Apps</a>
                     </div>
                 </div>

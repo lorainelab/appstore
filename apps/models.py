@@ -27,7 +27,7 @@ class Author(models.Model):
 _TagCountCache = dict()
 
 
-class Tag(models.Model):
+class Category(models.Model):
     name     = models.CharField(max_length=255, unique=True)
     fullname = models.CharField(max_length=255)
 
@@ -49,6 +49,7 @@ class Tag(models.Model):
 
     class Meta:
         ordering = ["name"]
+        verbose_name_plural = "categories"
 
 
 GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
@@ -60,13 +61,12 @@ def logo_path(app, filename):
                     app.Bundle_Version + '.' + get_ext)
 
 class App(models.Model):
-    name         = models.CharField(max_length=127, unique=True)
     Bundle_Name = models.CharField(max_length=127, unique=True)
     Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
     short_title  = models.CharField(max_length=255, blank=True, null=True)
     Bundle_Description = models.TextField(blank=True, null=True)
     Bundle_Version       = models.CharField(max_length=31, blank=False)
-    categories         = models.ManyToManyField(Tag, blank=True)
+    categories         = models.ManyToManyField(Category, blank=True)
 
     logo         = models.ImageField(blank=True, null=True, upload_to=logo_path)
 
@@ -125,6 +125,9 @@ class App(models.Model):
             self.release_file.delete()
             self.delete()
 
+    def delete_logo(self):
+        self.logo.delete()
+
     @property
     def page_url(self):
         return reverse('app_page', args=[self.Bundle_SymbolicName])
@@ -137,7 +140,7 @@ class App(models.Model):
     search_key = 'name'
 
     def __unicode__(self):
-        return self.name
+        return self.Bundle_Name
 
 
 @receiver(models.signals.pre_delete, sender=App)
@@ -145,7 +148,8 @@ def delete_file(sender, instance, *args, **kwargs):
     """ Deletes Release files on `post_delete` """
     if instance.release_file:
         instance.release_file.delete()
-
+    if instance.logo:
+        instance.logo.delete()
 
 class OrderedAuthor(models.Model):
     author       = models.ForeignKey(Author,on_delete=models.CASCADE)
@@ -153,7 +157,7 @@ class OrderedAuthor(models.Model):
     author_order = models.PositiveSmallIntegerField(default = 0)
 
     def __unicode__(self):
-        return unicode(self.author_order) + ': ' + self.app.name + ' by ' + self.author.name
+        return unicode(self.author_order) + ': ' + self.app.Bundle_Name + ' by ' + self.author.name
 
     class Meta:
         ordering = ["author_order"]
@@ -173,11 +177,13 @@ class Release(models.Model):
     notes         = models.TextField(blank=True, null=True)
     created       = models.DateTimeField(auto_now_add=True)
     active        = models.BooleanField(default=True)
-
-    repository_xml    = models.TextField(blank=True, null=True) #OBR Index Repository XML
+    logo    = models.ImageField(blank=True, null=True)
+    Bundle_Description = models.TextField(blank=True, null=True)  # To keep track of Descriptions Version wise
+    repository_xml    = models.TextField(blank=True, null=True)  # OBR Index Repository XML
     release_file  = models.FileField(upload_to=release_file_path)
     release_file_name = models.CharField(max_length=127)
     hexchecksum   = models.CharField(max_length=511, blank=True, null=True)
+
 
     @property
     def version_tuple(self):
@@ -188,7 +194,7 @@ class Release(models.Model):
         major = int(major)
         minor = int(minor) if minor else None
         patch = int(patch) if patch else None
-        return (major, minor, patch, tag)
+        return major, minor, patch, tag
 
     @property
     def created_iso(self):
@@ -200,7 +206,11 @@ class Release(models.Model):
 
     @property
     def release_download_url(self):
-        return reverse('release_download', args=[self.app.name, self.Bundle_Version])
+        return reverse('release_download', args=[self.app.Bundle_SymbolicName, self.Bundle_Version])
+
+    @property
+    def logo_url(self):
+        return self.logo.url if self.logo else GENERIC_LOGO_URL
 
     def __unicode__(self):
         return self.app.Bundle_Name + ' ' + self.Bundle_Version
@@ -219,6 +229,9 @@ class Release(models.Model):
 
     def delete_files(self):
         self.release_file.delete()
+
+    def delete_logo(self):
+        self.logo.delete()
 
     class Meta:
         ordering = ['-created']
@@ -243,3 +256,11 @@ class Screenshot(models.Model):
 
     def __unicode__(self):
         return '%s - %d' % (self.app.Bundle_Name, self.id)
+
+@receiver(models.signals.pre_delete, sender=Release)
+def delete_file(sender, instance, *args, **kwargs):
+    """ Deletes Release files on `post_delete` """
+    if instance.release_file:
+        instance.release_file.delete()
+    if instance.logo:
+        instance.logo.delete()

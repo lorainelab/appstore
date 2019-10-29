@@ -4,7 +4,6 @@ from apps.models import App
 
 class AppIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(document = True, use_template = True)
-    name = indexes.CharField(model_attr = 'name')
     Bundle_Name = indexes.CharField(model_attr='Bundle_Name',null=True)
     short_title = indexes.CharField(model_attr = 'short_title',null=True)
     Bundle_Description = indexes.CharField(model_attr = 'Bundle_Description',null=True)
