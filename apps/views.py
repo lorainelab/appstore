@@ -123,7 +123,7 @@ def apps_default(request, page=1):
 
 
 def all_apps(request):
-	apps = App.objects.filter(active=True).order_by('name')
+	apps = App.objects.filter(active=True).order_by('Bundle_Name')
 	c = {
 		'apps': apps,
 		'navbar_selected_link': 'all',
