@@ -8,7 +8,6 @@ def app_pending_cleanup():
     # delete only those entries which are more than 5 hours old
     time_threshold = datetime.now() - timedelta(hours=5)
     not_submitter_approved_objs = AppPending.objects.filter(submitter_approved=False, created__lte=time_threshold)
-    print(not_submitter_approved_objs.count())
     for not_submitter_approved_obj in not_submitter_approved_objs:
         submitter_approved_obj = get_object_or_none(AppPending, Bundle_SymbolicName=not_submitter_approved_obj.Bundle_SymbolicName, submitter_approved=True)
         if(submitter_approved_obj):
