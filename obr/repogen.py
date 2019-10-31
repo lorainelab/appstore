@@ -7,6 +7,7 @@ from django.conf import settings
 from xml.etree import ElementTree as ET
 import re
 import base64
+from util.view_util import get_object_or_none
 
 from django.shortcuts import get_object_or_404
 
@@ -219,10 +220,8 @@ def main(status):
     if status == 'pending':
         all_entries = AppPending.objects.all()
     else:
-        all_entries = Release.objects.all()
-
+        all_entries = Release.objects.filter(active=True)
     gen_tree = ""
-
     if len(all_entries) > 0:
         for i in range(0, len(all_entries)):
             if i == 0:
