@@ -123,7 +123,7 @@ def apps_default(request, page=1):
 
 
 def all_apps(request):
-	apps = App.objects.filter(active=True).order_by('name')
+	apps = App.objects.filter(active=True).order_by('Bundle_Name')
 	c = {
 		'apps': apps,
 		'navbar_selected_link': 'all',
@@ -312,7 +312,11 @@ def _parse_iso_date(string):
 
 
 def _mk_basic_field_saver(field, func=None):
-	def saver(app, request):
+	"""
+	Basic Field Saver for Different Fields in App Edit Page
+	Helper Function to Help Edit the Page
+	"""
+	def saver(app, request, release):
 		value = request.POST.get(field)
 		if value == None:
 			raise ValueError('no %s specified' % field)
@@ -325,7 +329,26 @@ def _mk_basic_field_saver(field, func=None):
 	return saver
 
 
-def _save_tags(app, request):
+def _mk_desc_field_saver(field, func=None):
+	"""
+	Basic Field Saver for Description Field in App Edit Page
+	Helper Function to Help Edit the Description of a particular release
+	"""
+	def saver(app, request, release):
+		value = request.POST.get(field)
+		if value == None:
+			raise ValueError('no %s specified' % field)
+		if value == '':
+			value = None
+		elif func:
+			value = func(value)
+		setattr(app, field, value)
+		setattr(release, field, value)
+
+	return saver
+
+
+def _save_tags(app, request, release):
 	tag_count = request.POST.get('tag_count')
 	if not tag_count:
 		raise ValueError('no tag_count specified')
@@ -356,18 +379,22 @@ class _AppPageEditConfig:
 	app_description_maxlength = 140
 
 
-def _upload_logo(app, request):
+def _upload_logo(app, request, release):
 	f = request.FILES.get('file')
 	if not f:
 		raise ValueError('no file submitted')
 	if f.size > _AppPageEditConfig.max_img_size_b:
 		raise ValueError(
 			'image file is %d bytes but can be at most %d bytes' % (f.size, _AppPageEditConfig.max_img_size_b))
-	app.delete_logo()
+	app.logo = ""
+	release.delete_logo()
 	app.logo.save(f.name, f)
+	release.logo = app.logo
+	app.save()
+	release.save()
 
 
-def _upload_screenshot(app, request):
+def _upload_screenshot(app, request, release):
 	screenshot_f = request.FILES.get('file')
 	if not screenshot_f:
 		raise ValueError('no file submitted')
@@ -381,7 +408,7 @@ def _upload_screenshot(app, request):
 	screenshot.save()
 
 
-def _delete_screenshot(app, request):
+def _delete_screenshot(app, request, release):
 	screenshot_id = request.POST.get('screenshot_id')
 	if not screenshot_id:
 		raise ValueError('no screenshot_id specified')
@@ -394,7 +421,7 @@ def _delete_screenshot(app, request):
 	screenshot.delete()
 
 
-def _check_editor(app, request):
+def _check_editor(app, request, release):
 	editor_email = request.POST.get('editor_email')
 	if not editor_email:
 		raise ValueError('no editor_email specified')
@@ -402,7 +429,7 @@ def _check_editor(app, request):
 	return user.username if user else False
 
 
-def _save_editors(app, request):
+def _save_editors(app, request, release):
 	editors_count = request.POST.get('editors_count')
 	if not editors_count:
 		raise ValueError('no editors_count specified')
@@ -427,7 +454,7 @@ def _save_editors(app, request):
 		app.editors.add(user)
 
 
-def _save_authors(app, request):
+def _save_authors(app, request, release):
 	authors_count = request.POST.get('authors_count')
 	if not authors_count:
 		raise ValueError('no authors_count specified')
@@ -453,7 +480,7 @@ def _save_authors(app, request):
 		ordered_author = OrderedAuthor.objects.create(app=app, author=author, author_order=author_order)
 
 
-def _save_release_notes(app, request):
+def _save_release_notes(app, request, release):
 	release_count = request.POST.get('release_count')
 	if not release_count:
 		raise ValueError('no release_count specified')
@@ -479,7 +506,7 @@ def _save_release_notes(app, request):
 		release.save()
 
 
-def _delete_release(app, request):
+def _delete_release(app, request, back_release):
 	release_count = request.POST.get('release_count')
 	if not release_count:
 		raise ValueError('no release_count specified')
@@ -515,7 +542,7 @@ _AppEditActions = {
 	'save_citation': _mk_basic_field_saver('citation'),
 	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
 	'save_contact_email': _mk_basic_field_saver('contact_email'),
-	'save_bundle_description': _mk_basic_field_saver('Bundle_Description'),
+	'save_bundle_description': _mk_desc_field_saver('Bundle_Description'),
 	'save_tags': _save_tags,
 	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
@@ -527,13 +554,25 @@ _AppEditActions = {
 	'delete_release': _delete_release,
 }
 
+"""
+Flow: app_page_edit -> result[following code] -> _AppEditActions -> Find Action ->
+			Go to the Function -> Do Processing -> Return -> Save App -> Save Releases
+"""
+
 
 @login_required
 def app_page_edit(request, app_name):
+	"""
+	On Click : Save
+	Function Call: app_page_edit
+	Request: HTTP Request
+	Request Content: action from one of the actions above.
+	app_name: Bundle Symbolic Name
+	"""
 	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
+	release = get_object_or_404(Release, app=app, Bundle_Version=app.Bundle_Version)
 	if not app.is_editor(request.user):
 		return HttpResponseForbidden()
-
 	if request.method == 'POST':
 		action = request.POST.get('action')
 		if not action:
@@ -541,12 +580,16 @@ def app_page_edit(request, app_name):
 		if not action in _AppEditActions:
 			return HttpResponseBadRequest('action "%s" invalid--must be: %s' % (action, ', '.join(_AppEditActions)))
 		try:
-			result = _AppEditActions[action](app, request)
+			"""
+			Result gets the App and Release Value
+			"""
+			result = _AppEditActions[action](app, request, release)
 		except ValueError as e:
 			return HttpResponseBadRequest(str(e))
 		except App.DoesNotExist:
 			return HttpResponseRedirect('all/')
 		app.save()
+		release.save()
 		if request.is_ajax():
 			return json_response(result)
 

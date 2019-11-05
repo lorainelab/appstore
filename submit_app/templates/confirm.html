@@ -4,158 +4,121 @@
 {% block title %}- Good news! Your App passed first level, automated review.{% endblock %}
 
 {% block more_head %}
-
-<style type="text/css">
-    form { display: inline; }
-    #loading { display: none; }
-    .tooltip-inner {
-        max-width: 300px !important;
-        width: 300px !important;
-    }
-</style>
+<link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}submit_app/css/app_summary.css"/>
 {% endblock %}
 
 {% block content %}
 <div class="col-md-12">
-    <h1 class="text-success">Good news! Your App passed first level, automated review.</h1>
-</div>
+    <div class="col-md-12">
+        <h2 class="text-success font-weight-bold">Good news! Your App passed first level, automated review.</h2>
+    </div>
 
 
-<div class="col-md-12">
-    <p>We found the following information about your app:</p>
-</div>
+    <div class="pt-4 col-md-12">
+        <p>We found the following information about your App:</p>
+    </div>
 
-<div class="col-md-8">
-    <table class="table">
-    <tr>
-        <td>
-            <b>You Submitted</b>
-        </td>
-       <td> {{ pending.release_file_name }}</td>
-    </tr>
+    <div class="pl-5 col-md-12">
+        <table class="table text-justify">
         <tr>
             <td>
-                <b>Is this a new app?</b>
+                <b>You submitted:</b>
             </td>
-            <td>
-                {% if is_pending_replace %}
-                    No
-                {% else %}
-                    Yes
-                {% endif %}
-                <button class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right"  data-trigger="toggle"
-                        title="
-                    {% if is_pending_replace %}
-                        This is a replacement jar file for pending App {{ pending.Bundle_SymbolicName }}
-                        version {{ pending.Bundle_Version }}.
-                    {% else %}
-                        This is a new version of a released App {{ pending.Bundle_SymbolicName }}.
-                        Currently, the highest version released in App Store is {{ pending.Bundle_Version }}.
-                    {% endif %} ">
-                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
-                </button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Bundle Name</b>
-            </td>
-            <td>{{ pending.Bundle_Name }}
-                <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
-                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
-                </button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Bundle-Symbolic Name</b>
-            </td>
-            <td>{{ pending.Bundle_SymbolicName }}
-                <button id="tooltip-2" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
-                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
-                </button>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <b>Bundle Version</b>
-            </td>
-            <td>{{ pending.Bundle_Version }}
-                <button id="tooltip-3" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"  data-trigger="toggle" data-html="true">
-                     <i class="fa fa-info-circle" style="font-size: 30px"></i>
-                </button>
-            </td>
-        </tr>
-    </table>
-
-    {% if pom_attrs %}
-    <p>
-        Maven POM information:
-        <table class="table">
+           <td> {{ pending.release_file_name }}</td>
             <tr>
                 <td>
-                    <b>Group ID</b>
+                    <b>Bundle-Name:</b>
                 </td>
-                <td>{{ pom_attrs.groupId }}</td>
+                <td>{{ pending.Bundle_Name }}
+                    <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
+                         <i class="fa fa-info-circle" style="font-size: 30px"></i>
+                    </button>
+                </td>
             </tr>
             <tr>
                 <td>
-                    <b>Artifact ID</b>
+                    <b>Bundle-SymbolicName:</b>
                 </td>
-                <td>{{ pom_attrs.artifactId }}</td>
+                <td>{{ pending.Bundle_SymbolicName }}
+                    <button id="tooltip-2" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle" data-html="true">
+                         <i class="fa fa-info-circle" style="font-size: 30px"></i>
+                    </button>
+                </td>
             </tr>
             <tr>
                 <td>
-                    <b>Version</b>
+                    <b>Bundle-Version:</b>
                 </td>
-                <td>{{ pom_attrs.version }}</td>
+                <td>{{ pending.Bundle_Version }}
+                    <button id="tooltip-3" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true"  data-trigger="toggle" data-html="true">
+                         <i class="fa fa-info-circle" style="font-size: 30px"></i>
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>Summary:</b>
+                </td>
+                <td>
+                    {{ app_summary |safe}}
+                </td>
             </tr>
         </table>
-    </p>
-    {% endif %}
-</div>
 
-<div class="row">
-    <div class="col-md-12">
+        {% if pom_attrs %}
         <p>
-             {% if is_pending_replace %}
-                 Are you sure you want to replace the existing jar?
-             {% else %}
-                 Is the above information correct?
-                 <i>It cannot be changed after submission.</i>
-            {% endif %}
+            Maven POM information:
+            <table class="table">
+                <tr>
+                    <td>
+                        <b>Group ID</b>
+                    </td>
+                    <td>{{ pom_attrs.groupId }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Artifact ID</b>
+                    </td>
+                    <td>{{ pom_attrs.artifactId }}</td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>Version</b>
+                    </td>
+                    <td>{{ pom_attrs.version }}</td>
+                </tr>
+            </table>
         </p>
+        {% endif %}
+    </div>
+
+    <div class="col-md-12">
+            <p>
+                 {% if is_pending_replace %}
+                     Are you sure you want to replace the existing jar?
+                 {% else %}
+                     Is the above information correct?
+                {% endif %}
+            </p>
+    </div>
+
+    <div class="pt-4 text-center">
+        <form action="{% url 'confirm-submission' pending.id %}" method="post">
+             {% csrf_token %}
+             <input type="hidden" name="action" value="accept">
+             <input type="submit" class="btn btn-success" value="It's all good. Submit my App">
+        </form>
+        <form action="{% url 'confirm-submission' pending.id %}" method="post">
+             {% csrf_token %}
+             <input type="hidden" name="action" value="cancel">
+             <input type="submit" class="btn-sm btn btn-outline-dark ml-5" value="No. Cancel submission and go back">
+        </form>
         <div id="loading">
             <img src="{% get_static_prefix %}common/img/loading.gif">
         </div>
-         <form action="{% url 'confirm-submission' pending.id %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="accept">
-            <input type="submit" class="btn btn-success" value="It's all good. Submit my App">
-        </form>
-        <form action="{% url 'confirm-submission' pending.id %}" method="post">
-            {% csrf_token %}
-            <input type="hidden" name="action" value="cancel">
-            <input type="submit" class="btn btn-danger" value="No. Cancel submission">
-        </form>
     </div>
+
 </div>
-
-<script type="text/javascript">
-var tooltip1 = "Bundle Name is a short, user-friendly name for your App. App Store and IGB App Manager displayBundle Name to users.See <a href='" + getDocLink() + "' target='_blank'>developer’s documentation</a>";
-var tooltip2 = "Bundle-SymbolicName and Bundle-Version uniquely identify an IGB App jar file within the IGB OSGi runtime. IGB needs Bundle-Version and Bundle-Symbolic Name to install and run your App. Users never see Bundle-SymbolicName, but IGB needs it to run your App. See <a href='" + getDocLink() + "' target='_blank'>developer’s documentation</a>";
-var tooltip3 = "Bundle-Version and Bundle-SymbolicName uniquely identify an IGB App jar file within the IGB OSGi runtime. IGB needs Bundle-Version and Bundle-Symbolic Name to install and run your App. Bundle-Version contain number and full-stop characters only, such as 0.0.1 or 6.1.0. See <a href='" + getDocLink() + "' target='_blank'>developer’s documentation</a>";
-
-document.getElementById("tooltip-1").title= tooltip1;
-document.getElementById("tooltip-2").title= tooltip2;
-document.getElementById("tooltip-3").title= tooltip3;
-
-$(function() {
-    $('form').submit(function() {
-        $('input[type=submit]').hide();
-        $('#loading').show();
-    });
-});
-</script>
+<script type="text/javascript" src="{% get_static_prefix %}submit_app/js/app_summary.js"></script>
 {% endblock %}
     

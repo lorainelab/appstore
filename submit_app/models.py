@@ -26,6 +26,7 @@ class AppPending(models.Model):
     repository_xml      = models.TextField(blank=True, null=True) # OBR index file repository.xml
     release_file_name   = models.CharField(max_length=127) # ?
     release_file        = models.FileField(upload_to='pending_releases') # ?
+    submitter_approved  = models.BooleanField(default=False)
 
     def __str__(self):
         return self.Bundle_Name
@@ -37,8 +38,7 @@ class AppPending(models.Model):
 
     @property
     def is_new_app(self):
-        name = fullname_to_name(self.Bundle_Name)
-        return get_object_or_none(App, name = name) == None
+        return get_object_or_none(App, Bundle_SymbolicName = self.Bundle_SymbolicName) == None
 
     class Meta:
         ordering = ['created']
@@ -51,12 +51,19 @@ class AppPending(models.Model):
         release.works_with = self.works_with
         release.active = True
         release.created = datetime.datetime.today()
+        release.Bundle_Description = app.Bundle_Description
+        app.Bundle_Version = release.Bundle_Version
         release.repository_xml = self.repository_xml
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
+        release.calc_checksum()
+        release.save()
         app.release_file = release.release_file
         app.release_file_name = basename(app.release_file.name)
+        release.release_file_name = basename(release.release_file.name)
         app.save()
+        release.save()
+
         if not app.has_releases:
             app.has_releases = True
         app.latest_release_date = release.created
