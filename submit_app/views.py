@@ -150,12 +150,14 @@ def _app_summary(pending):
 # IGBF-2026 end
 
 def _create_pending(submitter, jar_details, release_file):
-    pending = AppPending.objects.create(submitter       = submitter,
+
+    pending, created = AppPending.objects.update_or_create(submitter       = submitter,
                                         Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
                                         Bundle_Description     = base64.b64decode(jar_details['Bundle_Description']).decode('utf-8'),
                                         Bundle_Name        = jar_details['Bundle_Name'],
                                         Bundle_Version         = jar_details['Bundle_Version'],
-                                        repository_xml      = jar_details['repository'])
+                                        repository_xml      = jar_details['repository'],
+                                        submitter_approved = False)
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
