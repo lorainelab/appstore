@@ -334,7 +334,7 @@ def _mk_desc_field_saver(field, func=None):
 	Basic Field Saver for Description Field in App Edit Page
 	Helper Function to Help Edit the Description of a particular release
 	"""
-	def saver(app, release, request):
+	def saver(app, request, release):
 		value = request.POST.get(field)
 		if value == None:
 			raise ValueError('no %s specified' % field)
