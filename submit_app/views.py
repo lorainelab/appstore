@@ -124,7 +124,7 @@ def _app_summary(pending):
     is_app_submission_error = False
     app_summary = ALL_NEW_APP_MSG
     is_app_status_set = False
-    pending_objs = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, submitter_approved=True)
+    pending_obj = get_object_or_none(AppPending,Bundle_SymbolicName=pending.Bundle_SymbolicName, submitter_approved=True)
     released_objs = App.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName)
     if released_objs.count() > 0:
         for released_obj in released_objs:
@@ -135,14 +135,10 @@ def _app_summary(pending):
                 break
         if (not is_app_status_set):
             app_summary = NEW_VERSION_APP_MSG
-    if pending_objs.count() > 1:
-        i = 0
-        while i < len(pending_objs)-1:
-            if pending_objs[i].Bundle_Version == pending.Bundle_Version:
-                app_summary = APP_REPLACEMENT_JAR_MSG
-                is_app_status_set = True
-                break
-            i += 1
+    if (pending_obj):
+        if pending_obj.Bundle_Version == pending.Bundle_Version:
+            app_summary = APP_REPLACEMENT_JAR_MSG
+            is_app_status_set = True
         if(not is_app_status_set):
             app_summary = NOT_YET_RELEASED_APP_MSG
 
