@@ -97,8 +97,8 @@ class _DefaultConfig:
 
 
 def apps_default(request, page=1):
-	latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')
-	downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()
+	latest_apps = Release.objects.filter(active=True).order_by('-latest_release_date')
+	downloaded_apps = App.objects.order_by('downloads').reverse()
 	# latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')[:_DefaultConfig.num_of_top_apps]
 	# downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()[:_DefaultConfig.num_of_top_apps]
 	apps_on_each_pg = 6

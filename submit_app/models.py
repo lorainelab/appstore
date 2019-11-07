@@ -6,7 +6,6 @@ from django.db import models
 from django.dispatch import receiver
 
 from apps.models import App, Release
-from util.id_util import fullname_to_name
 from util.view_util import get_object_or_none
 
 try:

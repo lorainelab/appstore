@@ -268,7 +268,6 @@ def _pending_app_accept(pending, request):
         app is not yet released
     """
     app, _ = App.objects.get_or_create(Bundle_Name=pending.Bundle_Name)
-    app.active = True
     app.Bundle_SymbolicName = pending.Bundle_SymbolicName
     app.Bundle_Description = pending.Bundle_Description
     app.Bundle_Version = pending.Bundle_Version

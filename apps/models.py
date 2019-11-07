@@ -10,23 +10,6 @@ from django.dispatch import receiver
 from django.urls import reverse
 
 
-class Author(models.Model):
-    name        = models.CharField(max_length=255)
-    institution = models.CharField(max_length=255, null=True, blank=True)
-
-    search_schema = ('name', 'institution')
-    search_key = 'id'
-
-    def __unicode__(self):
-        if not self.institution:
-            return self.name
-        else:
-            return self.name + ' (' + self.institution + ')'
-
-
-_TagCountCache = dict()
-
-
 class Category(models.Model):
     name     = models.CharField(max_length=255, unique=True)
     fullname = models.CharField(max_length=255)
@@ -52,46 +35,15 @@ class Category(models.Model):
         verbose_name_plural = "categories"
 
 
-GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
-
-
-def logo_path(app, filename):
-    get_ext = filename.split('.')[-1]
-    return pathjoin(app.Bundle_SymbolicName, 'releases', app.Bundle_Version, app.Bundle_SymbolicName + '-' +
-                    app.Bundle_Version + '.' + get_ext)
-
 class App(models.Model):
-    Bundle_Name = models.CharField(max_length=127, unique=True)
+    Bundle_Name         = models.CharField(max_length=127, unique=True)
     Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
-    short_title  = models.CharField(max_length=255, blank=True, null=True)
-    Bundle_Description = models.TextField(blank=True, null=True)
-    Bundle_Version       = models.CharField(max_length=31, blank=False)
-    categories         = models.ManyToManyField(Category, blank=True)
 
-    logo         = models.ImageField(blank=True, null=True, upload_to=logo_path)
+    categories          = models.ManyToManyField(Category, blank=True)
+    editors             = models.ManyToManyField(User, blank=True)
 
-    authors      = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
-    editors      = models.ManyToManyField(User, blank=True)
-
-    latest_release_date       = models.DateField(blank=True, null=True)
-    has_releases              = models.BooleanField(default=False)
-    release_file    = models.FileField()
-    release_file_name = models.CharField(max_length=127)
-    license_url    = models.URLField(blank=True, null=True)
-    license_confirm = models.BooleanField(default=False)
-
-    website_url      = models.URLField(blank=True, null=True)
-    tutorial_url     = models.URLField(blank=True, null=True)
-    citation     = models.CharField(max_length=31, blank=True, null=True)
-    code_repository_url     = models.URLField(blank=True, null=True)
-
-    contact_email      = models.EmailField(blank=True, null=True)
-
-    stars        = models.PositiveIntegerField(default=0)
-    downloads    = models.PositiveIntegerField(default=0)
-
-    repository_xml = models.TextField(blank=True, null=True)    #OBR Index Repository XML
-    active = models.BooleanField(default=False)
+    stars               = models.PositiveIntegerField(default=0)
+    downloads           = models.PositiveIntegerField(default=0)
 
     def is_editor(self, user):
         if not user:
@@ -108,33 +60,8 @@ class App(models.Model):
         return 100 * self.stars / 5
 
     @property
-    def logo_url(self):
-        return self.logo.url if self.logo else GENERIC_LOGO_URL
-
-    @property
-    def releases(self):
-        return self.release_set.filter(active=True).all()
-
-    def update_has_releases(self):
-        self.has_releases = (self.release_set.filter(active=True).count() > 0)
-        self.save()
-        self.delete_releases()
-
-    def delete_releases(self):
-        if not self.has_releases:
-            self.release_file.delete()
-            self.delete()
-
-    def delete_logo(self):
-        self.logo.delete()
-
-    @property
     def page_url(self):
         return reverse('app_page', args=[self.Bundle_SymbolicName])
-
-    @property
-    def ordered_authors(self):
-        return (a.author for a in OrderedAuthor.objects.filter(app = self))
 
     search_schema = ('^Bundle_Name', 'short_title', 'Bundle_Description')
     search_key = 'name'
@@ -151,16 +78,22 @@ def delete_file(sender, instance, *args, **kwargs):
     if instance.logo:
         instance.logo.delete()
 
-class OrderedAuthor(models.Model):
-    author       = models.ForeignKey(Author,on_delete=models.CASCADE)
-    app          = models.ForeignKey(App,on_delete=models.CASCADE)
-    author_order = models.PositiveSmallIntegerField(default = 0)
+
+class Author(models.Model):
+    name        = models.CharField(max_length=255)
+    institution = models.CharField(max_length=255, null=True, blank=True)
+
+    search_schema = ('name', 'institution')
+    search_key = 'id'
 
     def __unicode__(self):
-        return unicode(self.author_order) + ': ' + self.app.Bundle_Name + ' by ' + self.author.name
+        if not self.institution:
+            return self.name
+        else:
+            return self.name + ' (' + self.institution + ')'
 
-    class Meta:
-        ordering = ["author_order"]
+
+_TagCountCache = dict()
 
 
 VersionRE = re.compile(r'^(\d+)(?:\.(\d)+)?(?:\.(\d)+)?(?:\.([\w-]+))?$')
@@ -170,20 +103,46 @@ def release_file_path(release, filename):
     return pathjoin(release.app.Bundle_SymbolicName, 'releases', release.Bundle_Version, filename)
 
 
-class Release(models.Model):
-    app           = models.ForeignKey(App,on_delete=models.CASCADE)
-    Bundle_Version       = models.CharField(max_length=31)
-    works_with    = models.CharField(max_length=31)
-    notes         = models.TextField(blank=True, null=True)
-    created       = models.DateTimeField(auto_now_add=True)
-    active        = models.BooleanField(default=True)
-    logo    = models.ImageField(blank=True, null=True)
-    Bundle_Description = models.TextField(blank=True, null=True)  # To keep track of Descriptions Version wise
-    repository_xml    = models.TextField(blank=True, null=True)  # OBR Index Repository XML
-    release_file  = models.FileField(upload_to=release_file_path)
-    release_file_name = models.CharField(max_length=127)
-    hexchecksum   = models.CharField(max_length=511, blank=True, null=True)
+def logo_path(app, filename):
+    get_ext = filename.split('.')[-1]
+    return pathjoin(app.Bundle_SymbolicName, 'releases', app.Bundle_Version, app.Bundle_SymbolicName + '-' +
+                    app.Bundle_Version + '.' + get_ext)
 
+
+GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
+
+
+class Release(models.Model):
+    app                     = models.ForeignKey(App, on_delete=models.CASCADE)
+    Bundle_Version          = models.CharField(max_length=31)
+    short_title             = models.CharField(max_length=255, blank=True, null=True)
+    Bundle_Description      = models.TextField(blank=True, null=True)
+
+    license_url             = models.URLField(blank=True, null=True)
+    license_confirm         = models.BooleanField(default=False)
+
+    website_url             = models.URLField(blank=True, null=True)
+    tutorial_url            = models.URLField(blank=True, null=True)
+    citation                = models.CharField(max_length=31, blank=True, null=True)
+    code_repository_url     = models.URLField(blank=True, null=True)
+
+    contact_email           = models.EmailField(blank=True, null=True)
+
+    platform_compatibility  = models.CharField(max_length=31)
+    created                 = models.DateTimeField(auto_now_add=True)
+    active                  = models.BooleanField(default=True)
+    logo                    = models.ImageField(blank=True, null=True, upload_to=logo_path)
+
+    repository_xml          = models.TextField(blank=True, null=True)  # OBR Index Repository XML
+    release_file            = models.FileField(upload_to=release_file_path)
+
+    hexchecksum             = models.CharField(max_length=511, blank=True, null=True)
+
+    authors                 = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
+
+    @property
+    def ordered_authors(self):
+        return (a.author for a in OrderedAuthor.objects.filter(app=self.app))
 
     @property
     def version_tuple(self):
@@ -250,7 +209,7 @@ def thumbnail_path(screenshot, filename):
 
 
 class Screenshot(models.Model):
-    app        = models.ForeignKey(App,on_delete=models.CASCADE)
+    app        = models.ForeignKey(App, on_delete=models.CASCADE)
     screenshot = models.ImageField(upload_to=screenshot_path)
     thumbnail  = models.ImageField(upload_to=thumbnail_path)
 
@@ -264,3 +223,14 @@ def delete_file(sender, instance, *args, **kwargs):
         instance.release_file.delete()
     if instance.logo:
         instance.logo.delete()
+
+class OrderedAuthor(models.Model):
+    author       = models.ForeignKey(Author, on_delete=models.CASCADE)
+    release          = models.ForeignKey(Release, on_delete=models.CASCADE)
+    author_order = models.PositiveSmallIntegerField(default=0)
+
+    def __unicode__(self):
+        return unicode(self.author_order) + ': ' + self.app.Bundle_Name + ' by ' + self.author.name
+
+    class Meta:
+        ordering = ["author_order"]
