@@ -63,7 +63,7 @@ class App(models.Model):
     def page_url(self):
         return reverse('app_page', args=[self.Bundle_SymbolicName])
 
-    search_schema = ('^Bundle_Name', 'short_title', 'Bundle_Description')
+    search_schema = ('^Bundle_Name')
     search_key = 'name'
 
     def __unicode__(self):

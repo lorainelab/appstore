@@ -68,10 +68,7 @@ def _user_accepted(request, pending):
     if app:
         if not app.is_editor(request.user):
             return HttpResponseForbidden('You are not authorized to add releases, because you are not an editor')
-        if not app.active:
-            app.active = True
-            app.save()
-        pending.make_release(app)
+        pending.make_release(app, pending.Bundle_Version)
         pending.delete_files()
         pending.delete()
         return html_response('update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
@@ -264,16 +261,19 @@ def _get_server_url(request):
 def _pending_app_accept(pending, request):
     # we always create a new app, because only new apps require accepting (old cytoscape behavior)
     """
-          Update existing released app with Bundle_Name and different version and create new app if the
+        Update existing released app with Bundle_Name and different version and create new app if the
         app is not yet released
     """
-    app, _ = App.objects.get_or_create(Bundle_Name=pending.Bundle_Name)
-    app.Bundle_SymbolicName = pending.Bundle_SymbolicName
-    app.Bundle_Description = pending.Bundle_Description
-    app.Bundle_Version = pending.Bundle_Version
-    app.editors.add(pending.submitter)
-    app.repository_xml = pending.repository_xml
+    app, _ = App.objects.update_or_create(Bundle_Name=pending.Bundle_Name, Bundle_SymbolicName=pending.Bundle_SymbolicName)
     app.save()
+    release, _ = Release.objects.get_or_create(app=app, Bundle_Version=pending.Bundle_Version)
+    release.Bundle_SymbolicName = pending.Bundle_SymbolicName
+    release.Bundle_Description = pending.Bundle_Description
+    release.Bundle_Version = pending.Bundle_Version
+    app.editors.add(pending.submitter)
+    release.repository_xml = pending.repository_xml
+    app.save()
+    release.save()
 
     pending.make_release(app)
     pending.delete_files()
