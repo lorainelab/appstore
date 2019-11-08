@@ -219,19 +219,13 @@ def _installed_count(app, user, post):
 
 # -- General app stuff
 
-
-def _latest_release(app):
-	releases = app.releases
-	if not releases: return None
-	return releases[0]  # go by the ordering provided by Release.Meta
-
-
-def _mk_app_page(app, user, request, decoded_details):
+def _mk_app_page(app, released_apps, user, request, decoded_details):
 	c = {
 		'app': app,
+		'released_apps': released_apps,
 		'decoded_details': decoded_details,
+		'latest_released': released_apps[0],
 		'is_editor': (user and app.is_editor(user)),
-		'latest_release': _latest_release(app),
 		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
 		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
 		'go_back_to': request.COOKIES.get('go_back_to'),
@@ -258,8 +252,9 @@ def get_host_url(request):
 
 
 def app_page(request, app_name):
-	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
-	decoded_details = app.Bundle_Description
+	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
+	released_apps = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')
+	decoded_details = released_apps[0].Bundle_Description
 	# temporarily remove if condition if you want any user to rate
 	user = request.user if request.user.is_authenticated else None
 	if request.user.is_authenticated:
@@ -277,7 +272,7 @@ def app_page(request, app_name):
 				return result
 			if request.is_ajax():
 				return json_response(result)
-	return _mk_app_page(app, user, request, decoded_details)
+	return _mk_app_page(app, released_apps, user, request, decoded_details)
 
 
 # ============================================
@@ -299,7 +294,6 @@ def institution_names(app, request):
 
 isoDateRe = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
 
-
 def _parse_iso_date(string):
 	matches = isoDateRe.match(string)
 	if not matches:
@@ -317,6 +311,7 @@ def _mk_basic_field_saver(field, func=None):
 	Helper Function to Help Edit the Page
 	"""
 	def saver(app, request, release):
+		print('before saving website %s' %release.website_url)
 		value = request.POST.get(field)
 		if value == None:
 			raise ValueError('no %s specified' % field)
@@ -324,29 +319,9 @@ def _mk_basic_field_saver(field, func=None):
 			value = None
 		elif func:
 			value = func(value)
-		setattr(app, field, value)
-
-	return saver
-
-
-def _mk_desc_field_saver(field, func=None):
-	"""
-	Basic Field Saver for Description Field in App Edit Page
-	Helper Function to Help Edit the Description of a particular release
-	"""
-	def saver(app, request, release):
-		value = request.POST.get(field)
-		if value == None:
-			raise ValueError('no %s specified' % field)
-		if value == '':
-			value = None
-		elif func:
-			value = func(value)
-		setattr(app, field, value)
 		setattr(release, field, value)
-
+		print('after saving website %s' %release.website_url)
 	return saver
-
 
 def _save_tags(app, request, release):
 	tag_count = request.POST.get('tag_count')
@@ -386,11 +361,8 @@ def _upload_logo(app, request, release):
 	if f.size > _AppPageEditConfig.max_img_size_b:
 		raise ValueError(
 			'image file is %d bytes but can be at most %d bytes' % (f.size, _AppPageEditConfig.max_img_size_b))
-	app.logo = ""
 	release.delete_logo()
-	app.logo.save(f.name, f)
-	release.logo = app.logo
-	app.save()
+	release.logo.save(f.name, f)
 	release.save()
 
 
@@ -402,7 +374,7 @@ def _upload_screenshot(app, request, release):
 		raise ValueError('image file is %d bytes but can be at most %d bytes' % (
 		screenshot_f.size, _AppPageEditConfig.max_img_size_b))
 	thumbnail_f = scale_img(screenshot_f, screenshot_f.name, _AppPageEditConfig.thumbnail_height_px, 'h')
-	screenshot = Screenshot.objects.create(app=app)
+	screenshot = Screenshot.objects.create(release=release)
 	screenshot.screenshot.save(screenshot_f.name, screenshot_f)
 	screenshot.thumbnail.save(thumbnail_f.name, thumbnail_f)
 	screenshot.save()
@@ -474,10 +446,10 @@ def _save_authors(app, request, release):
 			institution = None
 		authors.append((name, institution, i))
 
-	app.authors.clear()
+	release.authors.clear()
 	for name, institution, author_order in authors:
 		author, _ = Author.objects.get_or_create(name=name, institution=institution)
-		ordered_author = OrderedAuthor.objects.create(app=app, author=author, author_order=author_order)
+		ordered_author = OrderedAuthor.objects.create(release=release, author=author, author_order=author_order)
 
 
 def _save_release_notes(app, request, release):
@@ -542,7 +514,7 @@ _AppEditActions = {
 	'save_citation': _mk_basic_field_saver('citation'),
 	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
 	'save_contact_email': _mk_basic_field_saver('contact_email'),
-	'save_bundle_description': _mk_desc_field_saver('Bundle_Description'),
+	'save_bundle_description': _mk_basic_field_saver('Bundle_Description'),
 	'save_tags': _save_tags,
 	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
@@ -569,8 +541,9 @@ def app_page_edit(request, app_name):
 	Request Content: action from one of the actions above.
 	app_name: Bundle Symbolic Name
 	"""
-	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
-	release = get_object_or_404(Release, app=app, Bundle_Version=app.Bundle_Version)
+	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
+	released_apps = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')
+	latest_released = released_apps[:1][0]
 	if not app.is_editor(request.user):
 		return HttpResponseForbidden()
 	if request.method == 'POST':
@@ -583,19 +556,21 @@ def app_page_edit(request, app_name):
 			"""
 			Result gets the App and Release Value
 			"""
-			result = _AppEditActions[action](app, request, release)
+			result = _AppEditActions[action](app, request, latest_released)
 		except ValueError as e:
 			return HttpResponseBadRequest(str(e))
 		except App.DoesNotExist:
 			return HttpResponseRedirect('all/')
 		app.save()
-		release.save()
+		latest_released.save()
 		if request.is_ajax():
 			return json_response(result)
 
 	all_tags = [tag.fullname for tag in Category.objects.all()]
 	c = {
 		'app': app,
+		'latest_released':latest_released,
+		'released_apps':released_apps,
 		'all_tags': all_tags,
 		'max_file_img_size_b': _AppPageEditConfig.max_img_size_b,
 		'max_icon_dim_px': _AppPageEditConfig.max_icon_dim_px,

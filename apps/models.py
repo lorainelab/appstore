@@ -103,10 +103,10 @@ def release_file_path(release, filename):
     return pathjoin(release.app.Bundle_SymbolicName, 'releases', release.Bundle_Version, filename)
 
 
-def logo_path(app, filename):
+def logo_path(release, filename):
     get_ext = filename.split('.')[-1]
-    return pathjoin(app.Bundle_SymbolicName, 'releases', app.Bundle_Version, app.Bundle_SymbolicName + '-' +
-                    app.Bundle_Version + '.' + get_ext)
+    return pathjoin(release.app.Bundle_SymbolicName, 'releases', release.Bundle_Version, release.app.Bundle_SymbolicName + '-' +
+                    release.Bundle_Version + '.' + get_ext)
 
 
 GENERIC_LOGO_URL = urljoin(settings.STATIC_URL, 'apps/img/app_icon_generic.png')
@@ -142,7 +142,7 @@ class Release(models.Model):
 
     @property
     def ordered_authors(self):
-        return (a.author for a in OrderedAuthor.objects.filter(app=self.app))
+        return (a.author for a in OrderedAuthor.objects.filter(release=self))
 
     @property
     def version_tuple(self):
@@ -209,7 +209,7 @@ def thumbnail_path(screenshot, filename):
 
 
 class Screenshot(models.Model):
-    app        = models.ForeignKey(App, on_delete=models.CASCADE)
+    release        = models.ForeignKey(Release, on_delete=models.CASCADE)
     screenshot = models.ImageField(upload_to=screenshot_path)
     thumbnail  = models.ImageField(upload_to=thumbnail_path)
 
