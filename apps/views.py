@@ -331,7 +331,6 @@ def _mk_basic_field_saver(field, func=None):
 	Helper Function to Help Edit the Page
 	"""
 	def saver(app, request, release):
-		print('before saving website %s' %release.website_url)
 		value = request.POST.get(field)
 		if value == None:
 			raise ValueError('no %s specified' % field)
@@ -520,11 +519,6 @@ def _delete_release(app, request, back_release):
 		release.active = False
 		release.save()
 		app_id = release.app_id
-	app.update_has_releases()
-	if not app.has_releases:
-		instance = App.objects.get(id=app_id)
-		instance.delete()
-
 
 _AppEditActions = {
 	'save_short_title': _mk_basic_field_saver('short_title'),

@@ -45,6 +45,12 @@ def app_buttons(apps, releases):
 @register.inclusion_tag('list_of_apps_search.html')
 def list_of_apps_search(apps, releases, include_relevancy = False):
     # a list of sort buttons to display
+    if releases == "Temp":
+        releases = {}
+        for app in apps:
+            released_app = Release.objects.filter(active=True, app=app.object).order_by('-Bundle_Version')[:1][0]
+            releases[app] = released_app
+
                     # button name       div attr name          attr type
     sort_criteria = (('name',           'object.fullname',            'str'),
                     ('downloads',      'object.downloads',           'int'),

@@ -204,14 +204,14 @@ class Release(models.Model):
 
 def screenshot_path(screenshot, filename):
     get_ext = filename.split('.')[-1]
-    return pathjoin(screenshot.app.Bundle_SymbolicName, 'releases', screenshot.app.Bundle_Version, 'screenshots',
-                    filename + '_' +screenshot.app.Bundle_SymbolicName + '-' + screenshot.app.Bundle_Version + '.' + get_ext)
+    return pathjoin(screenshot.release.app.Bundle_SymbolicName, 'releases', screenshot.release.Bundle_Version, 'screenshots',
+                    filename + '_' +screenshot.release.app.Bundle_SymbolicName + '-' + screenshot.release.Bundle_Version + '.' + get_ext)
 
 
 def thumbnail_path(screenshot, filename):
     get_ext = filename.split('.')[-1]
-    return pathjoin(screenshot.app.Bundle_SymbolicName, 'releases', screenshot.app.Bundle_Version, 'thumbnails',
-                    filename + '_' +screenshot.app.Bundle_SymbolicName + '-' + screenshot.app.Bundle_Version + '.' + get_ext)
+    return pathjoin(screenshot.release.app.Bundle_SymbolicName, 'releases', screenshot.release.Bundle_Version, 'thumbnails',
+                    filename + '_' +screenshot.release.app.Bundle_SymbolicName + '-' + screenshot.release.Bundle_Version + '.' + get_ext)
 
 
 class Screenshot(models.Model):
