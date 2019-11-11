@@ -96,29 +96,20 @@ class _DefaultConfig:
 	num_of_top_apps = 6
 
 
-def apps_default(request, page=1):
-	latest_apps = Release.objects.filter(active=True)
+def apps_default(request):
 	downloaded_apps = App.objects.order_by('downloads').reverse()
-	# latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')[:_DefaultConfig.num_of_top_apps]
-	# downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()[:_DefaultConfig.num_of_top_apps]
-	apps_on_each_pg = 6
-	paginator = Paginator(downloaded_apps, apps_on_each_pg)
-	# page = request.GET.get('page')
-	try:
-		downloaded_app = paginator.get_page(page)
-	except PageNotAnInteger:
-		downloaded_app = paginator.page(1)
-	except EmptyPage:
-		downloaded_app = paginator.page(paginator.num_pages)
+	releases = {}
+	for app in downloaded_apps:
+		released_app = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')[:1][0]
+		releases[app] = released_app
 	c = {
-		'latest_apps': latest_apps,
-		'downloaded_apps_pg': downloaded_app,
+		'releases': releases,
+		'downloaded_apps_pg': downloaded_apps,
 		'go_back_to': 'home',
 		'navbar_selected_link': 'all',
 		'search_query': '',
 		'selected_tag_name': '',
 	}
-	# c.update(_nav_panel_context(request)) # This is another way to fix categories to display in homepage #Remove for loop in html_response method added in view_util.py.
 	return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
 
 
