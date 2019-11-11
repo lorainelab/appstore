@@ -20,7 +20,7 @@ class Category(models.Model):
         if self.name in _TagCountCache:
             count = _TagCountCache[self.name]
         else:
-            count = App.objects.filter(active = True, categories = self).count()
+            count = App.objects.filter(categories = self).count()
             _TagCountCache[self.name] = count
         return count
 
