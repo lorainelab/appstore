@@ -21,10 +21,7 @@
     </div >
     <div class="col-md-12">
         {% if apps_with_releases %}
-            {% app_buttons apps_with_releases %}
-        {% endif %}
-        {% if apps_without_releases %}
-            {% app_buttons apps_without_releases %}
+            {% app_buttons apps_with_releases releases %}
         {% endif %}
     </div>
 </div>
