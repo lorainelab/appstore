@@ -159,18 +159,25 @@ def apps_with_tag(request, tag_name):
 
 
 def apps_with_author(request, author_name):
-	apps = Release.objects.filter(active=True, authors__name__exact=author_name).order_by('name')
-	if not apps:
+	releases_obj = Release.objects.filter(active=True, authors__name__exact=author_name)
+	releases = {}
+	apps = []
+	for release in releases_obj:
+		releases[release.app] = release
+		apps.append(release.app)
+	if not releases:
 		raise Http404('No such author "%s".' % author_name)
 
 	c = {
 		'author_name': author_name,
 		'apps': apps,
+		'releases':releases,
 		'go_back_to': '%s\'s author page' % author_name,
 		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
 		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
 	}
 	return html_response('apps_with_author.html', c, request, processors=(_nav_panel_context,))
+
 
 
 # ============================================

@@ -56,6 +56,7 @@ class AppPending(models.Model):
         release.release_file.save(basename(self.release_file.name), self.release_file)
         release.calc_checksum()
         release.save()
+        return release
 
     def delete_files(self):
         self.release_file.delete()
