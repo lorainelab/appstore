@@ -148,10 +148,14 @@ def wall_of_apps(request):
 
 def apps_with_tag(request, tag_name):
 	tag = get_object_or_404(Category, name=tag_name)
-	apps = App.objects.filter(categories=tag).order_by('name')
+	apps = App.objects.filter(categories=tag).order_by('Bundle_Name')
+	releases = dict()
+	for app_query in apps:
+		releases[app_query] = Release.objects.filter(active=True, app=app_query).order_by('-Bundle_Version')[:1][0]
 	c = {
 		'tag': tag,
 		'apps': apps,
+		'releases':releases,
 		'selected_tag_name': tag_name,
 		'go_back_to': '&ldquo;%s&rdquo; category' % tag.fullname,
 	}
