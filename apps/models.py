@@ -195,6 +195,9 @@ class Release(models.Model):
     class Meta:
         ordering = ['-created']
 
+    search_schema = ('^Bundle_Name', 'short_title', 'Bundle_Description')
+    search_key = 'name'
+
 
 def screenshot_path(screenshot, filename):
     get_ext = filename.split('.')[-1]

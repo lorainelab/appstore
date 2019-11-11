@@ -112,8 +112,10 @@ def confirm_submission(request, id):
             return _user_accepted(request, latest_pending_obj_)
     return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary}, request)
 
+
 # Get the Current Directory Path to Temporarily store the Zip File
 dir_path = os.path.dirname(os.path.abspath(__file__))
+
 
 # IGBF-2026 start
 def _app_summary(pending):
@@ -142,6 +144,7 @@ def _app_summary(pending):
 
     return app_summary, is_app_submission_error
 # IGBF-2026 end
+
 
 def _create_pending(submitter, jar_details, release_file):
 
@@ -268,6 +271,7 @@ def _pending_app_accept(pending, request):
     app, _ = App.objects.update_or_create(Bundle_Name=pending.Bundle_Name, Bundle_SymbolicName=pending.Bundle_SymbolicName)
     app.save()
     release, _ = Release.objects.get_or_create(app=app, Bundle_Version=pending.Bundle_Version)
+    release.active = True
     release.Bundle_SymbolicName = pending.Bundle_SymbolicName
     release.Bundle_Description = pending.Bundle_Description
     release.Bundle_Version = pending.Bundle_Version
@@ -294,6 +298,7 @@ _PendingAppsActions = {
     'decline': _pending_app_decline,
 }
 
+
 @login_required
 def pending_apps(request):
     if not request.user.is_staff:
@@ -319,40 +324,40 @@ def pending_apps(request):
     return html_response('pending_apps.html', {'pending_apps': pending_apps}, request)
 
 
-def _app_info(request_post):
-    Bundle_Name = request_post.get('app_fullname')
-    url = reverse('app_page', args=(Bundle_Name,))
-    exists = App.objects.filter(Bundle_Name = Bundle_Name, active = True).count() > 0
-    return json_response({'url': url, 'exists': exists})
-
-
-def _update_app_page(request_post):
-    Bundle_Name = request_post.get('Bundle_Name')
-    release_info = Release.objects.get(Bundle_Name=Bundle_Name)
-    if not Bundle_Name:
-        return HttpResponseBadRequest('"Bundle_Name" not specified')
-    app = get_object_or_none(App, Bundle_Name = Bundle_Name)
-    if app:
-        app.active = True
-    else:
-        app = App.objects.create(Bundle_Name = Bundle_Name)
-
-    Bundle_Description = request_post.get('Bundle_Description')
-    if Bundle_Description:
-        app.Bundle_Description = Bundle_Description
-
-    author_count = request_post.get('author_count')
-    if author_count:
-        author_count = int(author_count)
-        for i in range(author_count):
-            name = request_post.get('author_' + str(i))
-            if not name:
-                return HttpResponseBadRequest('no such author at index ' + str(i))
-            institution = request_post.get('institution_' + str(i))
-            author, _ = Author.objects.get_or_create(name = name, institution = institution)
-            author_order = OrderedAuthor.objects.create(app = app, author = author, author_order = i)
-
-    app.save()
-    return json_response(True)
+# def _app_info(request_post):
+#     Bundle_Name = request_post.get('app_fullname')
+#     url = reverse('app_page', args=(Bundle_Name,))
+#     exists = App.objects.filter(Bundle_Name = Bundle_Name, active = True).count() > 0
+#     return json_response({'url': url, 'exists': exists})
+#
+#
+# def _update_app_page(request_post):
+#     Bundle_Name = request_post.get('Bundle_Name')
+#     release_info = Release.objects.get(Bundle_Name=Bundle_Name)
+#     if not Bundle_Name:
+#         return HttpResponseBadRequest('"Bundle_Name" not specified')
+#     app = get_object_or_none(App, Bundle_Name = Bundle_Name)
+#     if app:
+#         app.active = True
+#     else:
+#         app = App.objects.create(Bundle_Name = Bundle_Name)
+#
+#     Bundle_Description = request_post.get('Bundle_Description')
+#     if Bundle_Description:
+#         app.Bundle_Description = Bundle_Description
+#
+#     author_count = request_post.get('author_count')
+#     if author_count:
+#         author_count = int(author_count)
+#         for i in range(author_count):
+#             name = request_post.get('author_' + str(i))
+#             if not name:
+#                 return HttpResponseBadRequest('no such author at index ' + str(i))
+#             institution = request_post.get('institution_' + str(i))
+#             author, _ = Author.objects.get_or_create(name=name, institution=institution)
+#             author_order = OrderedAuthor.objects.create(app=app, author=author, author_order = i)
+#
+#     app.save()
+#     return json_response(True)
 
 
