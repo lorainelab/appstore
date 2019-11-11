@@ -97,7 +97,7 @@ class _DefaultConfig:
 
 
 def apps_default(request, page=1):
-	latest_apps = Release.objects.filter(active=True).order_by('-latest_release_date')
+	latest_apps = Release.objects.filter(active=True)
 	downloaded_apps = App.objects.order_by('downloads').reverse()
 	# latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')[:_DefaultConfig.num_of_top_apps]
 	# downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()[:_DefaultConfig.num_of_top_apps]
@@ -123,11 +123,16 @@ def apps_default(request, page=1):
 
 
 def all_apps(request):
-	apps = App.objects.filter(active=True).order_by('Bundle_Name')
+	apps = App.objects.order_by('Bundle_Name')
+	releases = {}
+	for app in apps:
+		released_app = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')[:1][0]
+		releases[app] = released_app
 	c = {
 		'apps': apps,
 		'navbar_selected_link': 'all',
 		'go_back_to': 'All Apps',
+		'releases': releases
 	}
 	return html_response('all_apps.html', c, request, processors=(_nav_panel_context,))
 
@@ -324,7 +329,7 @@ def _mk_basic_field_saver(field, func=None):
 			value = None
 		elif func:
 			value = func(value)
-		setattr(app, field, value)
+		setattr(release, field, value)
 
 	return saver
 
@@ -342,7 +347,6 @@ def _mk_desc_field_saver(field, func=None):
 			value = None
 		elif func:
 			value = func(value)
-		setattr(app, field, value)
 		setattr(release, field, value)
 
 	return saver
@@ -386,9 +390,7 @@ def _upload_logo(app, request, release):
 	if f.size > _AppPageEditConfig.max_img_size_b:
 		raise ValueError(
 			'image file is %d bytes but can be at most %d bytes' % (f.size, _AppPageEditConfig.max_img_size_b))
-	app.logo = ""
 	release.delete_logo()
-	app.logo.save(f.name, f)
 	release.logo = app.logo
 	app.save()
 	release.save()
@@ -402,7 +404,7 @@ def _upload_screenshot(app, request, release):
 		raise ValueError('image file is %d bytes but can be at most %d bytes' % (
 		screenshot_f.size, _AppPageEditConfig.max_img_size_b))
 	thumbnail_f = scale_img(screenshot_f, screenshot_f.name, _AppPageEditConfig.thumbnail_height_px, 'h')
-	screenshot = Screenshot.objects.create(app=app)
+	screenshot = Screenshot.objects.create(release=release)
 	screenshot.screenshot.save(screenshot_f.name, screenshot_f)
 	screenshot.thumbnail.save(thumbnail_f.name, thumbnail_f)
 	screenshot.save()
@@ -569,8 +571,8 @@ def app_page_edit(request, app_name):
 	Request Content: action from one of the actions above.
 	app_name: Bundle Symbolic Name
 	"""
-	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
-	release = get_object_or_404(Release, app=app, Bundle_Version=app.Bundle_Version)
+	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
+	release = get_object_or_404(Release, app=app, active=True, Bundle_Version=app.Bundle_Version)
 	if not app.is_editor(request.user):
 		return HttpResponseForbidden()
 	if request.method == 'POST':

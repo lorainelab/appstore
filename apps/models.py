@@ -195,6 +195,9 @@ class Release(models.Model):
     class Meta:
         ordering = ['-created']
 
+    search_schema = ('^Bundle_Name', 'short_title', 'Bundle_Description')
+    search_key = 'name'
+
 
 def screenshot_path(screenshot, filename):
     get_ext = filename.split('.')[-1]
@@ -209,7 +212,7 @@ def thumbnail_path(screenshot, filename):
 
 
 class Screenshot(models.Model):
-    app        = models.ForeignKey(App, on_delete=models.CASCADE)
+    release        = models.ForeignKey(Release, on_delete=models.CASCADE)
     screenshot = models.ImageField(upload_to=screenshot_path)
     thumbnail  = models.ImageField(upload_to=thumbnail_path)
 

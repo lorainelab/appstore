@@ -3,11 +3,10 @@
         order_index="{{ order_index }}"
         Bundle_Name="{{ app.Bundle_Name }}"
         downloads="{{ app.downloads }}"
-        latest_release_date="{{ app.latest_release_date.isoformat }}"
         onClick="window.location='{% url 'app_page' app.Bundle_SymbolicName %}';">
     <div class="row">
         <div class="col-md-3">
-            <img src="{{ app.logo_url }}" class="custom-img">
+            <img src="{{ release.logo_url }}" class="custom-img">
         </div>
         <div class="col-md-9">
             <div class="row">
@@ -15,11 +14,10 @@
                     <!-- data-toggle="tooltip" data-title="{{ app.Bundle_Name }}" -->
                     <h5 class="app-button-title">{{ app.Bundle_Name | truncatechars:40 }}</h5>
                 </div>
-                {% if app.short_title %}
+                {% if release.short_title %}
                 <div class="col-md-12 desc-spaced">
-                    <span class="desc-box small-visible">{{ app.short_title }}</span>
-                    <span class="desc-box long-visible">{{ app.short_title }}</span>
-                    <!--<p class="desc-box">{{ app.short_title }}</p>-->
+                    <span class="desc-box small-visible">{{ release.short_title }}</span>
+                    <span class="desc-box long-visible">{{ release.short_title }}</span>
                 </div>
                 {% endif %}
                  <div class="col-md-12">
