@@ -134,13 +134,16 @@ def all_apps(request):
 
 def wall_of_apps(request):
 	nav_panel_context = _nav_panel_context(request)
-	tags = [(tag.fullname, tag.app_set.all()) for tag in nav_panel_context['top_tags']]
+	tags = []
+	for tag in nav_panel_context['top_tags']:
+		for app_query in tag.app_set.all():
+			tags.append((tag.fullname, Release.objects.filter(active=True, app=app_query).order_by('-Bundle_Version')))
 	apps_in_not_top_tags = set()
 	for not_top_tag in nav_panel_context['not_top_tags']:
 		apps_in_not_top_tags.update(not_top_tag.app_set.all())
 	tags.append(('other', apps_in_not_top_tags))
 	c = {
-		'total_apps_count': App.objects.filter(active=True).count,
+		'total_apps_count': Release.objects.filter(active=True).count,
 		'tags': tags,
 		'go_back_to': 'Wall of Apps',
 	}
@@ -149,7 +152,7 @@ def wall_of_apps(request):
 
 def apps_with_tag(request, tag_name):
 	tag = get_object_or_404(Category, name=tag_name)
-	apps = App.objects.filter(active=True, categories=tag).order_by('name')
+	apps = App.objects.filter(categories=tag).order_by('name')
 	c = {
 		'tag': tag,
 		'apps': apps,
@@ -160,7 +163,7 @@ def apps_with_tag(request, tag_name):
 
 
 def apps_with_author(request, author_name):
-	apps = App.objects.filter(active=True, authors__name__exact=author_name).order_by('name')
+	apps = Release.objects.filter(active=True, authors__name__exact=author_name).order_by('name')
 	if not apps:
 		raise Http404('No such author "%s".' % author_name)
 
