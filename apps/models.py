@@ -138,6 +138,9 @@ class Release(models.Model):
 
     hexchecksum             = models.CharField(max_length=511, blank=True, null=True)
 
+    stars = models.PositiveIntegerField(default=0)
+    downloads = models.PositiveIntegerField(default=0)
+
     authors                 = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
 
     @property
