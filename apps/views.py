@@ -321,7 +321,6 @@ def _mk_basic_field_saver(field, func=None):
 	Helper Function to Help Edit the Page
 	"""
 	def saver(app, request, release):
-		print('before saving website %s' %release.website_url)
 		value = request.POST.get(field)
 		if value == None:
 			raise ValueError('no %s specified' % field)

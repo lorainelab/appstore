@@ -1,6 +1,6 @@
 {{ object.Bundle_Name }}
 {{ object.downloads }}
 {{ object.stars }}
-{% for tag in object.categories.all %}
+{% for tag in object.app.categories.all %}
 {{ tag.name }}
 {% endfor %}
