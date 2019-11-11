@@ -510,11 +510,6 @@ def _delete_release(app, request, back_release):
 		release.active = False
 		release.save()
 		app_id = release.app_id
-	app.update_has_releases()
-	if not app.has_releases:
-		instance = App.objects.get(id=app_id)
-		instance.delete()
-
 
 _AppEditActions = {
 	'save_short_title': _mk_basic_field_saver('short_title'),
