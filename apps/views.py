@@ -96,51 +96,50 @@ class _DefaultConfig:
 	num_of_top_apps = 6
 
 
-def apps_default(request, page=1):
-	latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')
-	downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()
-	# latest_apps = App.objects.filter(active=True).order_by('-latest_release_date')[:_DefaultConfig.num_of_top_apps]
-	# downloaded_apps = App.objects.filter(active=True).order_by('downloads').reverse()[:_DefaultConfig.num_of_top_apps]
-	apps_on_each_pg = 6
-	paginator = Paginator(downloaded_apps, apps_on_each_pg)
-	# page = request.GET.get('page')
-	try:
-		downloaded_app = paginator.get_page(page)
-	except PageNotAnInteger:
-		downloaded_app = paginator.page(1)
-	except EmptyPage:
-		downloaded_app = paginator.page(paginator.num_pages)
+def apps_default(request):
+	downloaded_apps = App.objects.order_by('downloads').reverse()
+	releases = {}
+	for app in downloaded_apps:
+		released_app = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')[:1][0]
+		releases[app] = released_app
 	c = {
-		'latest_apps': latest_apps,
-		'downloaded_apps_pg': downloaded_app,
+		'releases': releases,
+		'downloaded_apps_pg': downloaded_apps,
 		'go_back_to': 'home',
 		'navbar_selected_link': 'all',
 		'search_query': '',
 		'selected_tag_name': '',
 	}
-	# c.update(_nav_panel_context(request)) # This is another way to fix categories to display in homepage #Remove for loop in html_response method added in view_util.py.
 	return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
 
 
 def all_apps(request):
-	apps = App.objects.filter(active=True).order_by('Bundle_Name')
+	apps = App.objects.order_by('Bundle_Name')
+	releases = {}
+	for app in apps:
+		released_app = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')[:1][0]
+		releases[app] = released_app
 	c = {
 		'apps': apps,
 		'navbar_selected_link': 'all',
 		'go_back_to': 'All Apps',
+		'releases': releases
 	}
 	return html_response('all_apps.html', c, request, processors=(_nav_panel_context,))
 
 
 def wall_of_apps(request):
 	nav_panel_context = _nav_panel_context(request)
-	tags = [(tag.fullname, tag.app_set.all()) for tag in nav_panel_context['top_tags']]
+	tags = []
+	for tag in nav_panel_context['top_tags']:
+		for app_query in tag.app_set.all():
+			tags.append((tag.fullname, Release.objects.filter(active=True, app=app_query).order_by('-Bundle_Version')))
 	apps_in_not_top_tags = set()
 	for not_top_tag in nav_panel_context['not_top_tags']:
 		apps_in_not_top_tags.update(not_top_tag.app_set.all())
 	tags.append(('other', apps_in_not_top_tags))
 	c = {
-		'total_apps_count': App.objects.filter(active=True).count,
+		'total_apps_count': Release.objects.filter(active=True).count,
 		'tags': tags,
 		'go_back_to': 'Wall of Apps',
 	}
@@ -149,10 +148,14 @@ def wall_of_apps(request):
 
 def apps_with_tag(request, tag_name):
 	tag = get_object_or_404(Category, name=tag_name)
-	apps = App.objects.filter(active=True, categories=tag).order_by('name')
+	apps = App.objects.filter(categories=tag).order_by('Bundle_Name')
+	releases = dict()
+	for app_query in apps:
+		releases[app_query] = Release.objects.filter(active=True, app=app_query).order_by('-Bundle_Version')[:1][0]
 	c = {
 		'tag': tag,
 		'apps': apps,
+		'releases':releases,
 		'selected_tag_name': tag_name,
 		'go_back_to': '&ldquo;%s&rdquo; category' % tag.fullname,
 	}
@@ -160,18 +163,25 @@ def apps_with_tag(request, tag_name):
 
 
 def apps_with_author(request, author_name):
-	apps = App.objects.filter(active=True, authors__name__exact=author_name).order_by('name')
-	if not apps:
+	releases_obj = Release.objects.filter(active=True, authors__name__exact=author_name)
+	releases = {}
+	apps = []
+	for release in releases_obj:
+		releases[release.app] = release
+		apps.append(release.app)
+	if not releases:
 		raise Http404('No such author "%s".' % author_name)
 
 	c = {
 		'author_name': author_name,
 		'apps': apps,
+		'releases':releases,
 		'go_back_to': '%s\'s author page' % author_name,
 		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
 		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
 	}
 	return html_response('apps_with_author.html', c, request, processors=(_nav_panel_context,))
+
 
 
 # ============================================
@@ -182,14 +192,20 @@ def apps_with_author(request, author_name):
 
 def _app_rate(app, user, post):
 	rating_n = post.get('rating')
+	releases=Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')
 	try:
 		rating_n = int(rating_n)
 		if not (0 <= rating_n <= 5):
 			raise ValueError()
 	except ValueError:
 		raise ValueError('rating is "%s" but must be an integer between 0 and 5' % rating_n)
-	app.stars += rating_n
+	releases[:1][0].stars = rating_n
+	stars = 0
+	for release in releases:
+		stars += release.stars
+	app.stars = stars
 	app.save()
+	releases[:1][0].save()
 	return obj_to_dict(app, ('stars_percentage'))
 
 
@@ -198,6 +214,10 @@ def _app_ratings_delete_all(app, user, post):
 		return HttpResponseForbidden()
 	app.stars = 0
 	app.save()
+	releases = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')
+	for release in releases:
+		release.stars =0
+		release.save()
 
 
 def _installed_count(app, user, post):
@@ -219,19 +239,13 @@ def _installed_count(app, user, post):
 
 # -- General app stuff
 
-
-def _latest_release(app):
-	releases = app.releases
-	if not releases: return None
-	return releases[0]  # go by the ordering provided by Release.Meta
-
-
-def _mk_app_page(app, user, request, decoded_details):
+def _mk_app_page(app, released_apps, user, request, decoded_details):
 	c = {
 		'app': app,
+		'released_apps': released_apps,
 		'decoded_details': decoded_details,
+		'latest_released': released_apps[0],
 		'is_editor': (user and app.is_editor(user)),
-		'latest_release': _latest_release(app),
 		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
 		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
 		'go_back_to': request.COOKIES.get('go_back_to'),
@@ -258,8 +272,9 @@ def get_host_url(request):
 
 
 def app_page(request, app_name):
-	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
-	decoded_details = app.Bundle_Description
+	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
+	released_apps = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')
+	decoded_details = released_apps[0].Bundle_Description
 	# temporarily remove if condition if you want any user to rate
 	user = request.user if request.user.is_authenticated else None
 	if request.user.is_authenticated:
@@ -277,7 +292,7 @@ def app_page(request, app_name):
 				return result
 			if request.is_ajax():
 				return json_response(result)
-	return _mk_app_page(app, user, request, decoded_details)
+	return _mk_app_page(app, released_apps, user, request, decoded_details)
 
 
 # ============================================
@@ -298,7 +313,6 @@ def institution_names(app, request):
 
 
 isoDateRe = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
-
 
 def _parse_iso_date(string):
 	matches = isoDateRe.match(string)
@@ -324,25 +338,6 @@ def _mk_basic_field_saver(field, func=None):
 			value = None
 		elif func:
 			value = func(value)
-		setattr(app, field, value)
-
-	return saver
-
-
-def _mk_desc_field_saver(field, func=None):
-	"""
-	Basic Field Saver for Description Field in App Edit Page
-	Helper Function to Help Edit the Description of a particular release
-	"""
-	def saver(app, request, release):
-		value = request.POST.get(field)
-		if value == None:
-			raise ValueError('no %s specified' % field)
-		if value == '':
-			value = None
-		elif func:
-			value = func(value)
-		setattr(app, field, value)
 		setattr(release, field, value)
 
 	return saver
@@ -386,11 +381,8 @@ def _upload_logo(app, request, release):
 	if f.size > _AppPageEditConfig.max_img_size_b:
 		raise ValueError(
 			'image file is %d bytes but can be at most %d bytes' % (f.size, _AppPageEditConfig.max_img_size_b))
-	app.logo = ""
 	release.delete_logo()
-	app.logo.save(f.name, f)
-	release.logo = app.logo
-	app.save()
+	release.logo.save(f.name, f)
 	release.save()
 
 
@@ -402,7 +394,7 @@ def _upload_screenshot(app, request, release):
 		raise ValueError('image file is %d bytes but can be at most %d bytes' % (
 		screenshot_f.size, _AppPageEditConfig.max_img_size_b))
 	thumbnail_f = scale_img(screenshot_f, screenshot_f.name, _AppPageEditConfig.thumbnail_height_px, 'h')
-	screenshot = Screenshot.objects.create(app=app)
+	screenshot = Screenshot.objects.create(release=release)
 	screenshot.screenshot.save(screenshot_f.name, screenshot_f)
 	screenshot.thumbnail.save(thumbnail_f.name, thumbnail_f)
 	screenshot.save()
@@ -474,10 +466,10 @@ def _save_authors(app, request, release):
 			institution = None
 		authors.append((name, institution, i))
 
-	app.authors.clear()
+	release.authors.clear()
 	for name, institution, author_order in authors:
 		author, _ = Author.objects.get_or_create(name=name, institution=institution)
-		ordered_author = OrderedAuthor.objects.create(app=app, author=author, author_order=author_order)
+		ordered_author = OrderedAuthor.objects.create(release=release, author=author, author_order=author_order)
 
 
 def _save_release_notes(app, request, release):
@@ -527,11 +519,6 @@ def _delete_release(app, request, back_release):
 		release.active = False
 		release.save()
 		app_id = release.app_id
-	app.update_has_releases()
-	if not app.has_releases:
-		instance = App.objects.get(id=app_id)
-		instance.delete()
-
 
 _AppEditActions = {
 	'save_short_title': _mk_basic_field_saver('short_title'),
@@ -542,7 +529,7 @@ _AppEditActions = {
 	'save_citation': _mk_basic_field_saver('citation'),
 	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
 	'save_contact_email': _mk_basic_field_saver('contact_email'),
-	'save_bundle_description': _mk_desc_field_saver('Bundle_Description'),
+	'save_bundle_description': _mk_basic_field_saver('Bundle_Description'),
 	'save_tags': _save_tags,
 	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
@@ -569,8 +556,9 @@ def app_page_edit(request, app_name):
 	Request Content: action from one of the actions above.
 	app_name: Bundle Symbolic Name
 	"""
-	app = get_object_or_404(App, active=True, Bundle_SymbolicName=app_name)
-	release = get_object_or_404(Release, app=app, Bundle_Version=app.Bundle_Version)
+	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
+	released_apps = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')
+	latest_released = released_apps[:1][0]
 	if not app.is_editor(request.user):
 		return HttpResponseForbidden()
 	if request.method == 'POST':
@@ -583,19 +571,21 @@ def app_page_edit(request, app_name):
 			"""
 			Result gets the App and Release Value
 			"""
-			result = _AppEditActions[action](app, request, release)
+			result = _AppEditActions[action](app, request, latest_released)
 		except ValueError as e:
 			return HttpResponseBadRequest(str(e))
 		except App.DoesNotExist:
 			return HttpResponseRedirect('all/')
 		app.save()
-		release.save()
+		latest_released.save()
 		if request.is_ajax():
 			return json_response(result)
 
 	all_tags = [tag.fullname for tag in Category.objects.all()]
 	c = {
 		'app': app,
+		'latest_released':latest_released,
+		'released_apps':released_apps,
 		'all_tags': all_tags,
 		'max_file_img_size_b': _AppPageEditConfig.max_img_size_b,
 		'max_icon_dim_px': _AppPageEditConfig.max_icon_dim_px,

@@ -1,14 +1,6 @@
-{{ object.short_title }}
-{{ object.Bundle_Description }}
-{{ object.has_releases }}
 {{ object.Bundle_Name }}
 {{ object.downloads }}
 {{ object.stars }}
-{{ object.latest_release_date }}
-{% for tag in object.categories.all %}
+{% for tag in object.app.categories.all %}
 {{ tag.name }}
-{% endfor %}
-{% for author in object.authors.all %}
-{{ author.name }}
-{{ author.institution }}
 {% endfor %}

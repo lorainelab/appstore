@@ -4,21 +4,21 @@
     {% for app in apps %}
         {% if forloop.counter|divisibleby:2 %}
             <div class="col-md-6" id="right">
-            {% app_button app forloop.counter %}
+            {% app_button app forloop.counter releases %}
             </div>
         {% endif %}
 
         {% if not forloop.counter|divisibleby:2 %}
             {% if forloop.last %}
                 <div class="col-md-6" id="left">
-                {% app_button app forloop.counter %}
+                {% app_button app forloop.counter releases %}
                 </div>
                 <div class="col-md-6 invisible" id="right">
-                {% app_button app forloop.counter %}
+                {% app_button app forloop.counter releases %}
                 </div>
             {% else %}
                 <div class="col-md-6" id="left">
-                {% app_button app forloop.counter %}
+                {% app_button app forloop.counter releases %}
                 </div>
             {% endif %}
         {% endif %}
