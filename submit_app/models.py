@@ -20,7 +20,7 @@ class AppPending(models.Model):
     Bundle_SymbolicName = models.CharField(max_length=127) # Bundle-SymbolicName
     Bundle_Description  = models.TextField(blank=True, null=True) # Bundle-Description
     Bundle_Version      = models.CharField(max_length=31) # Bundle-Version
-    works_with          = models.CharField(max_length=31, null=True, blank=True, default="9.1.0")
+    works_with          = models.CharField(max_length=31, null=True, blank=True)
     created             = models.DateTimeField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
     repository_xml      = models.TextField(blank=True, null=True) # OBR index file repository.xml
