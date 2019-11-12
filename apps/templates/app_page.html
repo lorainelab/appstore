@@ -235,7 +235,7 @@ logger = logging.getLogger("app_page.html") %}
 		<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
 		<br />
 		{% endif %}
-		<strong class="custom-font">Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a>
+        <strong class="custom-font">Works with IGB </strong><a href="https://bioviz.org/" target="_blank" id="igb_version">{{ latest_released.platform_compatibility | strip_double_quotes}}</a>
 	</div>
 
 	{# end 3.0 download panel #}

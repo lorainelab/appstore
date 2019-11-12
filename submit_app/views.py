@@ -148,13 +148,34 @@ def _app_summary(pending):
 
 def _create_pending(submitter, jar_details, release_file):
 
+    regex = r"Import package org.lorainelab.igb........(.*?)</require>|' \
+               'Import package com.affymetrix.......(.*?)</require>";
+
+    igb_version = [''.join(t) for t in re.findall(regex, jar_details['repository'])]
+    version_list = [];
+    if igb_version is not None and len(igb_version) > 0:
+        for version in igb_version:
+            version_list.append(re.findall(r'\[.*?\)|\[.*?\]|\(.*?\)|\(.*?\]|\d+.?\d+.?\d+|\d+', version)[0])
+    else:
+        raise ValueError("Bundle does not have a lower bound version of IGB")
+        return
+
+    if version_list is None or len(igb_version) <= 0:
+        raise ValueError("IGB version range syntax is incorrect")
+        return
+
+    # Todo : Post a warning if the versions of all IGB packages are not matching
+
+    frequest_used_version_ = max(set(version_list), key=version_list.count);
+
     pending, created = AppPending.objects.update_or_create(submitter       = submitter,
                                         Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
                                         Bundle_Description     = base64.b64decode(jar_details['Bundle_Description']).decode('utf-8'),
                                         Bundle_Name        = jar_details['Bundle_Name'],
                                         Bundle_Version         = jar_details['Bundle_Version'],
                                         repository_xml      = jar_details['repository'],
-                                        submitter_approved = False)
+                                        submitter_approved = False,
+                                        works_with="\"" + frequest_used_version_ + "\"" if (frequest_used_version_.startswith(("(", "["))) else frequest_used_version_ + "+")
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
