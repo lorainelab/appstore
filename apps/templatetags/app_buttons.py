@@ -52,9 +52,8 @@ def list_of_apps_search(apps, releases, include_relevancy = False):
             releases[app] = released_app
 
                     # button name       div attr name          attr type
-    sort_criteria = (('name',           'object.fullname',            'str'),
-                    ('downloads',      'object.downloads',           'int'),
-                    ('newest release', 'object.latest_release_date', 'date'))
+    sort_criteria = (('name',           'object.Bundle_Name',            'str'),
+                    ('downloads',      'object.downloads',           'int'))
 
     if include_relevancy:
         sort_criteria = (('relevancy',  'order_index',  'int'), ) + sort_criteria
@@ -69,9 +68,9 @@ def list_of_apps(apps, releases, include_relevancy = False):
 
     # a list of sort buttons to display
                     # button name       div attr name          attr type
-    sort_criteria = (('name',           'fullname',            'str'),
+    sort_criteria = (('name',           'Bundle_Name',            'str'),
                      ('downloads',      'downloads',           'int'),
-                     ('newest release', 'latest_release_date', 'date'))
+                     ('newest release', 'created', 'date'))
 
     if include_relevancy:
         sort_criteria = (('relevancy',  'order_index',  'int'), ) + sort_criteria
