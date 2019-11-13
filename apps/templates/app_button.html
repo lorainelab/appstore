@@ -3,6 +3,7 @@
         order_index="{{ order_index }}"
         Bundle_Name="{{ app.Bundle_Name }}"
         downloads="{{ app.downloads }}"
+        created="{{ release.created }}"
         onClick="window.location='{% url 'app_page' app.Bundle_SymbolicName %}';">
     <div class="row">
         <div class="col-md-3">

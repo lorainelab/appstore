@@ -224,9 +224,15 @@ var AppPageEdit = (function($)
         add_btn.click(function() {
             if ($(this).hasClass('disabled'))
                 return;
-            add_tag(add_field.val(), true);
-            tags_modified();
-            toggle_add_tag();
+            if(add_field.val().length == 1){
+                Msgs.add_msg('Whoops! Cannot add single Alphabet Category', 'danger', 'category');
+                return;
+            } else {
+                add_tag(add_field.val(), true);
+                tags_modified();
+                toggle_add_tag();
+            }
+
         });
     }
 
