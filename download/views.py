@@ -102,7 +102,7 @@ def all_stats_timeline(request):
     return json_response(response)
 
 def app_stats(request, app_name):
-    app = get_object_or_404(App, active = True, Bundle_SymbolicName = app_name)
+    app = get_object_or_404(App, Bundle_SymbolicName = app_name)
     app_downloads_by_country = AppDownloadsByGeoLoc.objects.filter(app = app, geoloc__region = '', geoloc__city = '')
     releases = app.release_set.all()
     release_downloads_by_date = [dl for release in releases for dl in ReleaseDownloadsByDate.objects.filter(release = release)]
