@@ -238,3 +238,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # site specific settings
 # needed for /help/about
 GOOGLE_API_KEY=""
+
+# configurations for app_pending_cleanup cron
+APP_PENDING_CLEANUP_CRONSTRING='0 0 * * *'
+APP_PENDING_CLEANUP_TIME_OFFSET=5
