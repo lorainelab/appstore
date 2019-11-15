@@ -30,9 +30,11 @@ var AppPage = (function($) {
 			            Msgs.add_msg('Please update to a newer version of IGB @ <a href="https://bioviz.org/download.html" target="_blank"> Click Here </a>',
 			             'info');
 			             document.getElementById("app-install-btn").onclick = getIgb;
+			             $("a#igb_version").replaceWith($("a#igb_version").text(""));
 			        } else {
 			            Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
 			            document.getElementById("app-install-btn").onclick = getIgb;
+			            $("a#igb_version").replaceWith($("a#igb_version").text(""));
 			        }
 			    });
             } else if(xhr.readyState === 4 && xhr.status === 404) {
@@ -40,6 +42,7 @@ var AppPage = (function($) {
                 Msgs.add_msg('Before IGB can load Apps, add this App Store to IGB. Open the App Manager (Tools menu) and click Manage Repositories.' +
                     ' Then click "Add" to add the URL ' + repository_url, 'info');
                 document.getElementById("app-install-btn").set = getIgb;
+                $("a#igb_version").replaceWith($("a#igb_version").text(""));
           }
         }
     }
@@ -59,6 +62,7 @@ var AppPage = (function($) {
             } else if(xhr.readyState === 4 && xhr.status === 0 && callback) {
                 Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
                 document.getElementById("app-install-btn").onclick = getIgb;
+                $("a#igb_version").replaceWith($("a#igb_version").text(""));
             }
         }
     }
@@ -102,7 +106,7 @@ var AppPage = (function($) {
 
             install_btn.find('h4').html(btn_text);
             app_version.html("<strong>Version </strong>"+appVersion);
-            igb_version.html("IGB "+igbVersion);
+            //igb_version.html("IGB "+igbVersion);
 
             install_btn.off('click');
             install_btn.removeClass('disabled');
@@ -187,6 +191,7 @@ var AppPage = (function($) {
 			} else {
                 Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
                 document.getElementById("app-install-btn").setOn = getIgb;
+                $("a#igb_version").replaceWith($("a#igb_version").text(""));
             }
 		});
 	}

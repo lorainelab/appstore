@@ -99,11 +99,11 @@ var SortAppButtons = (function() {
             if(index % 2 == 0)
             {
                 currLeftCounter++;
-                panel = container.find("div #left").eq(currLeftCounter).find(".wrap");
+                panel = container.find("div #left").eq(currLeftCounter);
             }
             else{
                 currRightCounter++;
-                panel = container.find("div #right").eq(currRightCounter).find(".wrap");
+                panel = container.find("div #right").eq(currRightCounter);
             }
             panel.empty();
             panel.append(button);

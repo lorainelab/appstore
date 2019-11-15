@@ -11,7 +11,7 @@ logger = logging.getLogger("app_page.html") %}
 {% block more_head %}
 <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_page.css" />
 <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_stars.css" />
-
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" integrity="sha256-HAaDW5o2+LelybUhfuk0Zh2Vdk8Y2W2UeKmbaXhalfA=" crossorigin="anonymous" />
 {% endblock %}
 
@@ -34,26 +34,24 @@ logger = logging.getLogger("app_page.html") %}
 	<div class="col-md-12">
 		{# App Name and Icon #}
 		<div class="row">
-			<div class="col-md-2 img-div" style="background-image: url('{{app.logo_url}}');background-size: contain;"></div>
+			<div class="col-md-2 img-div" style="background-image: url('{{latest_released.logo_url}}');background-size: contain;"></div>
 			<div class="col-md-8">
 				{# App Name and description #}
 				<h2 class="app-name" id="app-name">
 					{{ app.Bundle_Name }}
 				</h2>
-				<span class="app-def-desc">{% if app.short_title %}{{ app.short_title }}{% endif %}</span>
+				<span class="app-def-desc">{% if latest_released.short_title %}{{ latest_released.short_title }}{% endif %}</span>
 				<br />
 				{# Ratings #}
 				<span class="get-app-stars">{{ app.stars_percentage }}</span>
 				<x-star-rating></x-star-rating>
 				{# End Ratings #}
 				{# Downloads #}
-				{% if app.has_releases %}
 				<span class="app-usage-info-divider"></span>
 				{{ app.downloads }}
 				<a href="{% url 'app_stats' app.Bundle_SymbolicName %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
 					 Downloads
 				</a>
-				{% endif %}
 				{# End Downloads #}
 
 				{# Helpdesk #}
@@ -61,18 +59,18 @@ logger = logging.getLogger("app_page.html") %}
 				<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
 				{# End Helpdesk #}
 				{# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
-				{% if app.citation or  app.code_repository_url %}
+				{% if latest_released.citation or  latest_released.code_repository_url %}
 				{# Citations #}
-				{% if app.citation %}
+				{% if latest_released.citation %}
 				<span> | </span>
-				<a href="https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed_citedin&from_uid={{ app.citation }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search PubMed for articles citing this app.">{% trans "  Citations" %}</a>
+				<a href="https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed_citedin&from_uid={{ latest_released.citation }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search PubMed for articles citing this app.">{% trans "  Citations" %}</a>
 
 				{% endif %}
 				{# End Citations #}
 				<span class="app-usage-info-divider"></span>
 
-				{% if app.code_repository_url %}
-				<a href="{{ app.code_repository_url }}" target="_blank">
+				{% if latest_released.code_repository_url %}
+				<a href="{{ latest_released.code_repository_url }}" target="_blank">
 					<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
 				</a>
 				{% endif %}
@@ -112,11 +110,9 @@ logger = logging.getLogger("app_page.html") %}
 		<li class="nav-item">
 			<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">About this App</a>
 		</li>
-		{% if app.has_releases %}
 		<li class="nav-item">
 			<a class="nav-link" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
 		</li>
-		{% endif %}
 	</ul>
 	<!-- Tab panes -->
 	<div class="tab-content">
@@ -138,10 +134,10 @@ logger = logging.getLogger("app_page.html") %}
 			<br />
 
 			{# Screenshots #}
-			{% if app.screenshot_set.all %}
+			{% if latest_released.screenshot_set.all %}
 			<div class="row">
 				<div class="col-md-12" id="app-screenshots">
-					{% for screenshot in app.screenshot_set.all %}
+					{% for screenshot in latest_released.screenshot_set.all %}
 					<a href="{{ screenshot.screenshot.url }}" data-toggle="lightbox" data-gallery="screen-gallery">
 						<img src="{{ screenshot.thumbnail.url }}" class="img-fluid"/>
 					</a>
@@ -162,12 +158,12 @@ logger = logging.getLogger("app_page.html") %}
 			{# End Details #}
 
 			{# Authors #}
-			{% if app.authors.all %}
+			{% if latest_released.authors.all %}
 			<div class="row">
 				<div class="col-md-8">
 					Authors:
 					<ul>
-						{% for author in app.ordered_authors %}
+						{% for author in latest_released.ordered_authors %}
 						<li>
 							<a href="{% url 'author_page' author.name %}">
 								{{ author.name }} {% if author.institution %} ({{ author.institution }}){% endif %}
@@ -181,7 +177,7 @@ logger = logging.getLogger("app_page.html") %}
 			{# End Authors #}
 		</div>
 	<div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
-		{% for release in app.releases %}
+		{% for release in released_apps %}
 			<div class="row">
 				<div class="col-md-12">
 					<div class="row">
@@ -202,7 +198,7 @@ logger = logging.getLogger("app_page.html") %}
 									{{ release.Bundle_Version }}
 								</h5>
 							{% endif %}
-							<p><strong>Release Date : </strong> {{ release.created_iso|date:"r" }}</p>
+							<p><strong>Release Date : </strong> {{ release.created_iso|date:"j M, H:i:s" }}</p>
 							{# End Release version #}
 
 							{# Works with #}
@@ -239,12 +235,12 @@ logger = logging.getLogger("app_page.html") %}
 		<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
 		<br />
 		{% endif %}
-		<strong class="custom-font">Works with</strong> <a href="https://bioviz.org/" target="_blank" id="igb_version"></a>
+        <strong class="custom-font">Works with IGB </strong><a href="https://bioviz.org/" target="_blank" id="igb_version">{{ latest_released.platform_compatibility | strip_double_quotes}}</a>
 	</div>
 
 	{# end 3.0 download panel #}
 
-	{# app resources #}
+	{# latest_released resources #}
 	<div class="alert alert-warning box-resource">
 		<ul class="nav nav-list">
 		<h5>RESOURCES</h5>
@@ -263,54 +259,53 @@ logger = logging.getLogger("app_page.html") %}
 				</a>
 			</li>
 
-			{% if app.website_url %}
+			{% if latest_released.website_url %}
 			<li>
 				<i class="fa fa-home"></i>
-				<a href="{{ app.website_url }}" target="_blank" style="padding-right:50px;">
+				<a href="{{ latest_released.website_url }}" target="_blank" style="padding-right:50px;">
 					Website
 				</a>
 			</li>
 			{% endif %}
 
-			{% if app.tutorial_url %}
+			{% if latest_released.tutorial_url %}
 			<li>
 				<i class="fa fa-book"></i>
-				<a href="{{ app.tutorial_url }}" target="_blank">
+				<a href="{{ latest_released.tutorial_url }}" target="_blank" style="padding-right:50px;">
 					Tutorial
 				</a>
 			</li>
 			{% endif %}
 
-			{% if app.citation %}
+			{% if latest_released.citation %}
 			<li>
 				<i class="fa fa-heart"></i>
-				<a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ app.citation }}" target="_blank">
+				<a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ latest_released.citation }}" target="_blank" style="padding-right:50px;">
 					Cite this App
 				</a>
 			</li>
 			{% endif %}
 
-			{% if app.code_repository_url %}
+			{% if latest_released.code_repository_url %}
 			<li>
 				<i class="fa fa-code-fork"></i>
-				<a href="{{ app.code_repository_url }}" target="_blank">
+				<a href="{{ latest_released.code_repository_url }}" target="_blank" style="padding-right:50px;">
 					&nbsp;&nbsp;Code Repository
 				</a>
 			</li>
 			{% endif %}
-			<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
-			{% if app.contact_email %}
+			{% if latest_released.contact_email %}
 			<li>
 				<i class="fa fa-envelope"></i>
-				<a href="mailto:{{ app.contact_email }}" target="_blank">
+				<a href="mailto:{{ latest_released.contact_email }}" target="_blank" style="padding-right:50px;">
 					 E-mail
 				</a>
 			</li>
 			{% endif %}
 		</ul>
 	</div>
-	{# end app resources #}
+	{# end latest_released resources #}
 </div>
 {# end right-hand panels #}
 </div>
@@ -344,14 +339,14 @@ logger = logging.getLogger("app_page.html") %}
 {# End modal dialog #}
 
 {# License modal dialog #}
-{% if app.license_confirm and app.license_url %}
+{% if latest_released.license_confirm and latest_released.license_url %}
 <div class="modal hide fade in" id="license_modal">
 	<div class="modal-header">
 		<a class="close" data-dismiss="modal">&times;</a>
 		<h3>License Agreement</h3>
 	</div>
 	<div class="modal-body">
-		<iframe data-src="{{ app.license_url }}" width="500" height="400"></iframe>
+		<iframe data-src="{{ latest_released.license_url }}" width="500" height="400"></iframe>
 	</div>
 	<div class="modal-footer">
 		<a href="#" class="btn" data-dismiss="modal">Don't Accept</a>
@@ -377,7 +372,7 @@ logger = logging.getLogger("app_page.html") %}
 	AppPage.setup_install("{{ app.Bundle_Name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}");
 
 
-	{% if app.Bundle_Description %}
+	{% if latest_released.Bundle_Description %}
 	AppPage.setup_details();
 	{% endif %}
 

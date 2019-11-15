@@ -23,7 +23,9 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = config('SECRET_KEY',default="XXXX")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG=config('DEBUG',default=True)
+#DEBUG=config('DEBUG', default=True)
+
+DEBUG=True
 
 # add allowed hosts here
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='localhost')
@@ -70,11 +72,11 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-	'file': {
+    'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
             # must be write-able by web server user
-            'filename': config('DJANGO_LOG_FILE',default=os.path.join(BASE_DIR, 'debug.log')),
+            'filename': config('DJANGO_LOG_FILE', default=os.path.join(BASE_DIR, 'debug.log')),
         },
     },
     'loggers': {

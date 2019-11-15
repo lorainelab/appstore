@@ -1,0 +1,5 @@
+{{ object.Bundle_Description }}
+{% for author in object.authors.all %}
+{{ author.name }}
+{{ author.institution }}
+{% endfor %}

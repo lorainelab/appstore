@@ -18,7 +18,7 @@
         {# App Name and Icon #}
         <div class="row">
             <div class="col-md-2">
-                <img class="appimg" id="app-icon" src="{{ app.logo_url }}" data-toggle="tooltip" title="Click here to choose another logo">
+                <img class="appimg" id="app-icon" src="{{ latest_released.logo_url }}" data-toggle="tooltip" title="Click here to choose another logo">
             </div>
             <div class="col-md-10">
                 {# App Name and description #}
@@ -26,7 +26,7 @@
                     {{ app.Bundle_Name }}
                 </h2>
                 <input class="form-control" type="text" id="app-description" placeholder="Enter a short description of your app here"
-                       value="{% if app.short_title %}{{ app.short_title|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}" />
+                       value="{% if latest_released.short_title %}{{ latest_released.short_title|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}" />
             </div>
     {# End app header #}
         </div>
@@ -43,11 +43,9 @@
             <li class="nav-item">
                 <a class="nav-link active" id="app-info-tab" data-toggle="tab" href="#app-info" role="tab" aria-controls="app-info" aria-selected="true">Bundle Description</a>
             </li>
-            {% if app.has_releases %}
             <li class="nav-item">
                 <a class="nav-link" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
             </li>
-            {% endif %}
         </ul>
         <!-- Tab panes -->
         <div class="tab-content">
@@ -60,7 +58,6 @@
                         <h6 class="muted">CATEGORIES</h6>
                         <hr />
                         <div class="col-md-9" id="app-tags-list"></div>
-                        <hr />
                         <button type="button" id="app-tag-add-btn" data-toggle="popover" class="btn btn-light">
                           <i class="fa fa-plus"></i> Add Category
                         </button>
@@ -70,7 +67,7 @@
                 {# End Categories #}
 
                 <br />
-
+                <hr />
                 {# Screenshots #}
                 <div class="row">
                     <div class="col-md-12">
@@ -99,7 +96,7 @@
                 </div>
                 <div class="row">
                     <div class="col-md-12">
-                        <textarea id="app-details" class="col-md-12" rows="15">{% if app.Bundle_Description %}{{ app.Bundle_Description }}{% endif %}</textarea>
+                        <textarea id="app-details" class="col-md-12" rows="15">{% if latest_released.Bundle_Description %}{{ latest_released.Bundle_Description }}{% endif %}</textarea>
                     </div>
                     <div class="col-md-12 margin-top">
                         <h6 class="muted">PREVIEW</h6>
@@ -131,76 +128,78 @@
                 </div>
             </div>
             <div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
-                {# checking if there is only one release #}
-                {% if app.releases|length == 1 %}
-                <br />
-                <div class="row">
-                    <div class="col-md-12 release">
-                        <span class="alert alert-info">Deleting this Release will delete the whole application.</span>
-                    </div>
-                </div>
-                <br />
-                {% endif %}
+                {% for release in released_apps %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="row">
+                                <div class="col-md-3 img-div" style="background-image: url('{{release.logo_url}}');background-size: contain; margin-top: 30px;"></div>
+                                <div class="col-md-9">
+                                    {# Release version #}
+                                    <br />
+                                    {% if forloop.first %}
+                                        <h5>
+                                            Current Version :
+                                            <!-- Removed release.version argument href="% url 'release_download' app.name %-->
+                                            {{ release.Bundle_Version }}
+                                        </h5>
+                                    {% else %}
+                                        <h5>
+                                            Version :
+                                            <!-- Removed release.version argument href="% url 'release_download' app.name %-->
+                                            {{ release.Bundle_Version }}
+                                        </h5>
+                                    {% endif %}
+                                    <p><strong>Release Date : </strong> {{ release.created_iso|date:"j M, H:i:s" }}</p>
+                                    {# End Release version #}
 
-                {% for release in app.releases %}
-                <div class="row">
-                    <div class="col-md-12 release" release_id="{{ release.id }}">
-                        {# Release version #}
-                        <h4 style="margin-top:10px;">
-                            {{ release.Bundle_Version }}
-                            <small><abbr class="timeago"> {{ release.created_iso }} </abbr></small>
-                            <button class="btn btn-light {% if release.dependents.count %} disabled {% endif %} release-delete" style="margin-top:15px;"><i class="fa fa-trash"></i> Delete</button>
-                        </h4>
-                        {# End Release version #}
+                                    {# Works with #}
+                                    <p>
+                                        <strong>Works with</strong> IGB
+                                        {{ release.works_with }}
+                                    </p>
+                                    {# End Works with #}
+                                    {# Release #}
+                                    {% if release.releaseapi_set.count %}
+                                    {% with releaseapi=release.releaseapi_set.get %}
+                                    <p>
+                                        <strong>API</strong>
+                                        &nbsp;
+                                        <a target="_blank" href="{{ releaseapi.pom_xml_file.url }}">pom.xml</a>
+                                        &nbsp;
+                                        <a target="_blank" href="{{ releaseapi.javadocs_jar_file.url }}-extracted">Javadocs</a>
+                                    </p>
+                                    {% endwith %}
+                                    {% endif %}
 
-                        {# Works with #}
-                        <p>
-                            <strong>Works with</strong> IGB
-                            {{ release.works_with }}
-                        </p>
-                        {# End Works with #}
+                                    {# Release dependencies #}
+                                    {% if release.dependents.count %}
+                                    <p>
+                                        <strong>Apps that depend on this release</strong>
+                                        <ul>
+                                            {% for dependent in release.dependents.all %}
+                                            <li><a href="{% url 'app_page' dependent.app.Bundle_SymbolicName %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
+                                            {% endfor %}
+                                        </ul>
+                                    </p>
+                                    {% endif %}
+                                    {# End Release dependencies #}
 
-                        {# Release #}
-                        {% if release.releaseapi_set.count %}
-                        {% with releaseapi=release.releaseapi_set.get %}
-                        <p>
-                            <strong>API</strong>
-                            &nbsp;
-                            <a target="_blank" href="{{ releaseapi.pom_xml_file.url }}">pom.xml</a>
-                            &nbsp;
-                            <a target="_blank" href="{{ releaseapi.javadocs_jar_file.url }}-extracted">Javadocs</a>
-                        </p>
-                        {% endwith %}
-                        {% endif %}
-
-                        {# Release dependencies #}
-                        {% if release.dependents.count %}
-                        <p>
-                            <strong>Apps that depend on this release</strong>
-                            <ul>
-                                {% for dependent in release.dependents.all %}
-                                <li><a href="{% url 'app_page' dependent.app.Bundle_SymbolicName %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
-                                {% endfor %}
-                            </ul>
-                        </p>
-                        {% endif %}
-                        {# End Release dependencies #}
-
-                        {% if release.notes %}
-                        <p><strong>Release Notes</strong></p>
-                        <textarea id="release-notes" class="release-notes" rows="5">{% if release.notes %}{{ release.notes }}{% endif %}</textarea>
-                        <h6 class="muted">PREVIEW</h6>
-                        <div class="release-notes-preview">{{ release.notes | markdown_parser | safe }}
-                            <p id="release-markdown"></p>
+                                    {% if release.notes %}
+                                    <p><strong>Release Notes</strong></p>
+                                    <textarea id="release-notes" class="release-notes" rows="5">{% if release.notes %}{{ release.notes }}{% endif %}</textarea>
+                                    <h6 class="muted">PREVIEW</h6>
+                                    <div class="release-notes-preview">{{ release.notes | markdown_parser | safe }}
+                                        <p id="release-markdown"></p>
+                                    </div>
+                                    {% endif %}
+                                    {# End Release #}
+                                </div>
+                            </div>
+                            <hr />
                         </div>
-                        {% endif %}
-                        {# End Release #}
-                        <hr />
                     </div>
-                </div>
-                {% endfor %}
-                {# end looping through each release #}
-            </div>
+                    {% endfor %} {# end looping thru each release #}
+		    </div>
         </div>
     </div>
     {# end tabs #}
@@ -229,29 +228,29 @@
 
             <div class="form-group margin-top" id="app-license-text">
                 <label>License URL: </label>
-                <input class="form-control" type="text" placeholder="License URL (http://...)" value="{% if app.license_url %}{{ app.license_url }}{% endif %}">
-                <input type="checkbox" {% if app.license_confirm %}checked{% endif %}> Require confirmation
+                <input class="form-control" type="text" placeholder="License URL (http://...)" value="{% if latest_released.license_url %}{{ latest_released.license_url }}{% endif %}">
+                <input type="checkbox" {% if latest_released.license_confirm %}checked{% endif %}> Require confirmation
             </div>
             <div class="form-group" id="app-website">
                 <label><i class="fa fa-home"></i> Website URL:</label>
-                <input class="form-control" type="text"  value="{% if app.website_url %}{{ app.website_url }}{% endif %}">
+                <input class="form-control" type="text"  value="{% if latest_released.website_url %}{{ latest_released.website_url }}{% endif %}">
             </div>
             <div class="form-group" id="app-tutorial">
                 <label><i class="fa fa-book"></i> Tutorial URL:</label>
-                <input class="form-control" type="text" value="{% if app.tutorial_url %}{{ app.tutorial_url }}{% endif %}">
+                <input class="form-control" type="text" value="{% if latest_released.tutorial_url %}{{ latest_released.tutorial_url }}{% endif %}">
             </div>
             <div class="form-group" id="app-citation" validate_regexp="^\d+$">
                 <label><i class="fa fa-heart"></i> Citation:</label>
-                <input class="form-control" type="text" placeholder="PubMed ID" value="{% if app.citation %}{{ app.citation }}{% endif %}">
+                <input class="form-control" type="text" placeholder="PubMed ID" value="{% if latest_released.citation %}{{ latest_released.citation }}{% endif %}">
                 <span class="help-block">Example: <em>23595664</em></span>
             </div>
             <div class="form-group" id="app-coderepo">
                 <label><i class="fa fa-code-fork"></i> Code Repository URL:</label>
-                <input class="form-control" type="text" value="{% if app.code_repository_url %}{{ app.code_repository_url }}{% endif %}">
+                <input class="form-control" type="text" value="{% if latest_released.code_repository_url %}{{ latest_released.code_repository_url }}{% endif %}">
             </div>
             <div class="form-group" id="app-contact">
                 <label><i class="fa fa-envelope"></i> Contact Email:</label>
-                <input class="form-control" type="text" value="{% if app.contact_email %}{{ app.contact_email }}{% endif %}">
+                <input class="form-control" type="text" value="{% if latest_released.contact_email %}{{ latest_released.contact_email }}{% endif %}">
             </div>
         </div>
         {# end resources #}
@@ -389,9 +388,6 @@
     <script type="text/javascript" src="{% get_static_prefix %}apps/js/app_page_edit.js"></script>
 
     <script type="text/javascript">
-        {% if not app.has_releases %}
-            AppPageEdit.encourage_port();
-        {% endif %}
 
         {% if release_uploaded %}
             Msgs.add_msg('Your release has been uploaded! Click the "Release History" tab to see your releases and to add release notes.', 'success');
@@ -409,8 +405,8 @@
         {% endif %}
 
         AppPageEdit.setup_screenshot_btns({{ thumbnail_height_px }});
-        {% if app.screenshot_set.all %}
-            {% for screenshot in app.screenshot_set.all %}
+        {% if latest_released.screenshot_set.all %}
+            {% for screenshot in latest_released.screenshot_set.all %}
                 AppPageEdit.add_screenshot('{{ screenshot.thumbnail.url|escapejs }}').attr('backend_id', '{{screenshot.id}}');
             {% endfor %}
         {% endif %}
@@ -426,7 +422,7 @@
 
         AppPageEdit.setup_author_add_btn();
 
-        {% for author in app.ordered_authors %}
+        {% for author in latest_released.ordered_authors %}
             AppPageEdit.add_author('{{ author.name }}', {% if author.institution %}'{{ author.institution }}'{% else %}null{% endif %});
         {% endfor %}
 
@@ -435,9 +431,7 @@
             AppPageEdit.setup_authors_dnd();
         });
 
-        {% if app.has_releases %}
-            AppPageEdit.setup_release_notes();
-        {% endif %}
+        AppPageEdit.setup_release_notes();
 
         AppPageEdit.setup_cancel_btn();
         AppPageEdit.setup_save_btn();
