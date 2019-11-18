@@ -31,6 +31,10 @@ NOT_YET_RELEASED_APP_MSG = "The jar file Bundle_SymbolicName matches a previousl
 @login_required
 def submit_app(request):
     context = dict()
+    if 'HTTP_X_FORWARDED_FOR' in request.META:
+        ip = request.META['HTTP_X_FORWARDED_FOR'].split(",")[0].strip()
+        request.META['REMOTE_ADDR'] = ip
+    client_ip = request.META['REMOTE_ADDR']
     if request.method == 'POST':
         expect_app_name = request.POST.get('expect_app_name')
         f = request.FILES.get('file')
@@ -38,7 +42,7 @@ def submit_app(request):
         if f:
             try:
                 jar_details = process_jar(f, expect_app_name)
-                pending = _create_pending(request.user, jar_details, f)
+                pending = _create_pending(request.user, jar_details, f, client_ip)
                 version_pattern = "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
                 version_pattern = re.compile(version_pattern)
                 if not bool(version_pattern.match(jar_details['Bundle_Version'])):
@@ -146,12 +150,12 @@ def _app_summary(pending):
 # IGBF-2026 end
 
 
-def _create_pending(submitter, jar_details, release_file):
+def _create_pending(submitter, jar_details, release_file, client_ip):
 
     regex = r"Import package org.lorainelab.igb(.*?)</require>|Import package com.affymetrix(.*?)</require>"
 
     igb_version = [''.join(t) for t in re.findall(regex, jar_details['repository'])]
-    version_list = [];
+    version_list = []
     if igb_version is not None and len(igb_version) > 0:
         for version in igb_version:
             version = re.findall(r'\[.*?\)|\[.*?\]|\(.*?\)|\(.*?\]|\d+.?\d+.?\d+|\d+', version)
@@ -167,7 +171,7 @@ def _create_pending(submitter, jar_details, release_file):
 
     # Todo : Post a warning if the versions of all IGB packages are not matching
 
-    frequest_used_version_ = max(set(version_list), key=version_list.count);
+    frequest_used_version_ = max(set(version_list), key=version_list.count)
 
     pending, created = AppPending.objects.update_or_create(submitter       = submitter,
                                         Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
@@ -176,6 +180,7 @@ def _create_pending(submitter, jar_details, release_file):
                                         Bundle_Version         = jar_details['Bundle_Version'],
                                         repository_xml      = jar_details['repository'],
                                         submitter_approved = False,
+                                        uploader_ip = client_ip,
                                         works_with="\"" + frequest_used_version_ + "\"" if (frequest_used_version_.startswith(("(", "["))) else frequest_used_version_ + "+")
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
