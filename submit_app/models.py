@@ -27,6 +27,8 @@ class AppPending(models.Model):
     release_file_name   = models.CharField(max_length=127) # ?
     release_file        = models.FileField(upload_to='pending_releases') # ?
     submitter_approved  = models.BooleanField(default=False)
+    uploader_ip         = models.GenericIPAddressField(default="192.168.2.1")
+
 
     def __str__(self):
         return self.Bundle_Name
@@ -52,6 +54,7 @@ class AppPending(models.Model):
         release.created = datetime.datetime.today()
         release.Bundle_Description = self.Bundle_Description
         release.repository_xml = self.repository_xml
+        release.uploader_ip = self.uploader_ip
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
         release.calc_checksum()
