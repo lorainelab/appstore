@@ -28,7 +28,7 @@ class AppPending(models.Model):
     release_file_name   = models.CharField(max_length=127) # ?
     release_file        = models.FileField(upload_to='pending_releases') # ?
     submitter_approved  = models.BooleanField(default=False)
-    uploader_ip         = models.GenericIPAddressField(default="192.168.2.1")
+    uploader_ip         = models.GenericIPAddressField(null=True)
 
 
     def __str__(self):

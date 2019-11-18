@@ -141,7 +141,7 @@ class Release(models.Model):
     stars = models.PositiveIntegerField(default=0)
     downloads = models.PositiveIntegerField(default=0)
 
-    uploader_ip = models.GenericIPAddressField(default="192.168.2.1")
+    uploader_ip = models.GenericIPAddressField(null=True)
 
     authors                 = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
 
