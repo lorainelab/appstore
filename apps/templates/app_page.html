@@ -182,14 +182,8 @@ logger = logging.getLogger("app_page.html") %}
 												{# Works with #}
 												<p>
 													<strong>Works with</strong> IGB
-													{{ release.works_with }}
+													{{ release.platform_compatibility | strip_double_quotes}}
 												</p>
-												{# End Works with #}
-												{% if release.notes %}
-												<p><strong>Release Notes</strong></p>
-												<div class="app-release-notes">{{ release.notes }}</div>
-												{% endif %}
-												{# End Release #}
 											</div>
 										</div>
 										<hr />
@@ -377,8 +371,6 @@ logger = logging.getLogger("app_page.html") %}
 	{% if latest_released.Bundle_Description %}
 	AppPage.setup_details();
 	{% endif %}
-
-	AppPage.setup_release_notes();
 
 	// Javascript to enable link to tab
 	var url = document.location.toString();
