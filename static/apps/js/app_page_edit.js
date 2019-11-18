@@ -518,43 +518,6 @@ var AppPageEdit = (function($)
         return unique;
     }
 
-    /* ===============================
-         Release Notes
-       =============================== */
-
-    function setup_release_notes() {
-
-        $('.release').each(function() {
-            var release_div = $(this);
-            var release_id = $(this).attr('release_id');
-            var release_notes_field = $(this).find('.release-notes');
-            var release_notes_preview = $(this).find('.release-notes-preview');
-            var delete_btn = $(this).find('.release-delete');
-
-            //MarkdownUtil.setup_preview(release_notes_field, release_notes_preview);
-            field_change(release_notes_field, function() {
-                if (!SaveActions['release_notes'])
-                    SaveActions['release_notes'] = new Object();
-                SaveActions['release_notes'][release_id] = true;
-                save_btn_tag.removeClass('disabled');
-            });
-
-            if (delete_btn.hasClass('disabled')) {
-                delete_btn.tooltip({
-                    'html': true,
-                    'title': 'Other apps depend on this release. Contact us or the app authors to delete this release.'
-                });
-            } else {
-                delete_btn.click(function() {
-                    if (!SaveActions['release_deletes'])
-                        SaveActions['release_deletes'] = new Object();
-                    SaveActions['release_deletes'][release_id] = true;
-                    fade_out_and_remove(release_div);
-                    save_btn_tag.removeClass('disabled');
-                });
-            }
-        });
-    }
 
     /* ===============================
          Saving & Canceling
@@ -759,21 +722,6 @@ var AppPageEdit = (function($)
                 'data': data
             };
         },
-        'release_notes': function(release_ids) {
-            var data = Object();
-            data['action'] = 'save_release_notes';
-            var count = 0;
-            for (release_id in release_ids) {
-                data['release_id_' + count] = release_id;
-                data['notes_' + count] = $('[release_id=' + release_id + '] .release-notes').val();
-                count++;
-            }
-            data['release_count'] = count;
-            return {
-                'msg': 'Saving release notes',
-                'data': data
-            };
-        },
         'release_deletes': function(release_ids) {
             var data = Object();
             data['action'] = 'delete_release';
@@ -946,7 +894,6 @@ var AppPageEdit = (function($)
         'add_author': add_author,
         'setup_authors_typeahead': setup_authors_typeahead,
         'setup_authors_dnd': setup_authors_dnd,
-        'setup_release_notes': setup_release_notes,
         'setup_cancel_btn': setup_cancel_btn,
         'setup_save_btn': setup_save_btn,
         '_SaveActions': SaveActions,
