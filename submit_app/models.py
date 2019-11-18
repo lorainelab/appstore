@@ -6,7 +6,6 @@ from django.db import models
 from django.dispatch import receiver
 
 from apps.models import App, Release
-from util.id_util import fullname_to_name
 from util.view_util import get_object_or_none
 
 try:
@@ -21,8 +20,9 @@ class AppPending(models.Model):
     Bundle_SymbolicName = models.CharField(max_length=127) # Bundle-SymbolicName
     Bundle_Description  = models.TextField(blank=True, null=True) # Bundle-Description
     Bundle_Version      = models.CharField(max_length=31) # Bundle-Version
-    works_with          = models.CharField(max_length=31, null=True, blank=True, default="9.1.0")
+    works_with          = models.CharField(max_length=31, null=True, blank=True)
     created             = models.DateTimeField(auto_now_add=True)
+    updated             = models.DateTimeField(auto_now=True)
     repository_xml      = models.TextField(blank=True, null=True) # OBR index file repository.xml
     release_file_name   = models.CharField(max_length=127) # ?
     release_file        = models.FileField(upload_to='pending_releases') # ?
@@ -48,26 +48,15 @@ class AppPending(models.Model):
 
     def make_release(self, app):
         release, _ = Release.objects.get_or_create(app=app, Bundle_Version=self.Bundle_Version)
-        release.works_with = self.works_with
-        release.active = True
+        release.platform_compatibility = self.works_with
         release.created = datetime.datetime.today()
-        release.Bundle_Description = app.Bundle_Description
-        app.Bundle_Version = release.Bundle_Version
+        release.Bundle_Description = self.Bundle_Description
         release.repository_xml = self.repository_xml
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
         release.calc_checksum()
         release.save()
-        app.release_file = release.release_file
-        app.release_file_name = basename(app.release_file.name)
-        release.release_file_name = basename(release.release_file.name)
-        app.save()
-        release.save()
-
-        if not app.has_releases:
-            app.has_releases = True
-        app.latest_release_date = release.created
-        app.save()
+        return release
 
     def delete_files(self):
         self.release_file.delete()

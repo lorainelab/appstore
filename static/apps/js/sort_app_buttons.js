@@ -38,8 +38,8 @@ var SortAppButtons = (function() {
 
         'date': function(attr_name) {
             return function(a, b) {
-                var dateA = parseISODate(a.attr(attr_name));
-                var dateB = parseISODate(b.attr(attr_name));
+                var dateA = Date.parse(a.attr(attr_name));
+                var dateB = Date.parse(b.attr(attr_name));
                 if (dateA > dateB)
                     return 1;
                 else if (dateB > dateA)
@@ -57,7 +57,9 @@ var SortAppButtons = (function() {
 
         var buttons = [];
         container.find('.app_button').each(function () {
-            buttons.push($(this));
+            if($(this)[0] != container.find('.invisible').find('.app_button')[0]){
+                buttons.push($(this));
+            }
         });
 
         zero_value_buttons = [];
@@ -99,11 +101,11 @@ var SortAppButtons = (function() {
             if(index % 2 == 0)
             {
                 currLeftCounter++;
-                panel = container.find("div #left").eq(currLeftCounter).find(".wrap");
+                panel = container.find("div #left").eq(currLeftCounter);
             }
             else{
                 currRightCounter++;
-                panel = container.find("div #right").eq(currRightCounter).find(".wrap");
+                panel = container.find("div #right").eq(currRightCounter);
             }
             panel.empty();
             panel.append(button);

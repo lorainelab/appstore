@@ -30,9 +30,11 @@ var AppPage = (function($) {
 			            Msgs.add_msg('Please update to a newer version of IGB @ <a href="https://bioviz.org/download.html" target="_blank"> Click Here </a>',
 			             'info');
 			             document.getElementById("app-install-btn").onclick = getIgb;
+			             //$("#igb_version").replaceWith($("#igb_version").text(""));
 			        } else {
 			            Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
 			            document.getElementById("app-install-btn").onclick = getIgb;
+			            //$("#igb_version").replaceWith($("#igb_version").text(""));
 			        }
 			    });
             } else if(xhr.readyState === 4 && xhr.status === 404) {
@@ -40,6 +42,7 @@ var AppPage = (function($) {
                 Msgs.add_msg('Before IGB can load Apps, add this App Store to IGB. Open the App Manager (Tools menu) and click Manage Repositories.' +
                     ' Then click "Add" to add the URL ' + repository_url, 'info');
                 document.getElementById("app-install-btn").set = getIgb;
+                //$("#igb_version").replaceWith($("#igb_version").text(""));
           }
         }
     }
@@ -59,6 +62,7 @@ var AppPage = (function($) {
             } else if(xhr.readyState === 4 && xhr.status === 0 && callback) {
                 Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
                 document.getElementById("app-install-btn").onclick = getIgb;
+                //$("#igb_version").replaceWith($("#igb_version").text(""));
             }
         }
     }
@@ -91,18 +95,18 @@ var AppPage = (function($) {
     var install_btn_last_class = [];
 
 	function setup_install_btn(btn_class, icon_class, btn_text, appVersion, igbVersion, func) {
-
+        install_btn_last_class = [... install_btn[0]['classList']]
         if (install_btn_last_class.length !== 0)
             install_btn.removeClass(install_btn_last_class.pop());
             install_btn.addClass(btn_class);
             install_btn_last_class.push(btn_class);
 
-            install_btn.find('i').attr('class', '');
-            install_btn.find('i').addClass(icon_class);
+            install_btn.find('h6').html("<i></i> " + btn_text);
 
-            install_btn.find('h4').html(btn_text);
-            app_version.html("<strong>Version </strong>"+appVersion);
-            igb_version.html("IGB "+igbVersion);
+            install_btn.find('h6').find('i').attr('class', '');
+            install_btn.find('h6').find('i').addClass(icon_class);
+            app_version.html("<strong>App Version: </strong>" + appVersion);
+            //igb_version.html("IGB "+igbVersion);
 
             install_btn.off('click');
             install_btn.removeClass('disabled');
@@ -129,11 +133,11 @@ var AppPage = (function($) {
 
 
 	function set_install_btn_to_installing(appVersion, igbVersion) {
-		setup_install_btn('btn-info', 'icon-install-install', 'Installing...',appVersion, igbVersion);
+		setup_install_btn('btn-success', 'icon-install-install', 'Installing...',appVersion, igbVersion);
     }
 
 	function set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, appVersion, igbVersion) {
-		setup_install_btn('btn-info', 'icon-install-install', 'Install', appVersion, igbVersion,
+		setup_install_btn('btn-success', 'fa fa-download', 'Install this App', appVersion, igbVersion,
             function() {
                 set_install_btn_to_installing(appVersion, igbVersion);
                 install_app(app_bundleSymbolicName, "install", function(app_status, status) {
@@ -154,7 +158,7 @@ var AppPage = (function($) {
     }
 
 	function set_install_btn_to_upgrade(app_bundleName, app_bundleSymbolicName, appVersion, igbVersion) {
-		setup_install_btn('btn-warning', 'icon-install-upgrade', 'Upgrade',appVersion, igbVersion,
+		setup_install_btn('btn-warning', 'fa fa-arrow-circle-up', 'Upgrade this App',appVersion, igbVersion,
             function() {
                 set_install_btn_to_upgrading(appVersion, igbVersion);
                 install_app(app_bundleSymbolicName, "update", function(app_status, status) {
@@ -170,7 +174,7 @@ var AppPage = (function($) {
 	}
 
 	function set_install_btn_to_installed(appVersion, igbVersion) {
-		setup_install_btn('btn-success', 'icon-install-installed', 'Installed', appVersion, igbVersion);
+		setup_install_btn('btn-success', 'fa fa-check', 'Installed', appVersion, igbVersion);
 	}
 
 	function setup_install(app_bundleName, app_bundleSymbolicName, repository_url) {
@@ -187,6 +191,7 @@ var AppPage = (function($) {
 			} else {
                 Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
                 document.getElementById("app-install-btn").setOn = getIgb;
+                //$("#igb_version").replaceWith($("#igb_version").text(""));
             }
 		});
 	}
