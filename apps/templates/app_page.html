@@ -221,17 +221,18 @@ logger = logging.getLogger("app_page.html") %}
 				{# Right-hand panels #}
 				{# 3.0 download panel #}
 				<div class="box-release-info" id="app_status_block">
-					<h6 class="panel-title text-muted">To install and run this app, Start IGB</h6>
+					<h6 class="panel-title text-muted">To install and run this app, start IGB!</h6>
 					<button class="btn btn-block btn-info" id="app-install-btn">
 						{# <-- download button icon will go here #}
-						<h6><i class="fa fa-download"></i>  Get Latest IGB</h6> {# <-- download button text will go here #}
+						<h6><i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;Get latest IGB</h6> {# <-- download button text will go here #}
 					</button>
 					<p id="app_version"></p>
 					{% if app.license_url %}
 					<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
 					<br />
 					{% endif %}
-					<strong class="custom-font" id="igb_version">Works with IGB: <a href="https://bioviz.org/" target="_blank">{{ latest_released.platform_compatibility | strip_double_quotes}}</a></strong>
+					<strong class="custom-font"> App Version </strong> {{ latest_released.Bundle_Version }}<br />
+					<strong class="custom-font" id="igb_version">Works with IGB</strong> {{ latest_released.platform_compatibility | strip_double_quotes}}
 				</div>
 
 				{# end 3.0 download panel #}
