@@ -591,6 +591,5 @@ def app_page_edit(request, app_name):
 		'max_icon_dim_px': _AppPageEditConfig.max_icon_dim_px,
 		'thumbnail_height_px': _AppPageEditConfig.thumbnail_height_px,
 		'app_description_maxlength': _AppPageEditConfig.app_description_maxlength,
-		'release_uploaded': request.GET.get('upload_release') == 'true',
 	}
 	return html_response('app_page_edit.html', c, request)

@@ -152,14 +152,15 @@ def _app_summary(pending):
 
 def _create_pending(submitter, jar_details, release_file, client_ip):
 
-    regex = r"Import package org.lorainelab.igb........(.*?)</require>|' \
-               'Import package com.affymetrix.......(.*?)</require>"
+    regex = r"Import package org.lorainelab.igb........(.*?)|Import package com.affymetrix.......(.*?)</require>"
 
     igb_version = [''.join(t) for t in re.findall(regex, jar_details['repository'])]
     version_list = []
     if igb_version is not None and len(igb_version) > 0:
         for version in igb_version:
-            version_list.append(re.findall(r'\[.*?\)|\[.*?\]|\(.*?\)|\(.*?\]|\d+.?\d+.?\d+|\d+', version)[0])
+            version = re.findall(r'\[.*?\)|\[.*?\]|\(.*?\)|\(.*?\]|\d+.?\d+.?\d+|\d+', version)
+            if len(version) > 0:
+                version_list.append(version[0])
     else:
         raise ValueError("Bundle does not have a lower bound version of IGB")
         return
@@ -296,17 +297,14 @@ def _pending_app_accept(pending, request):
     """
     app, _ = App.objects.update_or_create(Bundle_Name=pending.Bundle_Name, Bundle_SymbolicName=pending.Bundle_SymbolicName)
     app.save()
-    release, _ = Release.objects.get_or_create(app=app, Bundle_Version=pending.Bundle_Version)
-    release.active = True
-    release.Bundle_SymbolicName = pending.Bundle_SymbolicName
-    release.Bundle_Description = pending.Bundle_Description
-    release.Bundle_Version = pending.Bundle_Version
     app.editors.add(pending.submitter)
-    release.repository_xml = pending.repository_xml
     app.save()
+
+    release = pending.make_release(app)
+    release.active = True
+    release.Bundle_Version = pending.Bundle_Version
     release.save()
 
-    pending.make_release(app)
     pending.delete_files()
     pending.delete()
 

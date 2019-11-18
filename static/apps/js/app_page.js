@@ -101,12 +101,12 @@ var AppPage = (function($) {
             install_btn.addClass(btn_class);
             install_btn_last_class.push(btn_class);
 
-            install_btn.find('h6').html("<i></i> " + btn_text);
+            install_btn.find('h6').html("<i></i>&nbsp;&nbsp;&nbsp;" + btn_text);
 
             install_btn.find('h6').find('i').attr('class', '');
             install_btn.find('h6').find('i').addClass(icon_class);
-            app_version.html("<strong>App Version: </strong>" + appVersion);
-            //igb_version.html("IGB "+igbVersion);
+            //app_version.html("<strong>App Version </strong>" + appVersion);
+            //igb_version.html("IGB " + igbVersion);
 
             install_btn.off('click');
             install_btn.removeClass('disabled');
@@ -133,7 +133,7 @@ var AppPage = (function($) {
 
 
 	function set_install_btn_to_installing(appVersion, igbVersion) {
-		setup_install_btn('btn-success', 'icon-install-install', 'Installing...',appVersion, igbVersion);
+		setup_install_btn('btn-success', 'fa fa-download', 'Installing...',appVersion, igbVersion);
     }
 
 	function set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, appVersion, igbVersion) {
@@ -314,19 +314,6 @@ var AppPage = (function($) {
         $('#app-details-md');
     }
 
-    /*
-     ================================================================
-       Release Notes
-     ================================================================
-    */
-
-    function setup_release_notes() {
-        $('.app-release-notes').each(function() {
-            $(this).text;
-        });
-
-        $('.timeago').text;
-    }
 
     /*
      ================================================================
@@ -339,6 +326,5 @@ var AppPage = (function($) {
 //      'setup_twox_download_popover': setup_twox_download_popover,
         'setup_stars': setup_stars,
         'setup_details': setup_details,
-        'setup_release_notes': setup_release_notes,
     }
 })($);

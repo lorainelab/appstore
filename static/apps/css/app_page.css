@@ -40,7 +40,7 @@
 
 #app-install-btn {
 	margin-bottom: 0.7em;
-    padding-top: 10px;
+    padding-top: 13px;
 }
 
 #app-install-btn h6>i {
@@ -138,6 +138,8 @@ small .timeago {
 .custom-editor {
     padding-left:10%;
     padding-top: 15%;
+    width: 10%;
+    height: 14%;
 }
 
 #app_version {
