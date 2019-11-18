@@ -148,14 +148,15 @@ def _app_summary(pending):
 
 def _create_pending(submitter, jar_details, release_file):
 
-    regex = r"Import package org.lorainelab.igb........(.*?)</require>|' \
-               'Import package com.affymetrix.......(.*?)</require>";
+    regex = r"Import package org.lorainelab.igb........(.*?)|Import package com.affymetrix.......(.*?)</require>"
 
     igb_version = [''.join(t) for t in re.findall(regex, jar_details['repository'])]
     version_list = [];
     if igb_version is not None and len(igb_version) > 0:
         for version in igb_version:
-            version_list.append(re.findall(r'\[.*?\)|\[.*?\]|\(.*?\)|\(.*?\]|\d+.?\d+.?\d+|\d+', version)[0])
+            version = re.findall(r'\[.*?\)|\[.*?\]|\(.*?\)|\(.*?\]|\d+.?\d+.?\d+|\d+', version)
+            if len(version) > 0:
+                version_list.append(version[0])
     else:
         raise ValueError("Bundle does not have a lower bound version of IGB")
         return

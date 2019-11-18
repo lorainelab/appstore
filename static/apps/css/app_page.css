@@ -138,6 +138,8 @@ small .timeago {
 .custom-editor {
     padding-left:10%;
     padding-top: 15%;
+    width: 10%;
+    height: 14%;
 }
 
 #app_version {
