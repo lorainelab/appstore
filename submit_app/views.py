@@ -292,17 +292,14 @@ def _pending_app_accept(pending, request):
     """
     app, _ = App.objects.update_or_create(Bundle_Name=pending.Bundle_Name, Bundle_SymbolicName=pending.Bundle_SymbolicName)
     app.save()
-    release, _ = Release.objects.get_or_create(app=app, Bundle_Version=pending.Bundle_Version)
-    release.active = True
-    release.Bundle_SymbolicName = pending.Bundle_SymbolicName
-    release.Bundle_Description = pending.Bundle_Description
-    release.Bundle_Version = pending.Bundle_Version
     app.editors.add(pending.submitter)
-    release.repository_xml = pending.repository_xml
     app.save()
+
+    release = pending.make_release(app)
+    release.active = True
+    release.Bundle_Version = pending.Bundle_Version
     release.save()
 
-    pending.make_release(app)
     pending.delete_files()
     pending.delete()
 
