@@ -88,7 +88,15 @@ logger = logging.getLogger("app_page.html") %}
 						</ul>
 						<!-- Tab panes -->
 						<div class="tab-content">
-							<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab">
+							<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab"
+                            {# App Version #}
+                            <br /> <br />
+                                <div class="row" style="font-size: large">
+                                    <div class="col-md-12">
+                                        Version:    {{ latest_released.Bundle_Version }}
+                                    </div>
+                                </div>
+
 								{# Categories #}
 								{% if app.categories.all %}
 								<br />
@@ -102,8 +110,6 @@ logger = logging.getLogger("app_page.html") %}
 								</div>
 								{% endif %}
 								{# End Categories #}
-
-								<br />
 
 								{# Screenshots #}
 								{% if latest_released.screenshot_set.all %}
@@ -176,14 +182,8 @@ logger = logging.getLogger("app_page.html") %}
 												{# Works with #}
 												<p>
 													<strong>Works with</strong> IGB
-													{{ release.works_with }}
+													{{ release.platform_compatibility | strip_double_quotes}}
 												</p>
-												{# End Works with #}
-												{% if release.notes %}
-												<p><strong>Release Notes</strong></p>
-												<div class="app-release-notes">{{ release.notes }}</div>
-												{% endif %}
-												{# End Release #}
 											</div>
 										</div>
 										<hr />
@@ -197,8 +197,8 @@ logger = logging.getLogger("app_page.html") %}
 			</div>
 			<div class="col-md-3">
 				{# Editor menu #}
-				{% if is_editor %}
 				<div class="btn-group custom-editor">
+                    		{% if is_editor %}
 					<button class="btn btn-md btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						<i class="fa fa-pencil text-white"></i>
 						&nbsp;Editor Actions
@@ -209,23 +209,24 @@ logger = logging.getLogger("app_page.html") %}
 						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" data-toggle="modal" href="#delete_ratings_modal">Delete all ratings</a>
 					</div>
+                    	{% endif %}
 				</div>
-				{% endif %}
 				{# End editor menu #}
 				{# Right-hand panels #}
 				{# 3.0 download panel #}
 				<div class="box-release-info" id="app_status_block">
-					<h6 class="panel-title text-muted">To install and run this app, Start IGB</h6>
+					<h6 class="panel-title text-muted">To install and run this app, start IGB!</h6>
 					<button class="btn btn-block btn-info" id="app-install-btn">
 						{# <-- download button icon will go here #}
-						<h6><i class="fa fa-download"></i>  Get Latest IGB</h6> {# <-- download button text will go here #}
+						<h6><i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;Get latest IGB</h6> {# <-- download button text will go here #}
 					</button>
 					<p id="app_version"></p>
 					{% if app.license_url %}
 					<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
 					<br />
 					{% endif %}
-					<strong class="custom-font" id="igb_version">Works with IGB: <a href="https://bioviz.org/" target="_blank">{{ latest_released.platform_compatibility | strip_double_quotes}}</a></strong>
+					<strong class="custom-font"> App Version </strong> {{ latest_released.Bundle_Version }}<br />
+					<strong class="custom-font" id="igb_version">Works with IGB</strong> {{ latest_released.platform_compatibility | strip_double_quotes}}
 				</div>
 
 				{# end 3.0 download panel #}
@@ -370,8 +371,6 @@ logger = logging.getLogger("app_page.html") %}
 	{% if latest_released.Bundle_Description %}
 	AppPage.setup_details();
 	{% endif %}
-
-	AppPage.setup_release_notes();
 
 	// Javascript to enable link to tab
 	var url = document.location.toString();

@@ -171,28 +171,6 @@
                                     {% endwith %}
                                     {% endif %}
 
-                                    {# Release dependencies #}
-                                    {% if release.dependents.count %}
-                                    <p>
-                                        <strong>Apps that depend on this release</strong>
-                                        <ul>
-                                            {% for dependent in release.dependents.all %}
-                                            <li><a href="{% url 'app_page' dependent.app.Bundle_SymbolicName %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </p>
-                                    {% endif %}
-                                    {# End Release dependencies #}
-
-                                    {% if release.notes %}
-                                    <p><strong>Release Notes</strong></p>
-                                    <textarea id="release-notes" class="release-notes" rows="5">{% if release.notes %}{{ release.notes }}{% endif %}</textarea>
-                                    <h6 class="muted">PREVIEW</h6>
-                                    <div class="release-notes-preview">{{ release.notes | markdown_parser | safe }}
-                                        <p id="release-markdown"></p>
-                                    </div>
-                                    {% endif %}
-                                    {# End Release #}
                                 </div>
                             </div>
                             <hr />
@@ -389,10 +367,6 @@
 
     <script type="text/javascript">
 
-        {% if release_uploaded %}
-            Msgs.add_msg('Your release has been uploaded! Click the "Release History" tab to see your releases and to add release notes.', 'success');
-        {% endif %}
-
         AppPageEdit.set_max_file_img_size({{ max_file_img_size_b }});
         AppPageEdit.setup_text_fields();
         AppPageEdit.setup_icon_selection({{ max_icon_dim_px }});
@@ -431,8 +405,6 @@
             AppPageEdit.setup_authors_dnd();
         });
 
-        AppPageEdit.setup_release_notes();
-
         AppPageEdit.setup_cancel_btn();
         AppPageEdit.setup_save_btn();
     </script>
@@ -445,17 +417,6 @@
         })
         $('#app-details').bind('input propertychange', function() {
             $('#content-markdown').html(marked(this.value));
-        });
-    </script>
-    <script>
-        $(document).ready(function(){
-            var releasedContent = $('#release-notes').val()
-            if (releasedContent) {
-                $('#release-markdown').html(marked(releasedContent));
-            }
-        })
-        $('#release-notes').bind('input propertychange', function() {
-            $('#release-markdown').html(marked(this.value));
         });
     </script>
 {% endblock %}
