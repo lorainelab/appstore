@@ -43,11 +43,11 @@ def submit_app(request):
             try:
                 jar_details = process_jar(f, expect_app_name)
                 pending = _create_pending(request.user, jar_details, f, client_ip)
-                version_pattern ="^[0-9].[0-9].[0-9]+"
+                version_pattern = "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
                 version_pattern = re.compile(version_pattern)
                 if not bool(version_pattern.match(jar_details['Bundle_Version'])):
-                    raise ValueError("The version is not in proper pattern. It should have 3 order version numbering "
-                                     "(e.g: x.y.z)")
+                    raise ValueError("Bundle-Version %s is incorrect. Please use semantic versioning. " 
+                                                                                        "See https://semver.org/." %jar_details['Bundle_Version'])
                 if jar_details['has_export_pkg']:
                     return HttpResponseRedirect(reverse('submit-api', args=[pending.id]))
                 else:
@@ -152,7 +152,7 @@ def _app_summary(pending):
 
 def _create_pending(submitter, jar_details, release_file, client_ip):
 
-    regex = r"Import package org.lorainelab.igb........(.*?)|Import package com.affymetrix.......(.*?)</require>"
+    regex = r"Import package org.lorainelab.igb(.*?)</require>|Import package com.affymetrix(.*?)</require>"
 
     igb_version = [''.join(t) for t in re.findall(regex, jar_details['repository'])]
     version_list = []
@@ -165,7 +165,7 @@ def _create_pending(submitter, jar_details, release_file, client_ip):
         raise ValueError("Bundle does not have a lower bound version of IGB")
         return
 
-    if version_list is None or len(igb_version) <= 0:
+    if version_list is None or len(version_list) <= 0:
         raise ValueError("IGB version range syntax is incorrect")
         return
 
