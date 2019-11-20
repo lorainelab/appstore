@@ -8,7 +8,6 @@ class AppIndex(indexes.SearchIndex, indexes.Indexable):
 
     categories = indexes.MultiValueField(model_attr = 'categories', null=True)
 
-    downloads = indexes.IntegerField(model_attr = 'downloads',null = True)
     stars = indexes.IntegerField(model_attr = 'stars',null = True)
 
 

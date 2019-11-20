@@ -70,7 +70,8 @@ class AppPending(models.Model):
             release.citation = previous_release[0].citation
             release.code_repository_url = previous_release[0].code_repository_url
             release.contact_email = previous_release[0].contact_email
-            release.logo.save(previous_release[0].logo.name, previous_release[0].logo)
+            if previous_release[0].logo:
+                release.logo.save(previous_release[0].logo.name, previous_release[0].logo)
             for author in previous_release[0].authors.all():
                 release.authors.add(author)
         release.save()
