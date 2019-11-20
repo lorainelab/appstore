@@ -102,6 +102,8 @@ def confirm_submission(request, id):
     if is_app_submission_error:
         return html_response('error.html', {'pending': pending, 'app_summary': app_summary}, request)
     # IGBF-2026 end
+    error_message = "IGB version could not be parsed from repository.xml. Kindly enter it manually via app edit page." \
+        if pending.works_with is None else None
     action = request.POST.get('action')
     if action:
         latest_pending_obj_ = pending_obj[1] if is_pending_replace else pending_obj[0]
@@ -114,7 +116,7 @@ def confirm_submission(request, id):
             _send_email_for_pending(server_url, latest_pending_obj_)
             _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
-    return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary}, request)
+    return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary, 'info_msg': error_message}, request)
 
 
 # Get the Current Directory Path to Temporarily store the Zip File
@@ -152,7 +154,7 @@ def _app_summary(pending):
 
 def _create_pending(submitter, jar_details, release_file, client_ip):
 
-    regex = r"Import package org.lorainelab.igb(.*?)</require>|Import package com.affymetrix(.*?)</require>"
+    regex = r"Import package org.lorainelab.igb(.*?)</require>|Import package com.affymetrix1(.*?)</require>"
 
     igb_version = [''.join(t) for t in re.findall(regex, jar_details['repository'])]
     version_list = []
@@ -161,17 +163,18 @@ def _create_pending(submitter, jar_details, release_file, client_ip):
             version = re.findall(r'\[.*?\)|\[.*?\]|\(.*?\)|\(.*?\]|\d+.?\d+.?\d+|\d+', version)
             if len(version) > 0:
                 version_list.append(version[0])
-    else:
-        raise ValueError("Bundle does not have a lower bound version of IGB")
-        return
+        if version_list is None or len(igb_version) <= 0:
+            raise ValueError("IGB version range syntax is incorrect")
+            return
 
     if version_list is None or len(version_list) <= 0:
-        raise ValueError("IGB version range syntax is incorrect")
-        return
+        frequest_used_version_ = None
+    else:
+        # Todo : Post a warning if the versions of all IGB packages are not matching
 
-    # Todo : Post a warning if the versions of all IGB packages are not matching
+        frequest_used_version_ = max(set(version_list), key=version_list.count)
+        frequest_used_version_ = "\"" + frequest_used_version_ + "\"" if (frequest_used_version_.startswith(("(", "["))) else frequest_used_version_ + "+"
 
-    frequest_used_version_ = max(set(version_list), key=version_list.count)
 
     pending, created = AppPending.objects.update_or_create(submitter       = submitter,
                                         Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
@@ -181,7 +184,7 @@ def _create_pending(submitter, jar_details, release_file, client_ip):
                                         repository_xml      = jar_details['repository'],
                                         submitter_approved = False,
                                         uploader_ip = client_ip,
-                                        works_with="\"" + frequest_used_version_ + "\"" if (frequest_used_version_.startswith(("(", "["))) else frequest_used_version_ + "+")
+                                        works_with= frequest_used_version_)
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
