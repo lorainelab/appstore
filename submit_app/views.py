@@ -154,7 +154,7 @@ def _app_summary(pending):
 
 def _create_pending(submitter, jar_details, release_file, client_ip):
 
-    regex = r"Import package org.lorainelab.igb(.*?)</require>|Import package com.affymetrix1(.*?)</require>"
+    regex = r"Import package org.lorainelab.igb(.*?)</require>|Import package com.affymetrix(.*?)</require>"
 
     igb_version = [''.join(t) for t in re.findall(regex, jar_details['repository'])]
     version_list = []
