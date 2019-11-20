@@ -43,7 +43,7 @@ logger = logging.getLogger("app_page.html") %}
 						{# End Ratings #}
 						{# Downloads #}
 						<span class="app-usage-info-divider"></span>
-						{{ app.downloads }}
+						{{ download_count }}
 						<a href="{% url 'app_stats' app.Bundle_SymbolicName %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
 							 Downloads
 						</a>
