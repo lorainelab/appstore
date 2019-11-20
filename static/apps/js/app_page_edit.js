@@ -116,6 +116,7 @@ var AppPageEdit = (function($)
         field_change($('#app-license-text input[type=text]'), field_modified('license_url'));
         $('#app-license-text input[type=checkbox]').click(field_modified('license_confirm'));
         field_change($('#app-website'), field_modified('website_url'));
+        field_change($('#platform-compatibility'), field_modified('platform_compatibility'));
         field_change($('#app-tutorial'), field_modified('tutorial_url'));
         field_change($('#app-citation'), field_modified('citation'));
         field_change($('#app-coderepo'), field_modified('code_repository_url'));
@@ -645,6 +646,7 @@ var AppPageEdit = (function($)
             };
         },
         'website_url': mk_field_save_action('Saving website URL', 'save_website_url', 'website_url', $('#app-website input')),
+        'platform_compatibility': mk_field_save_action('Saving IGB Compatible Version', 'save_platform_compatibility', 'platform_compatibility', $('#platform-compatibility input')),
         'tutorial_url': mk_field_save_action('Saving tutorial URL', 'save_tutorial_url', 'tutorial_url', $('#app-tutorial input')),
         'citation': mk_field_save_action('Saving citation URL', 'save_citation', 'citation', $('#app-citation input')),
         'code_repository_url': mk_field_save_action('Saving code repository URL', 'save_code_repository_url', 'code_repository_url', $('#app-coderepo input')),

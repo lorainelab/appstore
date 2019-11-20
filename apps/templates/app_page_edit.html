@@ -203,8 +203,11 @@
         {# resources #}
         <div class="box-release-info">
             <h6 class="muted panel-title">Resources</h6>
-
-            <div class="form-group margin-top" id="app-license-text">
+            <div class="form-group margin-top" id="platform-compatibility">
+                <label><i class="fa fa-home"></i> Works With: </label>
+                <input class="form-control" type="text" value="{% if latest_released.platform_compatibility %}{{ latest_released.platform_compatibility }}{% endif %}">
+            </div>
+            <div class="form-group" id="app-license-text">
                 <label>License URL: </label>
                 <input class="form-control" type="text" placeholder="License URL (http://...)" value="{% if latest_released.license_url %}{{ latest_released.license_url }}{% endif %}">
                 <input type="checkbox" {% if latest_released.license_confirm %}checked{% endif %}> Require confirmation

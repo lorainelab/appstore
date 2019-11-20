@@ -525,6 +525,7 @@ _AppEditActions = {
 	'save_license_url': _mk_basic_field_saver('license_url'),
 	'save_license_confirm': _mk_basic_field_saver('license_confirm', func=lambda s: s.lower() == 'true'),
 	'save_website_url': _mk_basic_field_saver('website_url'),
+	'save_platform_compatibility': _mk_basic_field_saver('platform_compatibility'),
 	'save_tutorial_url': _mk_basic_field_saver('tutorial_url'),
 	'save_citation': _mk_basic_field_saver('citation'),
 	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
