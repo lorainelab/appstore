@@ -178,7 +178,7 @@ def download_timeline_csv(request, app_name):
     download_dict['Count'] = count
     data = pd.DataFrame(download_dict)
     pivoted = data.pivot(index='Date', columns='Release', values='Count').reset_index()
-    pivoted['Total'] = pivoted.sum(1).sum()
+    pivoted['Total'] = pivoted.sum(1)
     pivoted.fillna(0, inplace=True)
     response = HttpResponse(content_type='text/csv')
     filename = app.Bundle_Name + "_stats.csv"

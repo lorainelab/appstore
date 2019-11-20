@@ -165,6 +165,7 @@ var AppPage = (function($) {
                     if (status == "200" && app_status.status == "UPDATED") {
                         Msgs.add_msg(app_bundleName + ' has been updated! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
+                        set_download_count('Installed');
                     } else {
                         Msgs.add_msg('Could not update &ldquo;' + app_bundleName + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
                         set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, appVersion, igbVersion);

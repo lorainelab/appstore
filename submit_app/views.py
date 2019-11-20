@@ -78,8 +78,6 @@ def _user_accepted(request, pending):
         release = pending.make_release(app)
         pending.delete_files()
         pending.delete()
-        ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
-        ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count=F('count') + 1)
         return html_response('update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
                                                   'Bundle_Name': app.Bundle_Name,
                                                   'Bundle_Version': release.Bundle_Version}, request)
