@@ -11,7 +11,11 @@ from util.view_util import json_response, html_response, obj_to_dict, get_object
 from util.img_util import scale_img
 from util.id_util import fullname_to_name
 from apps.models import Category, App, Author, OrderedAuthor, Screenshot, Release
+from download.models import ReleaseDownloadsByDate
+from datetime import date
+from django.db.models import F
 from django.core.paginator import Paginator
+import collections
 # Returns a unicode string encoded in a cookie
 import logging
 
@@ -97,20 +101,31 @@ class _DefaultConfig:
 
 
 def apps_default(request):
-	downloaded_apps = App.objects.order_by('downloads').reverse()
-	releases = {}
-	for app in downloaded_apps:
-		released_app = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')[:1][0]
-		releases[app] = released_app
-	c = {
-		'releases': releases,
-		'downloaded_apps_pg': downloaded_apps,
-		'go_back_to': 'home',
-		'navbar_selected_link': 'all',
-		'search_query': '',
-		'selected_tag_name': '',
-	}
-	return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
+
+    apps = App.objects.all()
+    releases = {}
+    downloaded_apps = dict()
+    for app in apps:
+        released_app = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')[:1][0]
+        releases[app] = released_app
+        releases_obj = Release.objects.filter(app=app)
+        total_download = 0
+        for release in releases_obj:
+            downloads = ReleaseDownloadsByDate.objects.filter(release=release)
+        for download in downloads:
+            total_download += download.count
+        downloaded_apps[app] = total_download
+    sorted_dict = collections.OrderedDict(sorted(downloaded_apps.items(), key=lambda kv: kv[1], reverse=True))
+    c = {
+        'releases': releases,
+        'downloaded_apps_pg': sorted_dict.keys(),
+        'go_back_to': 'home',
+        'navbar_selected_link': 'all',
+        'search_query': '',
+        'selected_tag_name': '',
+    }
+    return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
+
 
 
 def all_apps(request):
@@ -219,31 +234,27 @@ def _app_ratings_delete_all(app, user, post):
 		release.stars =0
 		release.save()
 
-
-def _installed_count(app, user, post):
-	"""
-	:param app: Current App
-	:param user: Current User (Not Required by the Function but required by the model)
-	:param post: Dictionary containing Action and Status Keys
-	:return: True (Dummy Response | Can be change if another use case)
-	"""
-	state = post.get('status')
-	if state == "Installed":
-		app.downloads += 1
-		app.save()
-	else:
-		app.downloads -= 1
-		app.save()
-	return json_response('True')
-
+def _installed_count(app, user, post, release):
+        """
+        :param app: Current App
+        :param user: Current User (Not Required by the Function but required by the model)
+        :param post: Dictionary containing Action and Status Keys
+        :return: True (Dummy Response | Can be change if another use case)
+        """
+        state = post.get('status')
+        if state == "Installed":
+                ReleaseDownloadsByDate.objects.get_or_create(release=release, when=date.today())
+                ReleaseDownloadsByDate.objects.filter(release=release, when=date.today()).update(count = F('count')+1)
+        return json_response('True')
 
 # -- General app stuff
 
-def _mk_app_page(app, released_apps, user, request, decoded_details):
+def _mk_app_page(app, released_apps, user, request, decoded_details, download_count):
 	c = {
 		'app': app,
 		'released_apps': released_apps,
 		'decoded_details': decoded_details,
+		'download_count':download_count,
 		'latest_released': released_apps[0],
 		'is_editor': (user and app.is_editor(user)),
 		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
@@ -274,7 +285,14 @@ def get_host_url(request):
 def app_page(request, app_name):
 	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
 	released_apps = Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')
-	decoded_details = released_apps[0].Bundle_Description
+	latest_release = released_apps[:1][0]
+	decoded_details = latest_release.Bundle_Description
+	download_count = 0
+	for release in released_apps:
+		downloads = ReleaseDownloadsByDate.objects.filter(release=release)
+		if downloads.count() > 0:
+			for download in downloads:
+				download_count += download.count
 	# temporarily remove if condition if you want any user to rate
 	user = request.user if request.user.is_authenticated else None
 	if request.user.is_authenticated:
@@ -285,14 +303,14 @@ def app_page(request, app_name):
 			if not action in _AppActions:
 				return HttpResponseBadRequest('action "%s" invalid--must be: %s' % (action, ', '.join(_AppActions)))
 			try:
-				result = _AppActions[action](app, user, request.POST)
+				result = _AppActions[action](app, user, request.POST, latest_release)
 			except ValueError as e:
 				return HttpResponseBadRequest(str(e))
 			if isinstance(result, HttpResponse):
 				return result
 			if request.is_ajax():
 				return json_response(result)
-	return _mk_app_page(app, released_apps, user, request, decoded_details)
+	return _mk_app_page(app, released_apps, user, request, decoded_details, download_count)
 
 
 # ============================================

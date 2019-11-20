@@ -7,46 +7,22 @@
   <script type="text/javascript" src="{% get_static_prefix %}download/js/app_stats.js"></script>
 {% endblock %}
 
-{% block title %} - {{ app.Bundle_Name }} - Download Statistics{% endblock %}
+{% block title %} - {{ app.Bundle_Name }} - Download Statistics {% endblock %}
 
 {% block content %}
 <div class="row">
   <div class="col-md-12">
     <div class="page-header">
-      <h1>
+      <h2>
         {{ app.Bundle_Name }}
-        <small>Download Statistics</small>
-      </h1>
-      <h3>Total downloads: {{ app.downloads }}</h3>
+        <small class="text-muted">Download Statistics</small>
+      </h2>
+      <h4 class="strong">Total downloads: {{ total_download }}</h4>
+      <hr/>
+        <a href="{% url 'download-timeline-csv' app.Bundle_SymbolicName %}" class="btn btn-success {% if total_download == 0 %} disabled {% endif %}"  role="button" aria-disabled="true" style="margin-top:5px;">
+            <strong><i class="fa fa-download" style="color:white;"></i> &nbsp;&nbsp;Save as CSV</strong>
+        </a>
     </div>
   </div>
 </div>
-
-<div class="row">
-  <div class="col-md-6">
-    <h3 style="display: inline; margin-right: 1em;">Timeline</h3>
-    <div class="btn-group" style="display: inline;">
-      <button class="btn btn-small bg-grey active" id="timeline-cumulative">Cumulative</button>
-      <button class="btn btn-small bg-grey" id="timeline-by-day">By Day</button>
-    </div>
-  </div>
-  <div class="col-md-6">
-    <button class="btn btn-small pull-right" id="timeline-csv"><i class="icon-download-alt"></i> Save as CSV</button>
-  </div>
-</div>
-
-<div class="row">
-  <div class="col-md-12">
-    <div id="timeline-chart" style="width: 100%; height: 540px; margin-top: 2em; margin-bottom: 10em;"></div>
-  </div>
-</div>
-
-<script type="text/javascript">
-  google.load('visualization', '1', {'packages': ['corechart', 'geochart', 'annotatedtimeline']});
-  google.setOnLoadCallback(function() {
-    AppStats.setupTimeline();
-    AppStats.setupGeography();
-  });
-</script>
-
 {% endblock %}
