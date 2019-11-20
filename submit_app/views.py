@@ -1,6 +1,7 @@
 import base64
 import re
 import os
+import datetime
 from os.path import basename
 from platform import release
 from urllib.request import urlopen
@@ -18,6 +19,8 @@ from util.id_util import fullname_to_name
 from util.view_util import html_response, json_response, get_object_or_none
 from .models import AppPending
 from .processjar import process_jar
+from download.models import ReleaseDownloadsByDate
+from django.db.models import F
 
 # IGBF-2026 start
 APP_REPLACEMENT_JAR_MSG = "This is a <b>replacement jar file</b> for a not yet released App that you or a colleague already uploaded previously but is still in our “pending apps” waiting area. If you choose to submit it, this new jar file will replace the one that was uploaded before."
@@ -75,6 +78,8 @@ def _user_accepted(request, pending):
         release = pending.make_release(app)
         pending.delete_files()
         pending.delete()
+        ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
+        ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count=F('count') + 1)
         return html_response('update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
                                                   'Bundle_Name': app.Bundle_Name,
                                                   'Bundle_Version': release.Bundle_Version}, request)

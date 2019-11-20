@@ -12,7 +12,6 @@ from util.img_util import scale_img
 from util.id_util import fullname_to_name
 from apps.models import Category, App, Author, OrderedAuthor, Screenshot, Release
 from download.models import ReleaseDownloadsByDate
-from datetime import date
 from django.db.models import F
 from django.core.paginator import Paginator
 import collections
@@ -243,8 +242,8 @@ def _installed_count(app, user, post, release):
         """
         state = post.get('status')
         if state == "Installed":
-                ReleaseDownloadsByDate.objects.get_or_create(release=release, when=date.today())
-                ReleaseDownloadsByDate.objects.filter(release=release, when=date.today()).update(count = F('count')+1)
+                ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
+                ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count = F('count')+1)
         return json_response('True')
 
 # -- General app stuff
