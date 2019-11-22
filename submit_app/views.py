@@ -103,6 +103,8 @@ def confirm_submission(request, id):
     if is_app_submission_error:
         return html_response('error.html', {'pending': pending, 'app_summary': app_summary}, request)
     # IGBF-2026 end
+    error_message = "Please note: We read your App's repository.xml file but could not determine the IGB version it requires. Not to worry! You can enter this information manually after the App is released." \
+        if pending.works_with is None else None
     action = request.POST.get('action')
     if action:
         latest_pending_obj_ = pending_obj[1] if is_pending_replace else pending_obj[0]
@@ -115,7 +117,7 @@ def confirm_submission(request, id):
             _send_email_for_pending(server_url, latest_pending_obj_)
             _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
-    return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary}, request)
+    return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary, 'info_msg': error_message}, request)
 
 
 # Get the Current Directory Path to Temporarily store the Zip File
