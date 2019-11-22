@@ -18,6 +18,7 @@ from util.id_util import fullname_to_name
 from util.view_util import html_response, json_response, get_object_or_none
 from .models import AppPending
 from .processjar import process_jar
+from xml.etree import ElementTree as ET
 
 # IGBF-2026 start
 APP_REPLACEMENT_JAR_MSG = "This is a <b>replacement jar file</b> for a not yet released App that you or a colleague already uploaded previously but is still in our “pending apps” waiting area. If you choose to submit it, this new jar file will replace the one that was uploaded before."
@@ -152,26 +153,22 @@ def _app_summary(pending):
 
 def _create_pending(submitter, jar_details, release_file, client_ip):
 
-    regex = r"Import package org.lorainelab.igb(.*?)</require>|Import package com.affymetrix(.*?)</require>"
-
-    igb_version = [''.join(t) for t in re.findall(regex, jar_details['repository'])]
+    # Todo : Add the required IGB packages
+    regex = r'org.lorainelab.igb|com.affymetrix'
+    repo_tree = ET.fromstring(jar_details['repository'])
     version_list = []
-    if igb_version is not None and len(igb_version) > 0:
-        for version in igb_version:
-            version = re.findall(r'\[.*?\)|\[.*?\]|\(.*?\)|\(.*?\]|\d+.?\d+.?\d+|\d+', version)
+    for require in repo_tree.find('resource').findall('require'):
+        if re.search(regex, require.text) is not None:
+            version = re.findall(r'\[.*?\)|\[.*?\]|\(.*?\)|\(.*?\]|\d+.?\d+.?\d+|\d+', require.text)
             if len(version) > 0:
                 version_list.append(version[0])
-    else:
-        raise ValueError("Bundle does not have a lower bound version of IGB")
-        return
 
     if version_list is None or len(version_list) <= 0:
-        raise ValueError("IGB version range syntax is incorrect")
-        return
-
-    # Todo : Post a warning if the versions of all IGB packages are not matching
-
-    frequest_used_version_ = max(set(version_list), key=version_list.count)
+        frequest_used_version_ = None
+    else:
+        # Todo : Post a warning if the versions of all IGB packages are not matching
+        frequest_used_version_ = max(set(version_list), key=version_list.count)
+        frequest_used_version_ = frequest_used_version_ if (frequest_used_version_.startswith(("(", "["))) else frequest_used_version_ + "+"
 
     pending, created = AppPending.objects.update_or_create(submitter       = submitter,
                                         Bundle_SymbolicName    = jar_details['Bundle_SymbolicName'],
@@ -181,7 +178,7 @@ def _create_pending(submitter, jar_details, release_file, client_ip):
                                         repository_xml      = jar_details['repository'],
                                         submitter_approved = False,
                                         uploader_ip = client_ip,
-                                        works_with="\"" + frequest_used_version_ + "\"" if (frequest_used_version_.startswith(("(", "["))) else frequest_used_version_ + "+")
+                                        works_with=frequest_used_version_)
     file, file_name = _get_jar_file(release_file)
     pending.release_file.save(basename(file_name), file)
     pending.release_file_name = file_name
