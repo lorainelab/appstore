@@ -102,7 +102,7 @@ def confirm_submission(request, id):
     if is_app_submission_error:
         return html_response('error.html', {'pending': pending, 'app_summary': app_summary}, request)
     # IGBF-2026 end
-    error_message = "IGB version could not be parsed from repository.xml. Kindly enter it manually via app edit page." \
+    error_message = "Please note: We read your App's repository.xml file but could not determine the IGB version it requires. Not to worry! You can enter this information manually after the App is released." \
         if pending.works_with is None else None
     action = request.POST.get('action')
     if action:
