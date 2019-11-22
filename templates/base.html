@@ -92,6 +92,11 @@
                         {% autoescape off %}{{ error_msg }}{% endautoescape %}
                     </div>
                     {% endif %}
+                    {% if info_msg %}
+                    <div class="alert alert-primary">
+                        {% autoescape off %}{{ info_msg }}{% endautoescape %}
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             <!-- Example row of columns -->
