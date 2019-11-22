@@ -43,7 +43,7 @@ def submit_app(request):
             try:
                 jar_details = process_jar(f, expect_app_name)
                 pending = _create_pending(request.user, jar_details, f, client_ip)
-                version_pattern = "^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-((?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+([0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
+                version_pattern = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
                 version_pattern = re.compile(version_pattern)
                 if not bool(version_pattern.match(jar_details['Bundle_Version'])):
                     raise ValueError("Bundle-Version %s is incorrect. Please use semantic versioning. " 
