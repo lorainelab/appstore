@@ -72,11 +72,10 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
-    'file': {
+        'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            # must be write-able by web server user
-            'filename': config('DJANGO_LOG_FILE', default=os.path.join(BASE_DIR, 'debug.log')),
+            'filename': 'debug.log',
         },
     },
     'loggers': {
@@ -84,7 +83,7 @@ LOGGING = {
             'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True,
-	},
+        },
     },
 }
 
@@ -240,5 +239,14 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 GOOGLE_API_KEY=""
 
 # configurations for app_pending_cleanup cron
+
+# Cron string specifies the time when the cleanup process needs to be executed.
+# Default string will execute the cron everyday at midnight
+# Specify cronstring in settings.ini by referring to link  https://crontab.guru/
+# ex. setting to run cron every minute -
+# APP_PENDING_CLEANUP_CRONSTRING=*/1 * * * *
 APP_PENDING_CLEANUP_CRONSTRING=config('APP_PENDING_CLEANUP_CRONSTRING', default="0 0 * * *")
+
+# This field has value in hours. It will delete entries which are more than 5 hours old
+# from the time when cron executes.
 APP_PENDING_CLEANUP_TIME_OFFSET=config('APP_PENDING_CLEANUP_TIME_OFFSET', default=5)
