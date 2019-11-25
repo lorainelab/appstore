@@ -131,3 +131,8 @@ h4 button {
 .row-drag {
 	background-color: #F5EFA4;
 }
+
+.custom-break {
+    word-break: break-word !important;
+    cursor: pointer;
+}
