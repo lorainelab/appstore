@@ -152,3 +152,7 @@ small .timeago {
     margin-top: 10px;
     font-size: 15px;
 }
+
+#change-url {
+    text-decoration: none;
+}
