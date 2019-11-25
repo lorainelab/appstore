@@ -204,7 +204,7 @@ def apps_with_author(request, author_name):
 
 # -- App Rating
 
-def _app_rate(app, user, post):
+def _app_rate(app, user, post, latest_release):
 	rating_n = post.get('rating')
 	releases=Release.objects.filter(active=True, app=app).order_by('-Bundle_Version')
 	try:
@@ -213,13 +213,13 @@ def _app_rate(app, user, post):
 			raise ValueError()
 	except ValueError:
 		raise ValueError('rating is "%s" but must be an integer between 0 and 5' % rating_n)
-	releases[:1][0].stars = rating_n
+	latest_release.stars = rating_n
 	stars = 0
-	for release in releases:
-		stars += release.stars
-	app.stars = stars
+	for i in range(1, releases.count()):
+		stars += releases[i].stars
+	app.stars = stars + rating_n
 	app.save()
-	releases[:1][0].save()
+	latest_release.save()
 	return obj_to_dict(app, ('stars_percentage'))
 
 
