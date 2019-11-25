@@ -182,11 +182,14 @@ var AppPage = (function($) {
 		get_app_info(app_bundleSymbolicName, repository_url, function(app_status, is_running) {
 			if (is_running == "200") {
 					if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
+					    document.getElementById("change-url").href = "#"
 						set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
 					} else if (app_status.status === 'INSTALLED') {
+					    document.getElementById("change-url").href = "#"
 						set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
 
 					} else if (app_status.status === 'TO_UPDATE') {
+					    document.getElementById("change-url").href = "#"
                         set_install_btn_to_upgrade(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
 					}
 			} else {
