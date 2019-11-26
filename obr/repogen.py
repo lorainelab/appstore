@@ -188,7 +188,13 @@ def xml_generator(dict_ver, gen_tree, tree, state):
 
     current_resource = cur_tree.find('resource')
     curr_desc = current_resource.find('description')
-    curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
+
+    if curr_desc is not None:
+        curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
+    else:
+        curr_desc = ET.SubElement(current_resource, 'description')
+        curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
+
     if state == 'pending':
         current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
     else:
@@ -208,11 +214,15 @@ def initial_generation(dict_ver, state):
     element_tree = ET.fromstring(dict_ver.repository_xml)
     current_resource = element_tree.find('resource')
     curr_desc = current_resource.find('description')
-    if curr_desc is not None:
-        if state == 'pending':
-            current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
+
+    if state == 'pending':
+        current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
+    else:
+        current_resource.set('uri', '/media/' + str(dict_ver.release_file))
+        if curr_desc is not None:
+            curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
         else:
-            current_resource.set('uri', '/media/' + str(dict_ver.release_file))
+            curr_desc = ET.SubElement(current_resource, 'description')
             curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
     return element_tree
 
