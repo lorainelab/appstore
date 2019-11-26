@@ -75,7 +75,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': 'debug.log',
+            'filename': config('DJANGO_LOG_FILE', default=os.path.join(BASE_DIR, 'debug.log')),
         },
     },
     'loggers': {
