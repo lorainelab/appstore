@@ -178,32 +178,26 @@ var AppPage = (function($) {
 		setup_install_btn('btn-success', 'fa fa-check', 'Installed', appVersion, igbVersion);
 	}
 
-	function setup_install(app_bundleName, app_bundleSymbolicName, repository_url, release_BundleVersion, app_igb_platform_compatibility) {
+	function setup_install(app_bundleName, app_bundleSymbolicName, repository_url, release_BundleVersion) {
 		get_app_info(app_bundleSymbolicName, repository_url, function(app_status, is_running) {
 			if (is_running == "200") {
-			        var arr = [];
-			        app_igb_platform_compatibility_array = app_igb_platform_compatibility.split(',');
-			        for (var i = 0; i < app_igb_platform_compatibility_array.length; i++) {
-                        app_igb_platform_compatibility = app_igb_platform_compatibility_array[i].replace(/\D/g, ' ');
-                        app_igb_platform_compatibility = app_igb_platform_compatibility.trim().replace(/ /g, '.');
-                        arr.push(compareVersion(app_status.igbVersion, app_igb_platform_compatibility));
+
+			        if(compareVersion(app_status.appVersion, release_BundleVersion) == -1) {
+			            document.getElementById("app-install-btn").setOn = getIgb;
+
+			        } else if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
+                        document.getElementById("change-url").href = "#"
+                        set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
+
+                    } else if (app_status.status === 'INSTALLED') {
+                        document.getElementById("change-url").href = "#"
+                        set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
+
+                    } else if (app_status.status === 'TO_UPDATE') {
+                        document.getElementById("change-url").href = "#"
+                        set_install_btn_to_upgrade(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
                     }
 
-			        if(arr.includes(1) || arr.includes(0)) {
-                        if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
-                            document.getElementById("change-url").href = "#"
-                            set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
-                        } else if (app_status.status === 'INSTALLED') {
-                            document.getElementById("change-url").href = "#"
-                            set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
-
-                        } else if (app_status.status === 'TO_UPDATE') {
-                            document.getElementById("change-url").href = "#"
-                            set_install_btn_to_upgrade(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
-                        }
-                    } else {
-                        document.getElementById("app-install-btn").setOn = getIgb;
-                    }
 			} else {
                 Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
                 document.getElementById("app-install-btn").setOn = getIgb;
