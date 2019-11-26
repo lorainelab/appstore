@@ -178,6 +178,7 @@ var AppPage = (function($) {
 		setup_install_btn('btn-success', 'fa fa-check', 'Installed', appVersion, igbVersion);
 	}
 
+
 	function setup_install(app_bundleName, app_bundleSymbolicName, repository_url, release_BundleVersion) {
 		get_app_info(app_bundleSymbolicName, repository_url, function(app_status, is_running) {
 			if (is_running == "200") {
@@ -197,7 +198,7 @@ var AppPage = (function($) {
                         document.getElementById("change-url").href = "#"
                         set_install_btn_to_upgrade(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
                     }
-
+                    
 			} else {
                 Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
                 document.getElementById("app-install-btn").setOn = getIgb;
