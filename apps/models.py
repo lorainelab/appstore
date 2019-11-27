@@ -43,7 +43,6 @@ class App(models.Model):
     editors             = models.ManyToManyField(User, blank=True)
 
     stars               = models.PositiveIntegerField(default=0)
-    downloads           = models.PositiveIntegerField(default=0)
 
     def is_editor(self, user):
         if not user:
@@ -139,7 +138,8 @@ class Release(models.Model):
     hexchecksum             = models.CharField(max_length=511, blank=True, null=True)
 
     stars = models.PositiveIntegerField(default=0)
-    downloads = models.PositiveIntegerField(default=0)
+
+    uploader_ip = models.GenericIPAddressField(null=True)
 
     authors                 = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
 

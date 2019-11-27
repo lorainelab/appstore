@@ -149,7 +149,7 @@
                                             {{ release.Bundle_Version }}
                                         </h5>
                                     {% endif %}
-                                    <p><strong>Release Date : </strong> {{ release.created_iso|date:"j M, H:i:s" }}</p>
+                                    <p><strong>Release Date : </strong> {{ release.created_iso|date:"j M, Y" }}</p>
                                     {# End Release version #}
 
                                     {# Works with #}
@@ -171,28 +171,6 @@
                                     {% endwith %}
                                     {% endif %}
 
-                                    {# Release dependencies #}
-                                    {% if release.dependents.count %}
-                                    <p>
-                                        <strong>Apps that depend on this release</strong>
-                                        <ul>
-                                            {% for dependent in release.dependents.all %}
-                                            <li><a href="{% url 'app_page' dependent.app.Bundle_SymbolicName %}" target="_blank">{{ dependent.app.Bundle_Name }}</a> {{ dependent.version }}</li>
-                                            {% endfor %}
-                                        </ul>
-                                    </p>
-                                    {% endif %}
-                                    {# End Release dependencies #}
-
-                                    {% if release.notes %}
-                                    <p><strong>Release Notes</strong></p>
-                                    <textarea id="release-notes" class="release-notes" rows="5">{% if release.notes %}{{ release.notes }}{% endif %}</textarea>
-                                    <h6 class="muted">PREVIEW</h6>
-                                    <div class="release-notes-preview">{{ release.notes | markdown_parser | safe }}
-                                        <p id="release-markdown"></p>
-                                    </div>
-                                    {% endif %}
-                                    {# End Release #}
                                 </div>
                             </div>
                             <hr />
@@ -215,7 +193,9 @@
         {# editors #}
         <div class="box-release-info">
             <h6 class="muted panel-title">Editors</h6>
-            <ul class="nav nav-list" id="editors-list"></ul>
+            <ul class="nav nav-list custom-break" id="editors-list">
+
+            </ul>
             <br />
             <button id="app-editor-add" class="btn btn-primary btn-sm"><i class="fa fa-plus"></i> Add</button>
             <button id="app-editor-delete" class="btn btn-primary btn-sm disabled"><i class="fa fa-trash"></i> Delete</button>
@@ -225,9 +205,12 @@
         {# resources #}
         <div class="box-release-info">
             <h6 class="muted panel-title">Resources</h6>
-
-            <div class="form-group margin-top" id="app-license-text">
-                <label>License URL: </label>
+            <div class="form-group margin-top" id="platform-compatibility">
+                <label><i class="fa fa-globe"></i> Works With: </label>
+                <input class="form-control" type="text" value="{% if latest_released.platform_compatibility %}{{ latest_released.platform_compatibility }}{% endif %}">
+            </div>
+            <div class="form-group" id="app-license-text">
+                <label><i class="fa fa-file"></i> License URL: </label>
                 <input class="form-control" type="text" placeholder="License URL (http://...)" value="{% if latest_released.license_url %}{{ latest_released.license_url }}{% endif %}">
                 <input type="checkbox" {% if latest_released.license_confirm %}checked{% endif %}> Require confirmation
             </div>
@@ -389,10 +372,6 @@
 
     <script type="text/javascript">
 
-        {% if release_uploaded %}
-            Msgs.add_msg('Your release has been uploaded! Click the "Release History" tab to see your releases and to add release notes.', 'success');
-        {% endif %}
-
         AppPageEdit.set_max_file_img_size({{ max_file_img_size_b }});
         AppPageEdit.setup_text_fields();
         AppPageEdit.setup_icon_selection({{ max_icon_dim_px }});
@@ -431,8 +410,6 @@
             AppPageEdit.setup_authors_dnd();
         });
 
-        AppPageEdit.setup_release_notes();
-
         AppPageEdit.setup_cancel_btn();
         AppPageEdit.setup_save_btn();
     </script>
@@ -445,17 +422,6 @@
         })
         $('#app-details').bind('input propertychange', function() {
             $('#content-markdown').html(marked(this.value));
-        });
-    </script>
-    <script>
-        $(document).ready(function(){
-            var releasedContent = $('#release-notes').val()
-            if (releasedContent) {
-                $('#release-markdown').html(marked(releasedContent));
-            }
-        })
-        $('#release-notes').bind('input propertychange', function() {
-            $('#release-markdown').html(marked(this.value));
         });
     </script>
 {% endblock %}

@@ -1,17 +1,27 @@
 from django import template
 from apps.models import App, Release
-
+from download.models import ReleaseDownloadsByDate
 register = template.Library()
 
 
 @register.inclusion_tag('app_button.html')
 def app_button(app, order_index, release):
     try:
+        releases = Release.objects.filter(app=app)
+    except:
+        releases = Release.objects.filter(app=app.object)
+    total_download = 0
+    for release_obj in releases:
+        downloads = ReleaseDownloadsByDate.objects.filter(release=release_obj)
+        for download in downloads:
+            total_download += download.count
+    try:
         app.star_percentage = 100 * app.object.stars / 5
         c = {}
         c['app'] = app.object
         c['order_index'] = order_index
         c['release'] = release[app]
+        c['total_download'] = total_download
         return c
     except:
         app.star_percentage = 100 * app.stars / 5
@@ -19,8 +29,8 @@ def app_button(app, order_index, release):
         c['app'] = app
         c['order_index'] = order_index
         c['release'] = release[app]
+        c['total_download'] = total_download
         return c
-
 
 @register.inclusion_tag('app_button.html')
 def app_button_by_name(app_name):

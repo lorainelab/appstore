@@ -1,3 +1,4 @@
+import copy
 import datetime
 from os.path import basename
 
@@ -27,6 +28,8 @@ class AppPending(models.Model):
     release_file_name   = models.CharField(max_length=127) # ?
     release_file        = models.FileField(upload_to='pending_releases') # ?
     submitter_approved  = models.BooleanField(default=False)
+    uploader_ip         = models.GenericIPAddressField(null=True)
+
 
     def __str__(self):
         return self.Bundle_Name
@@ -47,14 +50,30 @@ class AppPending(models.Model):
         return self.Bundle_Name + ' ' + self.Bundle_Version + ' from ' + self.submitter.email
 
     def make_release(self, app):
+        # copy fields from previous released app into new release of same app
+        previous_release = copy.copy(Release.objects.filter(app=app).order_by('-Bundle_Version')[:1])
         release, _ = Release.objects.get_or_create(app=app, Bundle_Version=self.Bundle_Version)
         release.platform_compatibility = self.works_with
         release.created = datetime.datetime.today()
         release.Bundle_Description = self.Bundle_Description
         release.repository_xml = self.repository_xml
+        release.uploader_ip = self.uploader_ip
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
         release.calc_checksum()
+        if previous_release:
+            release.short_title = previous_release[0].short_title
+            release.license_url = previous_release[0].license_url
+            release.license_confirm = previous_release[0].license_confirm
+            release.website_url = previous_release[0].website_url
+            release.tutorial_url = previous_release[0].tutorial_url
+            release.citation = previous_release[0].citation
+            release.code_repository_url = previous_release[0].code_repository_url
+            release.contact_email = previous_release[0].contact_email
+            if previous_release[0].logo:
+                release.logo.save(previous_release[0].logo.name, previous_release[0].logo)
+            for author in previous_release[0].authors.all():
+                release.authors.add(author)
         release.save()
         return release
 

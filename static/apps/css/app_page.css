@@ -33,19 +33,20 @@
 }
 
 .panel-title {
+    font-size: 14px;
     margin-top: 0;
-    margin-bottom: 1em;
+    margin-bottom: 1.5em;
 }
 
 #app-install-btn {
 	margin-bottom: 0.7em;
+    padding-top: 13px;
 }
 
-#app-install-btn h4 {
-	display: inline;
-	vertical-align: middle;
-	margin-left: 0.3em;
+#app-install-btn h6>i {
+    color: white;
 }
+
 
 [class^="icon-install-"], [class*="icon-install-"] {
     background-image: url('../img/install_icons.png');
@@ -132,4 +133,26 @@ small .timeago {
 {
 	display: none;
 	text-align: center;
+}
+
+.custom-editor {
+    padding-left:10%;
+    padding-top: 15%;
+    width: 12%;
+    height: max-content;
+    margin-bottom: 15%
+}
+
+#app_version {
+    margin-bottom: 3px;
+    font-size: 15px;
+}
+
+#igb_version {
+    margin-top: 10px;
+    font-size: 15px;
+}
+
+#change-url {
+    text-decoration: none;
 }
