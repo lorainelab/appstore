@@ -198,18 +198,12 @@ logger = logging.getLogger("app_page.html") %}
 			<div class="col-md-3">
 				{# Editor menu #}
 				<div class="btn-group custom-editor">
-                    		{% if is_editor %}
-					<button class="btn btn-md btn-warning dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					{% if is_editor %}
+					<button class="btn btn-md btn-warning" onclick="document.location.href='{% url 'app_page_edit' app.Bundle_SymbolicName %}';">
 						<i class="fa fa-pencil text-white"></i>
 						&nbsp;Editor Actions
-						<span class="caret"></span>
 					</button>
-					<div class="dropdown-menu">
-						<a class="dropdown-item" href="{% url 'app_page_edit' app.Bundle_SymbolicName %}">Edit this page</a>
-						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" data-toggle="modal" href="#delete_ratings_modal">Delete all ratings</a>
-					</div>
-                    	{% endif %}
+					{% endif %}
 				</div>
 				{# End editor menu #}
 				{# Right-hand panels #}
