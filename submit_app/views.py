@@ -114,8 +114,8 @@ def confirm_submission(request, id):
             if pending_obj.count() > 1:
                 _replace_jar_details(request, pending_obj)
             server_url = _get_server_url(request)
-            # _send_email_for_pending(server_url, latest_pending_obj_)
-            # _send_email_for_pending_user(latest_pending_obj_)
+            _send_email_for_pending(server_url, latest_pending_obj_)
+            _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
     return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary, 'info_msg': error_message}, request)
 
