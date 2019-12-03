@@ -58,7 +58,7 @@ def list_of_apps_search(apps, releases, include_relevancy = False):
     if releases == "Temp":
         releases = {}
         for app in apps:
-            released_app = Release.objects.filter(active=True, app=app.object).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')[:1][0]
+            released_app = Release.objects.filter(active=True, app=app.object).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
             releases[app] = released_app
 
                     # button name       div attr name          attr type

@@ -101,29 +101,30 @@ class _DefaultConfig:
 
 def apps_default(request):
 
-    apps = App.objects.all()
-    releases = {}
-    downloaded_apps = dict()
-    for app in apps:
-        released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
-        releases[app] = released_app
-        releases_obj = Release.objects.filter(app=app)
-        total_download = 0
-        for release in releases_obj:
-            downloads = ReleaseDownloadsByDate.objects.filter(release=release)
-        for download in downloads:
-            total_download += download.count
-        downloaded_apps[app] = total_download
-    sorted_dict = collections.OrderedDict(sorted(downloaded_apps.items(), key=lambda kv: kv[1], reverse=True))
-    c = {
-        'releases': releases,
-        'downloaded_apps_pg': sorted_dict.keys(),
-        'go_back_to': 'home',
-        'navbar_selected_link': 'all',
-        'search_query': '',
-        'selected_tag_name': '',
-    }
-    return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
+	apps = App.objects.all()
+	releases = {}
+	downloaded_apps = dict()
+	for app in apps:
+		released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') AS UNSIGNED)"}).order_by('-natural_version')[:1][0]
+		print(released_app)
+		releases[app] = released_app
+		releases_obj = Release.objects.filter(app=app)
+		total_download = 0
+		for release in releases_obj:
+			downloads = ReleaseDownloadsByDate.objects.filter(release=release)
+		for download in downloads:
+			total_download += download.count
+		downloaded_apps[app] = total_download
+	sorted_dict = collections.OrderedDict(sorted(downloaded_apps.items(), key=lambda kv: kv[1], reverse=True))
+	c = {
+		'releases': releases,
+		'downloaded_apps_pg': sorted_dict.keys(),
+		'go_back_to': 'home',
+		'navbar_selected_link': 'all',
+		'search_query': '',
+		'selected_tag_name': '',
+	}
+	return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
 
 
 def all_apps(request):
