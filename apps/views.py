@@ -105,7 +105,7 @@ def apps_default(request):
     releases = {}
     downloaded_apps = dict()
     for app in apps:
-        released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')[:1][0]
+        released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
         releases[app] = released_app
         releases_obj = Release.objects.filter(app=app)
         total_download = 0
@@ -130,7 +130,7 @@ def all_apps(request):
 	apps = App.objects.order_by('Bundle_Name')
 	releases = {}
 	for app in apps:
-		released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')[:1][0]
+		released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
 		releases[app] = released_app
 	c = {
 		'apps': apps,
@@ -146,7 +146,7 @@ def wall_of_apps(request):
 	tags = []
 	for tag in nav_panel_context['top_tags']:
 		for app_query in tag.app_set.all():
-			tags.append((tag.fullname, Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')))
+			tags.append((tag.fullname, Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')))
 	apps_in_not_top_tags = set()
 	for not_top_tag in nav_panel_context['not_top_tags']:
 		apps_in_not_top_tags.update(not_top_tag.app_set.all())
@@ -164,7 +164,7 @@ def apps_with_tag(request, tag_name):
 	apps = App.objects.filter(categories=tag).order_by('Bundle_Name')
 	releases = dict()
 	for app_query in apps:
-		releases[app_query] = Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')[:1][0]
+		releases[app_query] = Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
 	c = {
 		'tag': tag,
 		'apps': apps,
@@ -205,7 +205,7 @@ def apps_with_author(request, author_name):
 
 def _app_rate(app, user, post, latest_release):
 	rating_n = post.get('rating')
-	releases=Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')
+	releases=Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
 	try:
 		rating_n = int(rating_n)
 		if not (0 <= rating_n <= 5):
@@ -227,7 +227,7 @@ def _app_ratings_delete_all(app, user, post):
 		return HttpResponseForbidden()
 	app.stars = 0
 	app.save()
-	releases = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')
+	releases = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
 	for release in releases:
 		release.stars =0
 		release.save()
@@ -288,8 +288,8 @@ def string_to_array(version, delem):
 
 def app_page(request, app_name):
 	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
-	released_apps = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')
-	latest_release = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')[:1][0]
+	released_apps = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
+	latest_release = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
 	decoded_details = latest_release.Bundle_Description
 	download_count = 0
 	for release in released_apps:
@@ -317,7 +317,7 @@ def app_page(request, app_name):
 	return _mk_app_page(app, released_apps, user, request, decoded_details, download_count)
 
 def get_latest_release(app):
-	latest_release = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')[:1][0]
+	latest_release = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
 
 
 # ============================================
@@ -583,7 +583,7 @@ def app_page_edit(request, app_name):
 	app_name: Bundle Symbolic Name
 	"""
 	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
-	released_apps = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as INTEGER)"}).order_by('-natural_version')
+	released_apps = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
 	latest_released = released_apps[:1][0]
 	if not app.is_editor(request.user):
 		return HttpResponseForbidden()
