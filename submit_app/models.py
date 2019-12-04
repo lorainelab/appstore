@@ -51,7 +51,7 @@ class AppPending(models.Model):
 
     def make_release(self, app):
         # copy fields from previous released app into new release of same app
-        previous_release = copy.copy(Release.objects.filter(app=app).order_by('-Bundle_Version')[:1])
+        previous_release = copy.copy(Release.objects.filter(app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1])
         release, _ = Release.objects.get_or_create(app=app, Bundle_Version=self.Bundle_Version)
         release.platform_compatibility = self.works_with
         release.created = datetime.datetime.today()
