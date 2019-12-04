@@ -106,7 +106,6 @@ def apps_default(request):
 	downloaded_apps = dict()
 	for app in apps:
 		released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') AS UNSIGNED)"}).order_by('-natural_version')[:1][0]
-		print(released_app)
 		releases[app] = released_app
 		releases_obj = Release.objects.filter(app=app)
 		total_download = 0
