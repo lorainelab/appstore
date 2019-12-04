@@ -17,6 +17,7 @@ from django.core.paginator import Paginator
 import collections
 # Returns a unicode string encoded in a cookie
 import logging
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -285,6 +286,11 @@ def string_to_array(version, delem):
 	version = ''.join(x for x in version)
 	return int(version)
 
+def install_app(request, path):
+    if settings.USE_S3:
+        return HttpResponseRedirect('https://' + settings.AWS_S3_CUSTOM_DOMAIN + '/' + settings.AWS_LOCATION + path)
+    else:
+        return HttpResponseRedirect('/' + settings.MEDIA_ROOT + path)
 
 def app_page(request, app_name):
 	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
