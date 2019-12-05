@@ -4,9 +4,10 @@ var Msgs = (function() {
 	// Adds a message box at the top of the page.
 	// Arguments:
 	//  msg: an html string with the message to put in the box
-	//  type: can be "error", "warning", "success", or "info", or just empty.
+	//  type: can be "error", "warning", "danger", "success", or "info", or just empty.
 	//  group: name of the message group; ensures that only one message in the group is shown.
 	function add_msg(msg, type, group) {
+		$("#alerts").children("div").remove();
 		var msg_tag = $('<div>').
 			addClass('alert').
 			html('<a class="close" data-dismiss="alert" href="#">&times;</a>' + msg).
@@ -19,20 +20,8 @@ var Msgs = (function() {
 		}
 
 		if (group) {
-		    if(group == 'category'){
-                alerts_tag.find('.' + group).remove();
-                msg_tag.addClass(group);
-                setTimeout(function(){
-                    alerts_tag.find('.' + group).hide('slow');
-                }, 2500);
-            } else {
-                alerts_tag.find('.' + group).remove();
-                msg_tag.addClass(group);
-                setTimeout(function(){
-                    alerts_tag.find('.' + group).hide('slow');
-                }, 1500);
-            }
-
+			alerts_tag.find('.' + group).remove();
+			msg_tag.addClass(group);
 		}
 	}
 
