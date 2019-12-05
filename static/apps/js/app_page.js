@@ -96,6 +96,10 @@ var AppPage = (function($) {
 
 	function setup_install_btn(btn_class, icon_class, btn_text, appVersion, igbVersion, func) {
         install_btn_last_class = [... install_btn[0]['classList']]
+        var index = install_btn_last_class.indexOf('disabled');
+        if (index > -1) {
+            install_btn_last_class.splice(index, 1);
+        }
         if (install_btn_last_class.length !== 0)
             install_btn.removeClass(install_btn_last_class.pop());
             install_btn.addClass(btn_class);
