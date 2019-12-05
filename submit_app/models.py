@@ -17,9 +17,8 @@ except ImportError:
 
 
 def pending_file_path(release, filename):
-    get_ext = filename.split('.')[-1]
     return pathjoin('pending_releases', release.Bundle_SymbolicName + '-' +
-                    release.Bundle_Version + '.' + get_ext)
+                    release.Bundle_Version + '.jar')
 
 
 class AppPending(models.Model):

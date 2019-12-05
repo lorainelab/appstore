@@ -99,9 +99,8 @@ VersionRE = re.compile(r'^(\d+)(?:\.(\d)+)?(?:\.(\d)+)?(?:\.([\w-]+))?$')
 
 
 def release_file_path(release, filename):
-    get_ext = filename.split('.')[-1]
     return pathjoin(release.app.Bundle_SymbolicName, 'releases', release.Bundle_Version, release.app.Bundle_SymbolicName + '-' +
-                    release.Bundle_Version + '.' + get_ext)
+                    release.Bundle_Version + '.jar')
 
 
 def logo_path(release, filename):
