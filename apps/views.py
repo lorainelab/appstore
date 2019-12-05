@@ -176,7 +176,7 @@ def apps_with_tag(request, tag_name):
 
 
 def apps_with_author(request, author_name):
-	releases_obj = Release.objects.filter(active=True, authors__name__exact=author_name)
+	releases_obj = Release.objects.filter(active=True, authors__name__exact=author_name).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
 	releases = {}
 	apps = []
 	for release in releases_obj:
@@ -184,6 +184,8 @@ def apps_with_author(request, author_name):
 		apps.append(release.app)
 	if not releases:
 		raise Http404('No such author "%s".' % author_name)
+
+	apps = list(set(apps))
 
 	c = {
 		'author_name': author_name,
