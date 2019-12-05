@@ -20,20 +20,8 @@ var Msgs = (function() {
 		}
 
 		if (group) {
-		    if(group == 'category'){
-                alerts_tag.find('.' + group).remove();
-                msg_tag.addClass(group);
-                setTimeout(function(){
-                    alerts_tag.find('.' + group).hide('slow');
-                }, 2500);
-            } else {
-                alerts_tag.find('.' + group).remove();
-                msg_tag.addClass(group);
-                setTimeout(function(){
-                    alerts_tag.find('.' + group).hide('slow');
-                }, 1500);
-            }
-
+			alerts_tag.find('.' + group).remove();
+			msg_tag.addClass(group);
 		}
 	}
 
