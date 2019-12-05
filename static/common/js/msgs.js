@@ -4,7 +4,7 @@ var Msgs = (function() {
 	// Adds a message box at the top of the page.
 	// Arguments:
 	//  msg: an html string with the message to put in the box
-	//  type: can be "error", "warning", "success", or "info", or just empty.
+	//  type: can be "error", "warning", "danger", "success", or "info", or just empty.
 	//  group: name of the message group; ensures that only one message in the group is shown.
 	function add_msg(msg, type, group) {
 		$("#alerts").children("div").remove();
