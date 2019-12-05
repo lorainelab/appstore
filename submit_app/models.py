@@ -1,6 +1,7 @@
 import copy
 import datetime
 from os.path import basename
+from os.path import join as pathjoin
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -15,6 +16,11 @@ except ImportError:
     from conf.mock import EMAIL_ADDR
 
 
+def pending_file_path(release, filename):
+    return pathjoin('pending_releases', release.Bundle_SymbolicName + '-' +
+                    release.Bundle_Version + '.jar')
+
+
 class AppPending(models.Model):
     submitter           = models.ForeignKey(User,on_delete=models.CASCADE)
     Bundle_Name         = models.CharField(max_length=127)  # Bundle-Name
@@ -25,8 +31,8 @@ class AppPending(models.Model):
     created             = models.DateTimeField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
     repository_xml      = models.TextField(blank=True, null=True) # OBR index file repository.xml
-    release_file_name   = models.CharField(max_length=127) # ?
-    release_file        = models.FileField(upload_to='pending_releases') # ?
+    release_file_name   = models.CharField(max_length=127) # For UI Purpose Only | To show the user the name of the file uploaded
+    release_file        = models.FileField(upload_to=pending_file_path) # Saving symbolicname-version.jar in pending_releases
     submitter_approved  = models.BooleanField(default=False)
     uploader_ip         = models.GenericIPAddressField(null=True)
 
