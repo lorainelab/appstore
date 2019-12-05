@@ -226,7 +226,7 @@ var AppPageEdit = (function($)
             if ($(this).hasClass('disabled'))
                 return;
             if(add_field.val().length == 1){
-                Msgs.add_msg('Whoops! Cannot add single Alphabet Category', 'danger', 'category');
+                Msgs.add_msg('Whoops! Cannot add single Alphabet Category', 'danger');
                 return;
             } else {
                 add_tag(add_field.val(), true);
@@ -822,14 +822,14 @@ var AppPageEdit = (function($)
         });
 
         if (!all_valid)
-            Msgs.add_msg('Whoops! Please fix the fields in red. Once you\'re done, click Save again.', 'danger', 'save');
+            Msgs.add_msg('Whoops! Please fix the fields in red. Once you\'re done, click Save again.', 'danger');
         try {
             var invalid_input_str = validateUrls();
             if (invalid_input_str != "") {
                 throw (invalid_input_str.split(", ").length > 1) ? invalid_input_str + " are invalid" : invalid_input_str + " is invalid";
             }
         } catch (error) {
-            Msgs.add_msg(error, 'danger', 'save');
+            Msgs.add_msg(error, 'danger');
             return false;
         }
         return all_valid;

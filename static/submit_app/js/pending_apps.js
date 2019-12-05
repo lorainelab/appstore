@@ -18,7 +18,7 @@ var PendingApps = (function() {
                                 pending_tag.remove();
                             });
                             msg = msg.replace('%s', app_name + ' ' + app_version);
-                            Msgs.add_msg(msg, msg_type, 'rating');
+                            Msgs.add_msg(msg, msg_type);
                        });
             }
             

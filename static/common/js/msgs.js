@@ -7,6 +7,7 @@ var Msgs = (function() {
 	//  type: can be "error", "warning", "success", or "info", or just empty.
 	//  group: name of the message group; ensures that only one message in the group is shown.
 	function add_msg(msg, type, group) {
+		$("#alerts").children("div").remove();
 		var msg_tag = $('<div>').
 			addClass('alert').
 			html('<a class="close" data-dismiss="alert" href="#">&times;</a>' + msg).
