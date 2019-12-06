@@ -13,7 +13,7 @@ var SortAppButtons = (function() {
       var d = parseInt(pieces[3], 10);
       return new Date(y, m - 1, d);
     }
-    
+
     var sort_funcs = {
       'int': function(attr_name) {
             return function(a, b) {
@@ -22,7 +22,7 @@ var SortAppButtons = (function() {
                 return numA - numB;
             };
         },
-        
+
         'str': function(attr_name) {
             return function(a, b) {
                 var nameA = a.attr(attr_name).toLowerCase();
@@ -49,8 +49,8 @@ var SortAppButtons = (function() {
             }
         }
     };
-    
-    
+
+
     function sort_app_buttons(container, sort_func, attr_name, attr_type) {
         var currLeftCounter, currRightCounter;
         currLeftCounter = currRightCounter = -1;
@@ -86,7 +86,7 @@ var SortAppButtons = (function() {
         if(zero_value_buttons.length != 0) {
           zero_value_buttons = zero_value_buttons.filter(function(e) {
             return e != undefined;})
-            zero_value_buttons.sort(sort_funcs['str']('fullname'));
+            zero_value_buttons.sort(sort_funcs['str']('bundle_name'));
         }
 
         if (descending) {
