@@ -17,6 +17,7 @@ from django.core.paginator import Paginator
 import collections
 # Returns a unicode string encoded in a cookie
 import logging
+from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
@@ -270,7 +271,6 @@ def _mk_app_page(app, released_apps, user, request, decoded_details, download_co
 _AppActions = {
 	'rate': _app_rate,
 	'ratings_delete_all': _app_ratings_delete_all,
-	'installed_count': _installed_count,
 }
 
 
@@ -287,6 +287,18 @@ def string_to_array(version, delem):
 	version = version.split(delem)
 	version = ''.join(x for x in version)
 	return int(version)
+
+
+def install_app(request, path):
+	result = path.split('/')
+	app = App.objects.get(Bundle_SymbolicName=result[0])
+	release = Release.objects.get(app=app, Bundle_Version=result[2])
+	ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
+	ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count=F('count') + 1)
+	if settings.USE_S3:
+		return HttpResponseRedirect('https://' + settings.AWS_S3_CUSTOM_DOMAIN + '/' + settings.AWS_LOCATION + '/' + path)
+	else:
+		return HttpResponseRedirect('/media/' + path)
 
 
 def app_page(request, app_name):

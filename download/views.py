@@ -42,16 +42,8 @@ def release_download(request, app_name):
     ip4addr = _client_ipaddr(request)
     when = datetime.date.today()
 
-    # Update the App object
-    release.app.downloads += 1
-    release.app.save()
-
     # Record the download as a Download object
     Download.objects.create(release=release, ip4addr=ip4addr, when=when)
-
-    # Record the download in the timeline
-    _increment_count(ReleaseDownloadsByDate, release=release, when=when)
-    _increment_count(ReleaseDownloadsByDate, release=None, when=when)
 
     # Look up geographical information about the user's IP address
     geoinfo = geoIP.city(ipaddr_long_to_str(ip4addr))
