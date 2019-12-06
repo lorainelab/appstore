@@ -98,9 +98,9 @@ def generate_xml(dict_ver, tree, state):
     resource.set('symbolicname', dict_ver.Bundle_SymbolicName)
     resource.set('presentationname', dict_ver.Bundle_Name)
     if state == 'pending':
-        resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
+        resource.set('uri', '/media/pending_releases/' + dict_ver.release_file.name)
     else:
-        resource.set('uri', '/media/' + get_bundle_symbolic_name(dict_ver.Bundle_SymbolicName) + '/' + 'releases' + '/' + dict_ver.Bundle_Version + '/' + dict_ver.release_file_name)
+        resource.set('uri', '/media/' + get_bundle_symbolic_name(dict_ver.Bundle_SymbolicName) + '/' + 'releases' + '/' + dict_ver.Bundle_Version + '/' + dict_ver.release_file.name)
     resource.set('version', dict_ver.Bundle_Version)
 
     short_title = ET.SubElement(resource, 'description')
