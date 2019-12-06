@@ -14,7 +14,7 @@ class Download(Model):
 class ReleaseDownloadsByDate(Model):
     release = ForeignKey(Release, null = True, on_delete=models.CASCADE) # null release has total count across a given day
     when    = DateField()
-    count   = PositiveIntegerField(default = 0)
+    count   = PositiveIntegerField(default = 0, null = False, blank = False)
 
     def __unicode__(self):
         return unicode(self.release) + u' ' + unicode(self.when) + u': ' + unicode(self.count)
