@@ -147,7 +147,6 @@ var AppPage = (function($) {
                 install_app(app_bundleSymbolicName, "install", function(app_status, status) {
                     if (status == "200" && app_status.status == "INSTALLED") {
                         Msgs.add_msg(app_bundleName + ' has been installed! Go to IGB to use it.', 'success');
-                        set_download_count('Installed');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
                         Msgs.add_msg('Could not install &ldquo;' + app_bundleName + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
@@ -169,7 +168,6 @@ var AppPage = (function($) {
                     if (status == "200" && app_status.status == "UPDATED") {
                         Msgs.add_msg(app_bundleName + ' has been updated! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
-                        set_download_count('Installed');
                     } else {
                         Msgs.add_msg('Could not update &ldquo;' + app_bundleName + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
                         set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, appVersion, igbVersion);
