@@ -5,6 +5,8 @@ var PendingApps = (function() {
             var pending_tag = $(this);
             var app_name = $(this).find('.app-name-pending').text();
             var app_version = $(this).find('.app-version').text();
+            var symbolic_name = $(this).find('.Bundle_SymbolicName').text();
+            console.log(symbolic_name);
             var pending_id = $(this).attr('pending_id');
             
             function do_action(action, msg, msg_type) {
@@ -23,10 +25,11 @@ var PendingApps = (function() {
             }
             
             $(this).find('.accept').click(function() {
-                do_action('accept', '&ldquo;%s&rdquo; has been accepted.', 'success')
+                var accept_msg = "Congratulations! You released and App <strong>" +  app_name + "</strong>, with Bundle_SymbolicName <strong>" + symbolic_name + "</strong>, and Bundle_Version <strong>" + app_version + "</strong>. If this is the highest available version, please confirm that you can now install it using <a href='/apps/" + symbolic_name + "'>[this App Store page]</a>. Also confirm that you can install the expected highest compatible versions within IGB using IGB App Manager. Note that all versions ever submitted to App Store – including this one – are listed on the <a href='/obr/releases'>App Store OBR index endpoint</a>. Please check that as well!";
+                do_action('accept', accept_msg, 'success')
             });
             $(this).find('.decline').click(function() {
-                do_action('decline', '&ldquo;%s&rdquo; has been declined.', 'danger')
+                do_action('decline', '%s has been declined.', 'danger')
             });
         });
     }
