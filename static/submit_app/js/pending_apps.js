@@ -25,7 +25,7 @@ var PendingApps = (function() {
             }
             
             $(this).find('.accept').click(function() {
-                var accept_msg = "Congratulations! You released and App <strong>" +  app_name + "</strong>, with Bundle_SymbolicName <strong>" + symbolic_name + "</strong>, and Bundle_Version <strong>" + app_version + "</strong>. If this is the highest available version, please confirm that you can now install it using <a href='/apps/" + symbolic_name + "'>[this App Store page]</a>. Also confirm that you can install the expected highest compatible versions within IGB using IGB App Manager. Note that all versions ever submitted to App Store – including this one – are listed on the <a href='/obr/releases'>App Store OBR index endpoint</a>. Please check that as well!";
+                var accept_msg = "Congratulations! You released an App <strong>" +  app_name.trim() + "</strong>, with Bundle_SymbolicName <strong>" + symbolic_name.trim() + "</strong>, and Bundle_Version <strong>" + app_version.trim() + "</strong>. If this is the highest available version, please confirm that you can now install it using <a href='/apps/" + symbolic_name + "' target='_blank'>this App Store page</a>. Also confirm that you can install the expected highest compatible versions within IGB using IGB App Manager. Note that all versions ever submitted to App Store – including this one – are listed on the <a href='/obr/releases' target='_blank'>App Store OBR index endpoint</a>. Please check that as well!";
                 do_action('accept', accept_msg, 'success')
             });
             $(this).find('.decline').click(function() {
