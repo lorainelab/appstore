@@ -144,17 +144,25 @@ def all_apps(request):
 
 def wall_of_apps(request):
 	nav_panel_context = _nav_panel_context(request)
-	tags = []
+	tags = {}
+	ordered_tags, app_tag_instances = [], []
 	for tag in nav_panel_context['top_tags']:
+		ordered_tags.append(tag.fullname)
+		tags[tag.fullname] = []
 		for app_query in tag.app_set.all():
-			tags.append((tag.fullname, Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')))
-	apps_in_not_top_tags = set()
+			tags[tag.fullname].append(Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version'))
+			app_tag_instances.append(app_query.Bundle_SymbolicName)
+				
+	tags['other'] = []
+	ordered_tags.append('other')
 	for not_top_tag in nav_panel_context['not_top_tags']:
-		apps_in_not_top_tags.update(not_top_tag.app_set.all())
-	tags.append(('other', apps_in_not_top_tags))
+		for app_query in not_top_tag.app_set.all():
+			tags['other'].append(Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version'))
+			app_tag_instances.append(app_query.Bundle_SymbolicName)
 	c = {
-		'total_apps_count': Release.objects.filter(active=True).count,
+		'total_apps_count': len(set(app_tag_instances)),
 		'tags': tags,
+		'ordered_tags': ordered_tags,
 		'go_back_to': 'Wall of Apps',
 	}
 	return html_response('wall_of_apps.html', c, request)
