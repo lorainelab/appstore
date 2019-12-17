@@ -42,6 +42,8 @@ class StarRating extends HTMLElement {
 
         this.number = this.number;
 
+        let userAuthenticated = this.getAttribute('data-authenticated');
+
         this.addEventListener('mousemove', e => {
             let box = this.getBoundingClientRect(),
                 starIndex = Math.floor((e.pageX - box.left) / box.width * this.stars.length);
@@ -57,19 +59,25 @@ class StarRating extends HTMLElement {
             let box = this.getBoundingClientRect(),
                 starIndex = Math.floor((e.pageX - box.left) / box.width * this.stars.length);
 
-            this.value = starIndex + 1;
+            if (userAuthenticated == "True") {
+              this.value = starIndex + 1;
+            }
 
             let rateEvent = new Event('rate');
             this.dispatchEvent(rateEvent);
 
             $.post('', {'action': 'rate', 'rating': this.value}, function() {
-              Msgs.add_msg('Rating Updated ! Thank you for the input.',  'info','rating');
-            })
+              if (userAuthenticated == "True") {
+                Msgs.add_msg('Rating Updated ! Thank you for the input.', 'info', 'rating');
+              } else {
+                Msgs.add_msg('Please sign in to rate an app.', 'info', 'rating')
+              }
+            });
         });
 
         var getcurrent = $('.get-app-stars').text()
         console.log(getcurrent);
-
+        
         if (getcurrent == 0){
             // pass
         } else if(getcurrent > 0 && getcurrent < 20) {

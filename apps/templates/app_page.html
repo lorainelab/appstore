@@ -39,7 +39,7 @@ logger = logging.getLogger("app_page.html") %}
 						<br />
 						{# Ratings #}
 						<span class="get-app-stars">{{ app.stars_percentage }}</span>
-						<x-star-rating></x-star-rating>
+						<x-star-rating data-authenticated="{{ is_logged_in }}"></x-star-rating>
 						{# End Ratings #}
 						{# Downloads #}
 						<span class="app-usage-info-divider"></span>

@@ -231,7 +231,7 @@ def _app_rate(app, user, post, latest_release):
 	app.stars = stars + rating_n
 	app.save()
 	latest_release.save()
-	return obj_to_dict(app, ('stars_percentage'))
+	return obj_to_dict(app, (['stars_percentage']))
 
 
 def _app_ratings_delete_all(app, user, post):
@@ -266,7 +266,8 @@ def _mk_app_page(app, released_apps, user, request, decoded_details, download_co
 		'decoded_details': decoded_details,
 		'download_count':download_count,
 		'latest_released': released_apps[0],
-		'is_editor': (user and app.is_editor(user)),
+		'is_logged_in': (user != None),
+		'is_editor': app.is_editor(user),
 		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
 		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
 		'go_back_to': request.COOKIES.get('go_back_to'),
