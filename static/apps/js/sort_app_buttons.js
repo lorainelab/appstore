@@ -62,40 +62,57 @@ var SortAppButtons = (function() {
             }
         });
 
-        zero_value_buttons = [];
-        $.each(buttons, function(index, button) {
-            button_value = button[0]['attributes'][attr_name].value;
-            if(button_value == "0" || button_value == "") {
-                delete buttons[index];
-                zero_value_buttons.push(button);
-            }
-        });
-        /*
-            If all the buttons have 0 attribute value then no sorting is done.
-        */
-        if( buttons.includes(undefined) && buttons.length == zero_value_buttons.length || buttons.length == 0 ){
-            return;
-        }
-
         buttons = buttons.filter(function(e) { return e != undefined; })
         buttons.sort(sort_func);
-        /*
-          In case few buttons have 0 values for the sorting attribute then those buttons
-           are sorted by name and the others are sorted by value.
+        
+        function getButtonAttrValue(button, attr_name) {
+          return button[0]['attributes'][attr_name].value;
+        }
+        
+        /* 
+        This function takes an array of numerically sorted buttons and sorts any
+        subset of these which has equal numerical values alphabeically.
         */
-        if(zero_value_buttons.length != 0) {
-          zero_value_buttons = zero_value_buttons.filter(function(e) {
-            return e != undefined;})
-            zero_value_buttons.sort(sort_funcs['str']('bundle_name'));
+        function aphabeticallySortSorted(buttons, firstAttrSorted, startIndex, sortedArray) {
+          let duplicatelyRankedApps = [buttons[startIndex]];
+          if (startIndex + 1 < buttons.length) {
+            while (true) {
+              if (getButtonAttrValue(buttons[startIndex], firstAttrSorted)
+               == getButtonAttrValue(buttons[startIndex + 1], firstAttrSorted)) {
+              duplicatelyRankedApps.push(buttons[startIndex + 1]);
+              startIndex += 1;
+              if (startIndex + 1 == buttons.length) {
+                break;
+              }
+            } else {
+                startIndex += 1;
+                break;
+              }
+            }
+          } else {
+            startIndex += 1;
+          }
+          if (startIndex == buttons.length) {
+            return sortedArray;
+          }
+          else {
+            duplicatelyRankedApps.sort(sort_funcs['str']('bundle_name'));
+            sortedArray = sortedArray.concat(duplicatelyRankedApps);
+            sortedArray = aphabeticallySortSorted(buttons, firstAttrSorted, startIndex, sortedArray);
+            return sortedArray;
+          }
         }
-
-        if (descending) {
-            buttons = buttons.reverse();
-            zero_value_buttons = zero_value_buttons.reverse();
-            buttons = $.merge(buttons, zero_value_buttons);
-        } else {
-             buttons = $.merge(zero_value_buttons, buttons);
+        
+        if (attr_type == 'int') {
+            buttons = aphabeticallySortSorted(buttons, 'downloads', 0, []);
+            if (descending) {
+                buttons.reverse();
+                buttons = aphabeticallySortSorted(buttons, 'downloads', 0, []);
+              }
+        } else if (descending) {
+            buttons.reverse();
         }
+        
 
         $.each(buttons, function(index, button) {
             if(index % 2 == 0)
