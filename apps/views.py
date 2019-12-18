@@ -40,7 +40,7 @@ class _NavPanelConfig:
 
 
 def _all_tags_of_count(min_count):
-	return filter(lambda tag: tag.count >= min_count, Category.objects.all())
+	return filter(lambda tag: tag.count > min_count, Category.objects.all())
 
 
 _NavPanelContextCache = None
