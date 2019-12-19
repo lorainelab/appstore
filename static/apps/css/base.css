@@ -331,7 +331,7 @@ x-star-rating > .star.full::after {
   right: 0;
 }
 
-hr, #sticky-footer {
+#footer-hr, #sticky-footer {
   margin-bottom: 20%;
 }
 
