@@ -1,6 +1,7 @@
 import copy
 import datetime
 from os.path import basename
+from os.path import join as pathjoin
 
 from django.contrib.auth.models import User
 from django.db import models
@@ -15,6 +16,11 @@ except ImportError:
     from conf.mock import EMAIL_ADDR
 
 
+def pending_file_path(release, filename):
+    return pathjoin('pending_releases', release.Bundle_SymbolicName + '-' +
+                    release.Bundle_Version + '.jar')
+
+
 class AppPending(models.Model):
     submitter           = models.ForeignKey(User,on_delete=models.CASCADE)
     Bundle_Name         = models.CharField(max_length=127)  # Bundle-Name
@@ -25,8 +31,8 @@ class AppPending(models.Model):
     created             = models.DateTimeField(auto_now_add=True)
     updated             = models.DateTimeField(auto_now=True)
     repository_xml      = models.TextField(blank=True, null=True) # OBR index file repository.xml
-    release_file_name   = models.CharField(max_length=127) # ?
-    release_file        = models.FileField(upload_to='pending_releases') # ?
+    release_file_name   = models.CharField(max_length=127) # For UI Purpose Only | To show the user the name of the file uploaded
+    release_file        = models.FileField(upload_to=pending_file_path) # Saving symbolicname-version.jar in pending_releases
     submitter_approved  = models.BooleanField(default=False)
     uploader_ip         = models.GenericIPAddressField(null=True)
 
@@ -51,7 +57,7 @@ class AppPending(models.Model):
 
     def make_release(self, app):
         # copy fields from previous released app into new release of same app
-        previous_release = copy.copy(Release.objects.filter(app=app).order_by('-Bundle_Version')[:1])
+        previous_release = copy.copy(Release.objects.filter(app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1])
         release, _ = Release.objects.get_or_create(app=app, Bundle_Version=self.Bundle_Version)
         release.platform_compatibility = self.works_with
         release.created = datetime.datetime.today()

@@ -229,7 +229,7 @@ def _get_jar_file(release_file):
 
 
 def _send_email_for_pending(server_url, pending):
-    admin_url = reverse('admin:login', current_app=pending.Bundle_Name)
+    admin_url = reverse('admin:login', current_app=pending.Bundle_SymbolicName)
     msg = u"""
 The following app has been submitted:
     ID: {id}
@@ -252,9 +252,9 @@ The following app has been submitted:
     send_mail('{Bundle_Name} App - Successfully Submitted.'.format(Bundle_Name = pending.Bundle_Name), msg, settings.EMAIL_ADDR, [pending.submitter.email], fail_silently=False)
 
 
-def _send_email_for_accepted_app(to_email, from_email, Bundle_Name, server_url):
+def _send_email_for_accepted_app(to_email, from_email, Bundle_Name, Bundle_SymbolicName, server_url):
     subject = u'IGB App Store - {Bundle_Name} Has Been Approved'.format(Bundle_Name = Bundle_Name)
-    app_url = reverse('app_page', args=[Bundle_Name])
+    app_url = reverse('app_page', args=[Bundle_SymbolicName])
     msg = u"""Your app has been approved! Here is your app page:
 
   {server_url}{app_url}
@@ -308,7 +308,7 @@ def _pending_app_accept(pending, request):
     pending.delete()
 
     server_url = _get_server_url(request)
-    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.Bundle_Name, server_url)
+    _send_email_for_accepted_app(pending.submitter.email, settings.EMAIL_ADDR, app.Bundle_Name, app.Bundle_SymbolicName, server_url)
 
 
 def _pending_app_decline(pending_app, request):

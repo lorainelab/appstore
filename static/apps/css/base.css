@@ -1,6 +1,8 @@
 html {
     font-size: 16px;
+    position: relative;
 }
+
 @media (min-width: 768px) {
     html {
         font-size: 16px;
@@ -318,8 +320,19 @@ x-star-rating > .star.full::after {
     bottom:0;
     left:0;
     right:0;
-    position:fixed;
-    flex-shrink: none;
+    max-height: 10%;
+    position:absolute;
+}
+
+#sticky-footer .container {
+  position: absolute;
+  bottom: 25%;
+  left: 0;
+  right: 0;
+}
+
+#footer-hr, #sticky-footer {
+  margin-bottom: 20%;
 }
 
 .user-dropdown {

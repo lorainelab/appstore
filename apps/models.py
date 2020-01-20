@@ -16,13 +16,7 @@ class Category(models.Model):
 
     @property
     def count(self):
-        global _TagCountCache
-        if self.name in _TagCountCache:
-            count = _TagCountCache[self.name]
-        else:
-            count = App.objects.filter(categories = self).count()
-            _TagCountCache[self.name] = count
-        return count
+        return App.objects.filter(categories = self).count()
 
     search_schema = ('fullname', )
     search_key = 'name'
@@ -92,14 +86,12 @@ class Author(models.Model):
             return self.name + ' (' + self.institution + ')'
 
 
-_TagCountCache = dict()
-
-
 VersionRE = re.compile(r'^(\d+)(?:\.(\d)+)?(?:\.(\d)+)?(?:\.([\w-]+))?$')
 
 
 def release_file_path(release, filename):
-    return pathjoin(release.app.Bundle_SymbolicName, 'releases', release.Bundle_Version, filename)
+    return pathjoin(release.app.Bundle_SymbolicName, 'releases', release.Bundle_Version, release.app.Bundle_SymbolicName + '-' +
+                    release.Bundle_Version + '.jar')
 
 
 def logo_path(release, filename):

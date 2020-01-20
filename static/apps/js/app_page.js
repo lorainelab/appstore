@@ -96,6 +96,10 @@ var AppPage = (function($) {
 
 	function setup_install_btn(btn_class, icon_class, btn_text, appVersion, igbVersion, func) {
         install_btn_last_class = [... install_btn[0]['classList']]
+        var index = install_btn_last_class.indexOf('disabled');
+        if (index > -1) {
+            install_btn_last_class.splice(index, 1);
+        }
         if (install_btn_last_class.length !== 0)
             install_btn.removeClass(install_btn_last_class.pop());
             install_btn.addClass(btn_class);
@@ -143,7 +147,6 @@ var AppPage = (function($) {
                 install_app(app_bundleSymbolicName, "install", function(app_status, status) {
                     if (status == "200" && app_status.status == "INSTALLED") {
                         Msgs.add_msg(app_bundleName + ' has been installed! Go to IGB to use it.', 'success');
-                        set_download_count('Installed');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
                     } else {
                         Msgs.add_msg('Could not install &ldquo;' + app_bundleName + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
@@ -165,7 +168,6 @@ var AppPage = (function($) {
                     if (status == "200" && app_status.status == "UPDATED") {
                         Msgs.add_msg(app_bundleName + ' has been updated! Go to IGB to use it.', 'success');
                         set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
-                        set_download_count('Installed');
                     } else {
                         Msgs.add_msg('Could not update &ldquo;' + app_bundleName + '&rdquo; app: <tt>' + app_status.status + '</tt>', 'danger');
                         set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, appVersion, igbVersion);
@@ -178,20 +180,27 @@ var AppPage = (function($) {
 		setup_install_btn('btn-success', 'fa fa-check', 'Installed', appVersion, igbVersion);
 	}
 
-	function setup_install(app_bundleName, app_bundleSymbolicName, repository_url) {
+
+	function setup_install(app_bundleName, app_bundleSymbolicName, repository_url, release_BundleVersion) {
 		get_app_info(app_bundleSymbolicName, repository_url, function(app_status, is_running) {
 			if (is_running == "200") {
-					if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
-					    document.getElementById("change-url").href = "#"
-						set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
-					} else if (app_status.status === 'INSTALLED') {
-					    document.getElementById("change-url").href = "#"
-						set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
 
-					} else if (app_status.status === 'TO_UPDATE') {
-					    document.getElementById("change-url").href = "#"
+			        if(compareVersion(app_status.appVersion, release_BundleVersion) == -1 && app_status.status != "TO_UPDATE") {
+			            document.getElementById("app-install-btn").setOn = getIgb;
+
+			        } else if (app_status.status === 'NOT_FOUND' || app_status.status === 'UNINSTALLED') {
+                        document.getElementById("change-url").href = "#";
+                        set_install_btn_to_install(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
+
+                    } else if (app_status.status === 'INSTALLED') {
+                        document.getElementById("change-url").href = "#";
+                        set_install_btn_to_installed(app_status.appVersion, app_status.igbVersion);
+
+                    } else if (app_status.status === 'TO_UPDATE') {
+                        document.getElementById("change-url").href = "#";
                         set_install_btn_to_upgrade(app_bundleName, app_bundleSymbolicName, app_status.appVersion, app_status.igbVersion);
-					}
+                    }
+                    
 			} else {
                 Msgs.add_msg('To install an App, start IGB version 9.1.0 or later. Then reload this page.', 'info');
                 document.getElementById("app-install-btn").setOn = getIgb;
@@ -203,6 +212,21 @@ var AppPage = (function($) {
 	function getIgb(){
 	    window.open('https://bioviz.org', '_blank');
 	}
+
+	function compareVersion(v1, v2) {
+        if (typeof v1 !== 'string') return false;
+        if (typeof v2 !== 'string') return false;
+        v1 = v1.split('.');
+        v2 = v2.split('.');
+        const k = Math.min(v1.length, v2.length);
+        for (let i = 0; i < k; ++ i) {
+            v1[i] = parseInt(v1[i], 10);
+            v2[i] = parseInt(v2[i], 10);
+            if (v1[i] > v2[i]) return 1;
+            if (v1[i] < v2[i]) return -1;
+        }
+    return v1.length == v2.length ? 0: (v1.length < v2.length ? -1 : 1);
+    }
 
 
     // Create and return an XHR object.

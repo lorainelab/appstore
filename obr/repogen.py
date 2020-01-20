@@ -98,9 +98,9 @@ def generate_xml(dict_ver, tree, state):
     resource.set('symbolicname', dict_ver.Bundle_SymbolicName)
     resource.set('presentationname', dict_ver.Bundle_Name)
     if state == 'pending':
-        resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
+        resource.set('uri', '/media/pending_releases/' + dict_ver.release_file.name)
     else:
-        resource.set('uri', '/media/' + get_bundle_symbolic_name(dict_ver.Bundle_SymbolicName) + '/' + 'releases' + '/' + dict_ver.Bundle_Version + '/' + dict_ver.release_file_name)
+        resource.set('uri', '/media/' + get_bundle_symbolic_name(dict_ver.Bundle_SymbolicName) + '/' + 'releases' + '/' + dict_ver.Bundle_Version + '/' + dict_ver.release_file.name)
     resource.set('version', dict_ver.Bundle_Version)
 
     short_title = ET.SubElement(resource, 'description')
@@ -196,9 +196,9 @@ def xml_generator(dict_ver, gen_tree, tree, state):
         curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
 
     if state == 'pending':
-        current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
+        current_resource.set('uri', '/installapp/pending_releases/' + dict_ver.release_file.name)
     else:
-        current_resource.set('uri', '/media/' + str(dict_ver.release_file))
+        current_resource.set('uri', '/installapp/' + str(dict_ver.release_file.name))
 
     super_tree.append(current_resource)
     return super_tree
@@ -216,9 +216,9 @@ def initial_generation(dict_ver, state):
     curr_desc = current_resource.find('description')
 
     if state == 'pending':
-        current_resource.set('uri', '/media/pending_releases/' + dict_ver.release_file_name)
+        current_resource.set('uri', '/installapp/pending_releases/' + dict_ver.release_file.name)
     else:
-        current_resource.set('uri', '/media/' + str(dict_ver.release_file))
+        current_resource.set('uri', '/installapp/' + str(dict_ver.release_file.name))
 
     if curr_desc is not None:
         curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
