@@ -3,8 +3,8 @@
 {% load pagination %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-3">
+<div class="row no-gutters">
+    <div class="col-md-4">
         <div class="navigation-panel">
             {% ifequal navbar_selected_link "all" %}
                 <a href="{% url 'all_apps' %}">
@@ -63,15 +63,8 @@
             </div>
         </div>
     </div>
-    <div class="col-md-9">
+    <div class="col-md-8">
         {% block main %}{% endblock %}
-    </div>
-</div>
-
-<div class="row">
-    <div class="col-md-3"></div>
-    <div class="col-md-9">
-        {% pagination downloaded_apps_pg %}
     </div>
 </div>
 
