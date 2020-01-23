@@ -25,7 +25,6 @@ urlpatterns = [
     path(r'accounts/',include('users.urls')),
     path(r'',          views.apps_default, name='default-page'),
     path(r'apps/',       include('apps.urls')),
-    #re_path(r'apps/<slug:>/,       include('apps.urls')),
     path(r'search',      include('haystack.urls')),
     path(r'download/',   include('download.urls')),
     path(r'submit_app/', include('submit_app.urls')),
