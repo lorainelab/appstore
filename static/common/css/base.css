@@ -6,17 +6,13 @@ body {
   margin-left: 3em;
 }
 
-.navbar .navbar-inner .container .appstore-brand-logo{
+.navbar .navbar-inner .container {
     width:1.5em;
     height:1.5em;
 }
 
 .navbar .navbar-inner .container .appstore-navbar-item{
     padding: 0.3em 0em;
-}
-
-.navbar .navbar-inner .container .appstore-brand-name{
-    color:#d7d382;
 }
 
 .navbar .navbar-inner .container .appstore-name{
