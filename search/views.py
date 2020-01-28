@@ -68,13 +68,11 @@ def search(request):
     query1 = removespace(query)
     d = {
         'results': _xapian_search(query1),
-        'search_query': query1,
-        'go_back_to': '&ldquo;%s&rdquo; search results' % query1,
+        'search_query': query1
     }
     c = {
         'results': _xapian_search(query),
-        'search_query': query,
-    	'go_back_to': '&ldquo;%s&rdquo; search results' % query,
+        'search_query': query
     }
     if None in (c['results']):
         d = c

@@ -119,7 +119,6 @@ def apps_default(request):
 	c = {
 		'releases': releases,
 		'downloaded_apps_pg': sorted_dict.keys(),
-		'go_back_to': 'home',
 		'navbar_selected_link': 'all',
 		'search_query': '',
 		'selected_tag_name': '',
@@ -136,7 +135,6 @@ def all_apps(request):
 	c = {
 		'apps': apps,
 		'navbar_selected_link': 'all',
-		'go_back_to': 'All Apps',
 		'releases': releases
 	}
 	return html_response('all_apps.html', c, request, processors=(_nav_panel_context,))
@@ -163,7 +161,6 @@ def wall_of_apps(request):
 		'total_apps_count': len(set(app_tag_instances)),
 		'tags': tags,
 		'ordered_tags': ordered_tags,
-		'go_back_to': 'Wall of Apps',
 	}
 	return html_response('wall_of_apps.html', c, request)
 
@@ -177,9 +174,8 @@ def apps_with_tag(request, tag_name):
 	c = {
 		'tag': tag,
 		'apps': apps,
-		'releases':releases,
-		'selected_tag_name': tag_name,
-		'go_back_to': '&ldquo;%s&rdquo; category' % tag.fullname,
+		'releases': releases,
+		'selected_tag_name': tag_name
 	}
 	return html_response('apps_with_tag.html', c, request, processors=(_nav_panel_context,))
 
@@ -200,10 +196,7 @@ def apps_with_author(request, author_name):
 	c = {
 		'author_name': author_name,
 		'apps': apps,
-		'releases': releases,
-		'go_back_to': '%s\'s author page' % author_name,
-		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
-		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
+		'releases': releases
 	}
 	return html_response('apps_with_author.html', c, request, processors=(_nav_panel_context,))
 
@@ -268,9 +261,6 @@ def _mk_app_page(app, released_apps, user, request, decoded_details, download_co
 		'latest_released': released_apps[0],
 		'is_logged_in': (user != None),
 		'is_editor': app.is_editor(user),
-		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
-		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
-		'go_back_to': request.COOKIES.get('go_back_to'),
 		'search_query': '',
 		'repository_url':get_host_url(request) + '/obr/releases',
 	}
