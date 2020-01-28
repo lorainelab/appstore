@@ -7,24 +7,26 @@
         <meta name="description" content="">
         <meta name="author" content="Sameer Shanbhag">
         <link rel="shortcut icon" type="image/ico" href="{% get_static_prefix %}common/img/favicon.ico"/>
-        {% block more_head %}{% endblock %}
+
         <title>IGB App Store {% block title %}{% endblock %}</title>
 
         <!-- Bootstrap core CSS -->
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+
+        <!-- JQuery Library -->
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
-        <script type="text/javascript" src="{% get_static_prefix %}apps/js/jquery.tablednd.js"></script>
-        <script type="text/javascript" src="{% get_static_prefix %}common/lib/js/jquery.tmpl.min.js"></script>
+
+        <!-- custom Javascript Libraries Required for Error Reporting and Site Navigation -->
         <script type="text/javascript" src="{% get_static_prefix %}common/js/msgs.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
         <script type="text/javascript" src="{% get_static_prefix %}common/js/setup_ajax_for_csrf.js"></script>
-        <script type="text/javascript" src="{% get_static_prefix %}common/js/doc_link.js"></script>
+
         <!-- Custom styles for this template -->
         <link href="{% get_static_prefix %}apps/css/base.css" rel="stylesheet">
-        <link href="{% get_static_prefix %}common/css/nav_panel.css" rel="stylesheet">
-        <link href="{% get_static_prefix %}apps/css/app_button.css" rel="stylesheet" type="text/css" media="all">
+        <link href="{% get_static_prefix %}common/css/nav_header.css" rel="stylesheet">
+        {% block more_head %}{% endblock %}
     </head>
     <body>
         {# Navigation bar #}
@@ -85,7 +87,7 @@
         </div> <!-- /container -->
         <hr id="footer-hr" style="margin-top: 6em; padding-bottom: 5%; width:60%">
         {# Footer #}
-         <footer id="sticky-footer" class="py-4">
+        <footer id="sticky-footer" class="py-4">
             <div class="container text-center">
                 <div class="row">
                     <div class="col-12 col-md">
@@ -95,22 +97,15 @@
                     </div>
                 </div>
             </div>
-          </footer>
-
-        <script>
-            $(window).on('pageshow', function() {
-            {% if go_back_to %}
-                Cookies.set('go_back_to_title', '{{ go_back_to }}',  {'path': '/'});
-                Cookies.set('go_back_to_url',   '{{ request.get_full_path }}', {'path': '/'});
-            {% endif %}
-            });
-        </script>
+        </footer>
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-        <script src="{% get_static_prefix %}common/js/msgs.js"></script>
-        <script type="text/javascript" src="{% get_static_prefix %}apps/js/star_rating.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.6.2/marked.min.js"></script>
+
+        <!-- Custom JS -->
         <script type="text/javascript" src="{% get_static_prefix %}common/js/base.js"></script>
+        <script src="{% get_static_prefix %}common/js/msgs.js"></script>
+
+        {% block footer %}{% endblock %}
     </body>
 </html>

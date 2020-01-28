@@ -375,4 +375,10 @@ logger = logging.getLogger("app_page.html") %}
 
 </script>
 {% endblock %}
+
 </div>
+
+{% block footer %}
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.6.2/marked.min.js"></script>
+    <script type="text/javascript" src="{% get_static_prefix %}apps/js/star_rating.js"></script>
+{% endblock %}

@@ -2,6 +2,11 @@
 {% load static %}
 {% load pagination %}
 
+{% block more_head %}
+<link href="{% get_static_prefix %}apps/css/nav_panel.css" rel="stylesheet">
+<link href="{% get_static_prefix %}apps/css/app_button.css" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
 <div class="row no-gutters">
     <div class="col-md-4">

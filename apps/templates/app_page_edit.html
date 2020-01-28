@@ -5,6 +5,12 @@
 {% load timestamp_converter %}
 
 {% block more_head %}
+    <!-- Required JS for App Edit Page -->
+    <script type="text/javascript" src="{% get_static_prefix %}apps/js/jquery.tablednd.js"></script>
+    <script type="text/javascript" src="{% get_static_prefix %}common/lib/js/jquery.tmpl.min.js"></script>
+
+    <!-- Required CSS for App Edit Page -->
+    <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_page.css" />
     <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_page_edit.css" />
     <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/base.css" />
 {% endblock %}
@@ -424,4 +430,9 @@
             $('#content-markdown').html(marked(this.value));
         });
     </script>
+{% endblock %}
+
+{% block footer %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.6.2/marked.min.js"></script>
+    <script type="text/javascript" src="{% get_static_prefix %}apps/js/star_rating.js"></script>
 {% endblock %}
