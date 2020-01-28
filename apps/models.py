@@ -135,6 +135,10 @@ class Release(models.Model):
 
     authors                 = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
 
+    # To Display Release App and its version on Admin Panel > Releases Tab
+    def __str__(self):
+        return self.app.Bundle_Name + " - " +  self.Bundle_Version
+
     @property
     def ordered_authors(self):
         return (a.author for a in OrderedAuthor.objects.filter(release=self))
