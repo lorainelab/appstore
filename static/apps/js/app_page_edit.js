@@ -72,6 +72,7 @@ var AppPageEdit = (function($)
                 }
 
                 read_file(file, img_ready_func);
+                this.value = null;
             }
         });
     }
