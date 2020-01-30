@@ -9,10 +9,13 @@
 logger = logging.getLogger("app_page.html") %}
 
 {% block more_head %}
-<link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_page.css" />
-<link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_stars.css" />
+<!-- Screenshot Popup Box and Fontawesome libraries -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" integrity="sha256-HAaDW5o2+LelybUhfuk0Zh2Vdk8Y2W2UeKmbaXhalfA=" crossorigin="anonymous" />
+
+<!-- Custom Css libraries -->
+<link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_page.css" />
+<link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_stars.css" />
 {% endblock %}
 
 {% block title %}- {{ app.Bundle_Name }}{% endblock %}
@@ -379,6 +382,7 @@ logger = logging.getLogger("app_page.html") %}
 </div>
 
 {% block footer %}
+	<!-- Markdown Library -->
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.6.2/marked.min.js"></script>
     <script type="text/javascript" src="{% get_static_prefix %}apps/js/star_rating.js"></script>
 {% endblock %}
