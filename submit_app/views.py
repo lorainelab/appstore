@@ -49,10 +49,7 @@ def submit_app(request):
                 if not bool(version_pattern.match(jar_details['Bundle_Version'])):
                     raise ValueError("Bundle-Version %s is incorrect. Please use semantic versioning. " 
                                                                                         "See https://semver.org/." %jar_details['Bundle_Version'])
-                if jar_details['has_export_pkg']:
-                    return HttpResponseRedirect(reverse('submit-api', args=[pending.id]))
-                else:
-                    return HttpResponseRedirect(reverse('confirm-submission', args=[pending.id]))
+                return HttpResponseRedirect(reverse('confirm-submission', args=[pending.id]))
             except ValueError as e:
                 context['error_msg'] = str(e)
     else:
