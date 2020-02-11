@@ -1,11 +1,13 @@
+import io
+import logging
 from zipfile import ZipFile, BadZipfile
-import requests, io
-from .mfparse import parse_manifest, max_of_lower_igb_pkg_versions, parse_app_dependencies
-from apps.models import App, Release, VersionRE
+
+import requests
 from django.utils.encoding import smart_text
 from requests.exceptions import ConnectionError
-from util.view_util import get_object_or_none
-import logging, io, sys
+
+from apps.models import VersionRE
+from .mfparse import parse_manifest
 
 _MANIFEST_FILE_NAME = 'META-INF/MANIFEST.MF'
 _REPOSITORY_FILE_NAME = 'repository.xml'

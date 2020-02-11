@@ -1,23 +1,23 @@
-import re
+import collections
 import datetime
-import base64
+# Returns a unicode string encoded in a cookie
+import logging
+import re
 from urllib.parse import unquote
-from django.contrib.auth.models import User
+
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db.models import F
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.text import unescape_entities
-from util.view_util import json_response, html_response, obj_to_dict, get_object_or_none
-from util.img_util import scale_img
-from util.id_util import fullname_to_name
+
 from apps.models import Category, App, Author, OrderedAuthor, Screenshot, Release
 from download.models import ReleaseDownloadsByDate
-from django.db.models import F
-from django.core.paginator import Paginator
-import collections
-# Returns a unicode string encoded in a cookie
-import logging
-from django.conf import settings
+from util.id_util import fullname_to_name
+from util.img_util import scale_img
+from util.view_util import json_response, html_response, obj_to_dict, get_object_or_none
 
 logger = logging.getLogger(__name__)
 

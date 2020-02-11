@@ -9,12 +9,16 @@ from smtplib import SMTP
 
 PLUGINS_XML_URL = 'http://chianti.ucsd.edu/cyto_web/plugins/plugins.xml'
 
+
 def ez_elem_val(dom_obj, elem):
 	tags = dom_obj.getElementsByTagName(elem)
 	if not tags: return None
 	return tags[0].childNodes[0].nodeValue
 
+
 ISO_DATE_RE = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
+
+
 def parse_iso_date(iso_date):
 	if not iso_date: return None
 	(year_str, month_str, day_str) = ISO_DATE_RE.match(iso_date).groups()
@@ -23,16 +27,18 @@ def parse_iso_date(iso_date):
 		return None
 	return date(year, month, day)
 
-def plugins_dom_to_std_objs(dom_root):
-    plugins_dom = dom_root.getElementsByTagName('plugin')
 
-    for plugin_dom in plugins_dom:
-    	plugin_obj = dict()
-    	for elem in ('name', 'description', 'pluginVersion', 'release_date', 'url'):
-    		plugin_obj[elem] = ez_elem_val(plugin_dom, elem)
-    	if not plugin_obj['name']: continue
-    	plugin_obj['release_date'] = parse_iso_date(plugin_obj['release_date'])
-    	yield plugin_obj
+def plugins_dom_to_std_objs(dom_root):
+	plugins_dom = dom_root.getElementsByTagName('plugin')
+
+	for plugin_dom in plugins_dom:
+		plugin_obj = dict()
+		for elem in ('name', 'description', 'pluginVersion', 'release_date', 'url'):
+			plugin_obj[elem] = ez_elem_val(plugin_dom, elem)
+		if not plugin_obj['name']: continue
+		plugin_obj['release_date'] = parse_iso_date(plugin_obj['release_date'])
+		yield plugin_obj
+
 
 def filter_for_recent_plugins(plugins, min_date):
 	def is_plugin_recent(plugin_obj):
@@ -42,9 +48,11 @@ def filter_for_recent_plugins(plugins, min_date):
 		return delta.days >= 0
 	return ifilter(is_plugin_recent, plugins)
 
+
 def filter_for_plugins_in_n_days(plugins, n_days):
 	min_date = date.today() - timedelta(n_days)
 	return filter_for_recent_plugins(plugins, min_date)
+
 
 def fmt_plugin(plugin):
 	return '''
@@ -57,6 +65,7 @@ def fmt_plugin(plugin):
       {release_date}
   - Download:
       {url}'''.format(**plugin)
+
 
 def email_msg(email_to, msg, subject):
 	s = SMTP()
@@ -77,23 +86,23 @@ def parse_args(args):
 	return (parsed.n, parsed.email_to)
 
 def main(args):
-    parsed_args = parse_args(args)
-    if not parsed_args: return
-    (n_days, email_to) = parsed_args
-    input_file = urlopen(PLUGINS_XML_URL)
-    dom_root = parse(input_file)
-    input_file.close()
+	parsed_args = parse_args(args)
+	if not parsed_args: return
+	(n_days, email_to) = parsed_args
+	input_file = urlopen(PLUGINS_XML_URL)
+	dom_root = parse(input_file)
+	input_file.close()
 
-    plugins = plugins_dom_to_std_objs(dom_root)
-    recent_plugins = list(filter_for_plugins_in_n_days(plugins, n_days))
-    if not recent_plugins:
-        return
-    recent_plugins.sort(key=lambda p: p['release_date'], reverse=True)
+	plugins = plugins_dom_to_std_objs(dom_root)
+	recent_plugins = list(filter_for_plugins_in_n_days(plugins, n_days))
+	if not recent_plugins:
+		return
+	recent_plugins.sort(key=lambda p: p['release_date'], reverse=True)
 
-    msg = '\n'.join((fmt_plugin(plugin) for plugin in recent_plugins))
-    if email_to:
-        email_msg(email_to, msg, 'Updates to plugins.xml')
-    else:
-        print msg
+	msg = '\n'.join((fmt_plugin(plugin) for plugin in recent_plugins))
+	if email_to:
+		email_msg(email_to, msg, 'Updates to plugins.xml')
+	else:
+		print(msg)
 
 main(sys.argv[1:])

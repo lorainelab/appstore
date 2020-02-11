@@ -1,13 +1,16 @@
-import os.path
 import inspect
+import os.path
+
+import xapian
 from django.http import HttpResponseBadRequest
+
 from apps import models
 from apps.views import _nav_panel_context
-from util.view_util import html_response, get_object_or_none
-import xapian
 from conf.xapian import XAPIAN_INDICES_DIR
+from util.view_util import html_response, get_object_or_none
 
 Xapian_Enquires = None
+
 
 def _init_xapian_search():
     global Xapian_Enquires
@@ -22,6 +25,7 @@ def _init_xapian_search():
         qp.set_database(db)
         qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
         Xapian_Enquires[model] = (db, enquire, qp)
+
 
 def _xapian_search(query_str, limit = None, only_matching_ids = False):
     global Xapian_Enquires
@@ -53,6 +57,7 @@ def _xapian_search(query_str, limit = None, only_matching_ids = False):
             all_results[model.__name__] = matched_objs
         return all_results
 
+
 def removespace(query):
     final_query=''
     for i in range(len(query)):
@@ -60,6 +65,7 @@ def removespace(query):
             continue
         final_query += query[i]
     return final_query
+
 
 def search(request):
     query = request.GET.get('q', None)

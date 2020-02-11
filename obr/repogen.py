@@ -3,16 +3,11 @@
 # Email: sshanbh1@uncc.edu
 #
 
-from django.conf import settings
-from xml.etree import ElementTree as ET
-import re
 import base64
-from util.view_util import get_object_or_none
-
-from django.shortcuts import get_object_or_404
-
+from xml.etree import ElementTree as ET
+from apps.models import Release
 from submit_app.models import AppPending
-from apps.models import App, Release
+
 
 def get_bundle_symbolic_name(input):
     """

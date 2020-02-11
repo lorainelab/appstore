@@ -2,9 +2,10 @@
 # Download mysql-connector package : pip install mysql-connector-python
 #
 import xml.etree.ElementTree as ET
+
 import mysql.connector
 from mysql.connector import Error
-import base64
+
 
 #
 #author : Charan Reddy

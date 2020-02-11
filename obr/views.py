@@ -1,7 +1,9 @@
-from django.http import HttpResponse
-from . import repogen
-from util.view_util import html_response
 from xml.etree import ElementTree as ET
+
+from django.http import HttpResponse
+
+from util.view_util import html_response
+from . import repogen
 
 
 def serve_file_pending(request):

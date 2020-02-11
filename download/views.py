@@ -1,23 +1,21 @@
 import datetime
 
-from django.shortcuts import get_object_or_404
-from django.contrib.gis.geoip2 import GeoIP2
-from django.http import HttpResponseRedirect
-
-from django.http import HttpResponse
-from util.view_util import html_response, json_response, ipaddr_str_to_long, ipaddr_long_to_str, get_object_or_none
-from apps.models import App, Release
-from download.models import ReleaseDownloadsByDate, AppDownloadsByGeoLoc, Download, GeoLoc
-
 import pandas as pd
+from django.contrib.gis.geoip2 import GeoIP2
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+
+from apps.models import App, Release
+# put database in project directory
+# see https://docs.djangoproject.com/en/2.1/ref/contrib/gis/geoip2/
+from appstore.settings import BASE_DIR
+from download.models import ReleaseDownloadsByDate, AppDownloadsByGeoLoc, Download, GeoLoc
+from util.view_util import html_response, json_response, ipaddr_str_to_long, ipaddr_long_to_str
 
 # ===================================
 #   Download release
 # ===================================
-
-# put database in project directory
-# see https://docs.djangoproject.com/en/2.1/ref/contrib/gis/geoip2/
-from appstore.settings import BASE_DIR
 
 geoIP = GeoIP2(BASE_DIR)
 

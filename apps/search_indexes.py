@@ -1,5 +1,5 @@
 from haystack import indexes
-from apps.models import App, Release
+from apps.models import App
 
 
 class AppIndex(indexes.SearchIndex, indexes.Indexable):

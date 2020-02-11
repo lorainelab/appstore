@@ -1,24 +1,20 @@
 import base64
-import re
 import os
+import re
 from os.path import basename
-from platform import release
 from urllib.request import urlopen
-from zipfile import ZipFile
+from xml.etree import ElementTree as ET
 
 from django.conf import settings
 from django.contrib.auth.decorators import login_required
 from django.core.mail import send_mail
-from django.http import HttpResponse, HttpResponseRedirect, HttpResponseBadRequest, HttpResponseForbidden
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect, HttpResponseBadRequest, HttpResponseForbidden
 from django.urls import reverse
 
-from apps.models import Release, App, Author, OrderedAuthor
-from util.id_util import fullname_to_name
+from apps.models import Release, App
 from util.view_util import html_response, json_response, get_object_or_none
 from .models import AppPending
 from .processjar import process_jar
-from xml.etree import ElementTree as ET
 
 # IGBF-2026 start
 APP_REPLACEMENT_JAR_MSG = "This is a <b>replacement jar file</b> for a not yet released App that you or a colleague already uploaded previously but is still in our “pending apps” waiting area. If you choose to submit it, this new jar file will replace the one that was uploaded before."
