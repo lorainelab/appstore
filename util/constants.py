@@ -1,6 +1,3 @@
-from django.conf import settings
-
-
 def global_constants(request):
     brand = {
         'name': 'Integrated Genome Browser',

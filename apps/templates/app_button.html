@@ -21,6 +21,10 @@
                     <span class="desc-box long-visible">{{ release.short_title }}</span>
                 </div>
                 {% endif %}
+                {% if not release.short_title %}
+                    <span class="desc-box small-visible" style="visibility: hidden;">No Description</span>
+                    <span class="desc-box long-visible" style="visibility: hidden;">No Description</span>
+                {% endif %}
                  <div class="col-md-12">
                     <div class="rating-stars stars" data-placement="bottom">
                         {% if app.stars_percentage == 0 %}

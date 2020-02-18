@@ -1,0 +1,83 @@
+.navigation-panel{
+    background-image: -webkit-linear-gradient(top, #e8e8e8 0%, #f5f5f5 100%);
+    background-image: -o-linear-gradient(top, #e8e8e8 0%, #f5f5f5 100%);
+    background-image: -webkit-gradient(linear, left top, left bottom, from(#e8e8e8), to(#f5f5f5));
+    background-image: linear-gradient(to bottom, #e8e8e8 0%, #f5f5f5 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffe8e8e8', endColorstr='#fff5f5f5', GradientType=0);
+    background-repeat: repeat-x;
+    border-color: #dcdcdc;
+    -webkit-box-shadow: inset 0 1px 3px rgba(0, 0, 0, .05), 0 1px 0 rgba(255, 255, 255, .1);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, .05), 0 1px 0 rgba(255, 255, 255, .1);
+    min-height: 20px;
+    padding: 19px;
+    margin-bottom: 20px;
+    background-color: #f5f5f5;
+    border: 1px solid #e3e3e3;
+    border-radius: 4px;
+    .box-shadow(inset 0 1px 1px rgba(0,0,0,.05));
+    blockquote {
+        border-color: #ddd;
+        border-color: rgba(0,0,0,.15);
+    }
+}
+
+.navigation-list {
+    padding-left: 0;
+    margin-bottom: 0;
+    list-style: none;
+    margin-top: -10px;
+    margin-bottom: 10px;
+}
+
+h4 a:link {
+  text-decoration: none;
+}
+
+h4 a:visited {
+  text-decoration: none;
+}
+
+h4 a:hover {
+  text-decoration: underline;
+}
+
+h4 a:active {
+  text-decoration: underline;
+}
+
+.title {
+    font-weight: bold;
+}
+
+.navigation-list  > li > a {
+    position: relative;
+    display: block;
+    padding: 5px 15px;
+}
+
+/* Extra Navigation Styling */
+
+.all-apps-title {
+    font-size : 20px;
+}
+
+.count{
+    visibility: hidden;
+    font-weight: bold;
+}
+
+.navigation-list li:hover {
+    background-color: #d4d4d4;
+}
+
+.navigation-list li:hover .count{
+    visibility: visible;
+}
+
+.navigation-list li > span {
+    padding-left: 20px;
+}
+
+.navigation-list li > span > a {
+    text-decoration: none;
+}

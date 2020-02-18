@@ -2,11 +2,13 @@ from util.view_util import html_response
 from django.conf import settings
 from django.core.mail import send_mail
 
+
 def about(request):
-	c = dict()
-	c['footer_selected'] = 'about'
-	c['google_api_key'] = settings.GOOGLE_API_KEY
-	return html_response('about.html', c, request)
+    c = dict()
+    c['footer_selected'] = 'about'
+    c['google_api_key'] = settings.GOOGLE_API_KEY
+    return html_response('about.html', c, request)
+
 
 def contact(request):
     c = { 'footer_selected': 'contact' }
@@ -27,11 +29,3 @@ def contact(request):
         c['message'] = message
     return html_response('contact.html', c, request)
 
-def getstarted(request):
-	return html_response('getstarted.html', {}, request)
-
-def getstarted_app_install(request):
-	return html_response('getstarted_app_install.html', {}, request)
-
-def md(request):
-	return html_response('md.html', {}, request)

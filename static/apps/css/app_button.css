@@ -1,5 +1,112 @@
-.clearfix::after {
-  content: "";
-  clear: both;
-  display: table;
+.stars {
+    display:none;
+}
+
+/* Apps Tile CSS */
+.zero-margin {
+    margin:0px;
+}
+
+.indent-left {
+    padding-left: 5%;
+}
+
+.indent-right{
+    padding-right: 5%;
+}
+
+.box-part{
+    background-color: whiteSmoke;
+    border-radius: 4px;
+    padding:6px 14px;
+    margin: 5px 5px 5px 5px;
+    height: 96px;
+    cursor: pointer;
+    overflow: hidden;
+    border: 0.5px solid #d6d6d6;
+    border: 0.5px solid #d6d6d6;
+}
+
+.box-part:hover {
+    position: absolute;
+    z-index: 1;
+    background: whiteSmoke;
+    height: max-content;
+    box-shadow: 0 0 1.7em rgba(0, 0, 0, 0.4);
+    border: solid 1px rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+}
+
+.box-part:hover .small-visible{
+    visibility: hidden;
+    display: none;
+}
+
+.box-part:hover .long-visible{
+    display: block;
+    font-weight: 500;
+    padding-bottom: 10px;
+    line-height: 1.2em;
+    visibility: visible;
+}
+
+.box-part:hover .stars {
+    display: block;
+    padding-bottom: 5px;
+    padding-left: 10px;
+}
+
+.text{
+    margin:20px 0px;
+}
+
+.fa{
+     color:#4183D7;
+}
+
+.desc-spaced {
+    display: block;
+    margin-left : 10px;
+}
+
+.desc-box {
+    margin-right: 15px;
+    font-size: 14px;
+}
+
+.app-def-desc {
+    text-align: justify;
+}
+
+.custom-img {
+    width: 65px;
+    height: 65px;
+    background-repeat: no-repeat;
+    background-size: contain;
+    margin: 7px 7px 7px 0px;
+}
+
+span.desc-box.small-visible {
+    padding-bottom: 5px;
+    display: block;
+    line-height: 1.2em;
+    height: 2.4em;
+	overflow: hidden;
+}
+
+span.desc-box.long-visible{
+    display: none;
+    visibility: hidden;
+}
+
+.app-button-title {
+    padding-left: 10px;
+    padding-top: 5px;
+    color: #007bff;
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.box-part:hover .app-button-title {
+    color: #004b9c;
 }

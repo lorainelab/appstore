@@ -1,27 +1,9 @@
 {% extends "base.html" %}
 {% load dict %}
+{% load static %}
 
 {% block more_head %}
-	<style type="text/css">
-		.app-icon {
-			width: 64px;
-			height: 64px;
-			background-position: center center;
-			background-repeat: no-repeat;
-			border-radius: 0.5em;
-			padding: 0.5em;
-			display: inline-block;
-		}
-
-		.app-icon:hover {
-			background-color: #EDEDCA;
-		}
-
-		.container {
-			left: 20px;
-			width: 95%;
-		}
-	</style>
+	<link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/wall_of_apps.css"/>
 {% endblock %}
 
 {% block title %}
@@ -43,7 +25,7 @@
 						{# Only display latest release #}
 						{% for release in app|slice:"0:1" %}
 							<a href="{% url 'app_page' release.app.Bundle_SymbolicName %}">
-								<i class="app-icon" rel="tooltip" title="{{ release.Bundle_Name }}" style="background-image: url({{ release.logo_url }}); background-size: 75px 75px;"></i>
+								<i class="app-icon" rel="tooltip" title="{{ release.app.Bundle_Name }}" style="background-image: url({{ release.logo_url }}); background-size: 75px 75px;"></i>
 							</a>
 						{% endfor %}
 					{% endfor %}
@@ -51,9 +33,9 @@
 			</tr> 
 		{% endfor %}
 	</table>
-<script type="text/javascript">
-	$(function() {
-		$('.app-icon[rel=tooltip]').tooltip();
-	});
-</script>
+	<script type="text/javascript">
+		$(function() {
+			$('.app-icon[rel=tooltip]').tooltip();
+		});
+	</script>
 {% endblock %}

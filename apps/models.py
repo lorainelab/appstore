@@ -135,6 +135,10 @@ class Release(models.Model):
 
     authors                 = models.ManyToManyField(Author, blank=True, through='OrderedAuthor')
 
+    # To Display Release App and its version on Admin Panel > Releases Tab
+    def __str__(self):
+        return self.app.Bundle_Name + " - " +  self.Bundle_Version
+
     @property
     def ordered_authors(self):
         return (a.author for a in OrderedAuthor.objects.filter(release=self))
@@ -214,6 +218,7 @@ class Screenshot(models.Model):
     def __unicode__(self):
         return '%s - %d' % (self.app.Bundle_Name, self.id)
 
+
 @receiver(models.signals.pre_delete, sender=Release)
 def delete_file(sender, instance, *args, **kwargs):
     """ Deletes Release files on `post_delete` """
@@ -221,6 +226,7 @@ def delete_file(sender, instance, *args, **kwargs):
         instance.release_file.delete()
     if instance.logo:
         instance.logo.delete()
+
 
 class OrderedAuthor(models.Model):
     author       = models.ForeignKey(Author, on_delete=models.CASCADE)

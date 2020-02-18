@@ -7,20 +7,10 @@
 {% endblock %}
     
 {% block more_head %}
-  <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/nav_panel.css"/>
-  <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_button.css"/>
-  <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_stars.css"/>
+    <link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_button.css"/>
 {% endblock %}
 
 {% block content %}
-
-{% if go_back_to_title %}
-<div class="row">
-    <div class="col-md-12" style="margin-bottom: 2em;">
-        <a href="{{ go_back_to_url }}">&larr; Go back to {% autoescape off %}{{ go_back_to_title }}{% endautoescape %}</a>
-    </div>
-</div>
-{% endif %}
 <div class="row">
     <div class="col-md-12">
         <div class="page-header">
@@ -39,5 +29,4 @@
         {% app_buttons apps releases %}
     </div>
 </div>
-
 {% endblock %}

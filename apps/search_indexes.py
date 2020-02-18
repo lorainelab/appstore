@@ -1,5 +1,5 @@
 from haystack import indexes
-from apps.models import App, Release
+from apps.models import App
 
 
 class AppIndex(indexes.SearchIndex, indexes.Indexable):
@@ -16,20 +16,3 @@ class AppIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_tags(self, obj):
         return [tag.id for tag in obj.categories.all()]
-
-#
-# class ReleaseIndex(indexes.SearchIndex, indexes.Indexable):
-#     text = indexes.EdgeNgramField(document = True, use_template = True)
-#     Bundle_Description = indexes.CharField(model_attr='Bundle_Description', null=True)
-#
-#     authors = indexes.MultiValueField(model_attr='authors', null=True)
-#
-#     downloads = indexes.IntegerField(model_attr = 'downloads',null = True)
-#     stars = indexes.IntegerField(model_attr = 'stars',null = True)
-#
-#
-#     def get_model(self):
-#         return Release
-#
-#     def prepare_authors(self, obj):
-#         return [author.id for author in obj.authors.all()]

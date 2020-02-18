@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'social_django',
     'apps.apps.AppsConfig',
-    'search.apps.SearchConfig',
     'submit_app.apps.SubmitAppConfig',
     'users.apps.UsersConfig',
     'help.apps.HelpConfig',
@@ -156,7 +155,7 @@ DATABASES = {
 
 #EMAIL
 # used for the from: field in emails
-CONTACT_EMAILS = config('CONTACT_EMAILS', cast=Csv(),default="XXXX")
+CONTACT_EMAILS = config('CONTACT_EMAILS', cast=Csv(), default="XXXX")
 EMAIL_USE_TLS       = True
 EMAIL_HOST          = 'smtp.gmail.com'
 EMAIL_HOST_USER     = config('EMAIL_HOST_USER',default="XXXX")

@@ -1,23 +1,23 @@
-import re
+import collections
 import datetime
-import base64
+# Returns a unicode string encoded in a cookie
+import logging
+import re
 from urllib.parse import unquote
-from django.contrib.auth.models import User
+
+from django.conf import settings
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.db.models import F
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.text import unescape_entities
-from util.view_util import json_response, html_response, obj_to_dict, get_object_or_none
-from util.img_util import scale_img
-from util.id_util import fullname_to_name
+
 from apps.models import Category, App, Author, OrderedAuthor, Screenshot, Release
 from download.models import ReleaseDownloadsByDate
-from django.db.models import F
-from django.core.paginator import Paginator
-import collections
-# Returns a unicode string encoded in a cookie
-import logging
-from django.conf import settings
+from util.id_util import fullname_to_name
+from util.img_util import scale_img
+from util.view_util import json_response, html_response, obj_to_dict, get_object_or_none
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +119,6 @@ def apps_default(request):
 	c = {
 		'releases': releases,
 		'downloaded_apps_pg': sorted_dict.keys(),
-		'go_back_to': 'home',
 		'navbar_selected_link': 'all',
 		'search_query': '',
 		'selected_tag_name': '',
@@ -136,7 +135,6 @@ def all_apps(request):
 	c = {
 		'apps': apps,
 		'navbar_selected_link': 'all',
-		'go_back_to': 'All Apps',
 		'releases': releases
 	}
 	return html_response('all_apps.html', c, request, processors=(_nav_panel_context,))
@@ -163,7 +161,6 @@ def wall_of_apps(request):
 		'total_apps_count': len(set(app_tag_instances)),
 		'tags': tags,
 		'ordered_tags': ordered_tags,
-		'go_back_to': 'Wall of Apps',
 	}
 	return html_response('wall_of_apps.html', c, request)
 
@@ -177,9 +174,8 @@ def apps_with_tag(request, tag_name):
 	c = {
 		'tag': tag,
 		'apps': apps,
-		'releases':releases,
-		'selected_tag_name': tag_name,
-		'go_back_to': '&ldquo;%s&rdquo; category' % tag.fullname,
+		'releases': releases,
+		'selected_tag_name': tag_name
 	}
 	return html_response('apps_with_tag.html', c, request, processors=(_nav_panel_context,))
 
@@ -200,10 +196,7 @@ def apps_with_author(request, author_name):
 	c = {
 		'author_name': author_name,
 		'apps': apps,
-		'releases': releases,
-		'go_back_to': '%s\'s author page' % author_name,
-		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
-		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
+		'releases': releases
 	}
 	return html_response('apps_with_author.html', c, request, processors=(_nav_panel_context,))
 
@@ -244,35 +237,34 @@ def _app_ratings_delete_all(app, user, post):
 		release.stars =0
 		release.save()
 
+
 def _installed_count(app, user, post, release):
-        """
-        :param app: Current App
-        :param user: Current User (Not Required by the Function but required by the model)
-        :param post: Dictionary containing Action and Status Keys
-        :return: True (Dummy Response | Can be change if another use case)
-        """
-        state = post.get('status')
-        if state == "Installed":
-                ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
-                ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count = F('count')+1)
-        return json_response('True')
+	"""
+	:param app: Current App
+	:param user: Current User (Not Required by the Function but required by the model)
+	:param post: Dictionary containing Action and Status Keys
+	:return: True (Dummy Response | Can be change if another use case)
+	"""
+	state = post.get('status')
+	if state == "Installed":
+		ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
+		ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count = F('count')+1)
+	return json_response('True')
 
 # -- General app stuff
+
 
 def _mk_app_page(app, released_apps, user, request, decoded_details, download_count):
 	c = {
 		'app': app,
 		'released_apps': released_apps,
 		'decoded_details': decoded_details,
-		'download_count':download_count,
+		'download_count': download_count,
 		'latest_released': released_apps[0],
 		'is_logged_in': (user != None),
 		'is_editor': app.is_editor(user),
-		'go_back_to_title': _unescape_and_unquote(request.COOKIES.get('go_back_to_title')),
-		'go_back_to_url': _unescape_and_unquote(request.COOKIES.get('go_back_to_url')),
-		'go_back_to': request.COOKIES.get('go_back_to'),
 		'search_query': '',
-		'repository_url':get_host_url(request) + '/obr/releases',
+		'repository_url': get_host_url(request) + '/obr/releases',
 	}
 	return html_response('app_page.html', c, request)
 
@@ -340,10 +332,6 @@ def app_page(request, app_name):
 				return json_response(result)
 	return _mk_app_page(app, released_apps, user, request, decoded_details, download_count)
 
-def get_latest_release(app):
-	latest_release = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
-
-
 # ============================================
 #      App Page Editing
 # ============================================
@@ -362,6 +350,7 @@ def institution_names(app, request):
 
 
 isoDateRe = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
+
 
 def _parse_iso_date(string):
 	matches = isoDateRe.match(string)
@@ -541,7 +530,7 @@ def _save_release_notes(app, request, release):
 			raise ValueError('release_id "%s" is invalid' % release_id)
 		notes_key = 'notes_' + str(i)
 		notes = request.POST.get(notes_key)
-		if notes == None:
+		if notes is None:
 			raise ValueError('expected ' + notes_key)
 		release.notes = notes
 		release.save()
