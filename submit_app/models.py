@@ -10,13 +10,9 @@ from django.dispatch import receiver
 from apps.models import App, Release
 from util.view_util import get_object_or_none
 
-try:
-    from conf.emails import EMAIL_ADDR
-except ImportError:
-    from conf.mock import EMAIL_ADDR
-
 
 def pending_file_path(release, filename):
+    # Upload_to method returns the object and the filename
     return pathjoin('pending_releases', release.Bundle_SymbolicName + '-' +
                     release.Bundle_Version + '.jar')
 
@@ -36,7 +32,6 @@ class AppPending(models.Model):
     submitter_approved  = models.BooleanField(default=False)
     uploader_ip         = models.GenericIPAddressField(null=True)
 
-
     def __str__(self):
         return self.Bundle_Name
 
@@ -47,7 +42,7 @@ class AppPending(models.Model):
 
     @property
     def is_new_app(self):
-        return get_object_or_none(App, Bundle_SymbolicName = self.Bundle_SymbolicName) == None
+        return get_object_or_none(App, Bundle_SymbolicName = self.Bundle_SymbolicName) is None
 
     class Meta:
         ordering = ['created']
@@ -85,6 +80,7 @@ class AppPending(models.Model):
 
     def delete_files(self):
         self.release_file.delete()
+
 
 @receiver(models.signals.pre_delete, sender=AppPending)
 def delete_file(sender, instance, *args, **kwargs):

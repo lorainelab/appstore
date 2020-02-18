@@ -1,6 +1,7 @@
 from apps.models import VersionRE
 from collections import defaultdict
 
+'''
 # This file contains functions for parsing manifest files.
 
 # Parses a manifest file into a dictionary.
@@ -27,6 +28,7 @@ from collections import defaultdict
 #  manifest_lines: an iterable of the lines in the manifest file
 # Returns:
 #  a dictionary representing the contents of of the manifest file.
+'''
 def parse_manifest(manifest_lines):
     keys = list()
     vals = list()
@@ -42,14 +44,14 @@ def parse_manifest(manifest_lines):
             vals.append(val.strip())
     return _multival_dict(zip(keys, vals))
 
+
 def _multival_dict(keysAndVals):
     d = defaultdict(list)
     for k, v in keysAndVals:
         d[k].append(v)
     return dict(d)
 
-# ---------------------------------------------------
-
+'''
 # This section of code deals with parsing the Import-Package manifest entry
 # that has a particular syntax. Here's what Import-Package might look like:
 #   a.b.c,d.e.f;resolution:=False,h.i.j;version=1.2.3.beta,l.m.n;version="(1.2,3]"
@@ -75,6 +77,7 @@ def _multival_dict(keysAndVals):
 #  returns the index of the character, or the string's length
 #  if the character could not be found--this unusual
 #  behavior fits well with array slices
+'''
 def _index_of_char(string, c):
     i = 0
     strlen = len(string)
@@ -90,23 +93,28 @@ def _index_of_char(string, c):
             i += 1
     return i
 
+
 def _is_dblquote(string, i):
     return string[i] == '"' and string[i - 1] != '\\'
+
 
 def _split_by_pkg(s):
     return _split_by_char(s, ',')
 
+'''
 # Takes a string and splits it by a given char. This will not split the string
 # by the char if it's enclosed in double quotes.
 # Arguments:
 #  s: the string holding the entire "Import-Package" value.
 #  c: the character to split it by
+'''
 def _split_by_char(s, c):
     while s:
         next_index = _index_of_char(s, c)
         yield s[:next_index]
         s = s[next_index + 1:]
 
+'''
 # Takes a single package string, as returned by _split_by_pkg,
 # and returns the package name and a dictionary of all the attributes
 # of that package string.
@@ -116,6 +124,7 @@ def _split_by_char(s, c):
 #  s: a single package string, as returned by _split_by_pkg
 # Returns:
 #  (pkg-name, pkg-attrs), pkg-attrs is an empty dict if there are no attributes
+'''
 def _extract_pkg_and_attrs(s):
     s = s.strip()
     start_index = _index_of_char(s, ';') + 1
@@ -126,10 +135,12 @@ def _extract_pkg_and_attrs(s):
     else:
         return (s, dict())
 
+'''
 # Takes a string with this format:
 #  key1=val1;key2=val2
 # and returns this:
 #  ('key1', 'val1'), ('key2', 'val2')
+'''
 def _extract_attrs(s):
     while s:
         next_index = _index_of_char(s, ';')
@@ -137,26 +148,31 @@ def _extract_attrs(s):
         yield (name, val)
         s = s[next_index + 1:]
 
+'''
 # A convenience method for parsing a version string into a tuple.
 # It takes the following strings and returns:
 #  '3.0.0.beta' => ('3', '0', '0', 'beta')
 #  '3.0'        => ('3', '0', None, None)
 #  '3'          => ('3', None, None, None)
 #  'blah'       => None
+'''
 def _parse_version(s):
     matched = VersionRE.match(s)
     if not matched:
         return None
     return matched.groups()
 
+'''
 # Given a string representing either a version ('3.0') or a version range ('(3.0,4]'),
 # returns lower version of the range, or just the parsed version itself.
+'''
 def _lower_version(s):
     if ',' in s:
         return _parse_version_range(s)[1]
     else:
         return _parse_version(s)
 
+'''
 # Parses a version range.
 # Arguments:
 #  s: a version range string
@@ -164,6 +180,7 @@ def _lower_version(s):
 #  (start-range, start-version, end-version, end-range)
 # Example:
 #  '(3.0,4]' => ('(', ('3', '0', None, None), ('4', None, None, None), ']')
+'''
 def _parse_version_range(s):
     no_quotes = s[1:-1]
     (start, _, end) = no_quotes.partition(',')
@@ -184,26 +201,29 @@ def _parse_version_range(s):
 
     return (start_range, start_ver, end_ver, end_range)
 
+'''
 # Given a string containing the 'Import-Package' value,
 # returns a generator containing all the versions of
 # packages whose names begin with 'com.affymetrix'.
+'''
 def _lower_igb_pkg_versions(s):
     for (pkgname, attrs) in map(_extract_pkg_and_attrs, _split_by_pkg(s)):
         if not 'version' in attrs or not pkgname.startswith('com.affymetrix'):
             continue
         yield _lower_version(attrs['version'])
 
+'''
 # Given a string containing the 'Import-Package' value,
 # returns the maximum version across all the lower
 # versions of 'org.igb.*' packages.
 # Returns None if there are no IGB packages.
+'''
 def max_of_lower_igb_pkg_versions(s):
     try:
         return max(_lower_igb_pkg_versions(s))
     except ValueError:
         return None
 
-# ---------------------------------------------------
 
 def parse_app_dependencies(s):
     for dependency in _split_by_pkg(s):

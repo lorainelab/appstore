@@ -156,7 +156,7 @@ DATABASES = {
 
 #EMAIL
 # used for the from: field in emails
-CONTACT_EMAILS = config('CONTACT_EMAILS', cast=Csv(),default="XXXX")
+CONTACT_EMAILS = config('CONTACT_EMAILS', cast=Csv(), default="XXXX")
 EMAIL_USE_TLS       = True
 EMAIL_HOST          = 'smtp.gmail.com'
 EMAIL_HOST_USER     = config('EMAIL_HOST_USER',default="XXXX")

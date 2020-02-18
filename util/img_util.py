@@ -4,6 +4,8 @@ try:
     from BytesIO import BytesIO
 except ImportError:
     from io import BytesIO
+
+
 def scale_img(f, name, max_px, dim):
     try:
         img = Image.open(f, 'r')

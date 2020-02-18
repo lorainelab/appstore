@@ -218,6 +218,7 @@ class Screenshot(models.Model):
     def __unicode__(self):
         return '%s - %d' % (self.app.Bundle_Name, self.id)
 
+
 @receiver(models.signals.pre_delete, sender=Release)
 def delete_file(sender, instance, *args, **kwargs):
     """ Deletes Release files on `post_delete` """
@@ -225,6 +226,7 @@ def delete_file(sender, instance, *args, **kwargs):
         instance.release_file.delete()
     if instance.logo:
         instance.logo.delete()
+
 
 class OrderedAuthor(models.Model):
     author       = models.ForeignKey(Author, on_delete=models.CASCADE)

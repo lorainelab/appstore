@@ -335,6 +335,5 @@ def pending_apps(request):
         _PendingAppsActions[action](pending_app, request)
         if request.is_ajax():
             return json_response(True)
-
     pending_apps = AppPending.objects.all().filter(submitter_approved=True)
     return html_response('pending_apps.html', {'pending_apps': pending_apps}, request)

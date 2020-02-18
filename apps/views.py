@@ -237,32 +237,34 @@ def _app_ratings_delete_all(app, user, post):
 		release.stars =0
 		release.save()
 
+
 def _installed_count(app, user, post, release):
-        """
-        :param app: Current App
-        :param user: Current User (Not Required by the Function but required by the model)
-        :param post: Dictionary containing Action and Status Keys
-        :return: True (Dummy Response | Can be change if another use case)
-        """
-        state = post.get('status')
-        if state == "Installed":
-                ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
-                ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count = F('count')+1)
-        return json_response('True')
+	"""
+	:param app: Current App
+	:param user: Current User (Not Required by the Function but required by the model)
+	:param post: Dictionary containing Action and Status Keys
+	:return: True (Dummy Response | Can be change if another use case)
+	"""
+	state = post.get('status')
+	if state == "Installed":
+		ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
+		ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count = F('count')+1)
+	return json_response('True')
 
 # -- General app stuff
+
 
 def _mk_app_page(app, released_apps, user, request, decoded_details, download_count):
 	c = {
 		'app': app,
 		'released_apps': released_apps,
 		'decoded_details': decoded_details,
-		'download_count':download_count,
+		'download_count': download_count,
 		'latest_released': released_apps[0],
 		'is_logged_in': (user != None),
 		'is_editor': app.is_editor(user),
 		'search_query': '',
-		'repository_url':get_host_url(request) + '/obr/releases',
+		'repository_url': get_host_url(request) + '/obr/releases',
 	}
 	return html_response('app_page.html', c, request)
 
@@ -330,10 +332,6 @@ def app_page(request, app_name):
 				return json_response(result)
 	return _mk_app_page(app, released_apps, user, request, decoded_details, download_count)
 
-def get_latest_release(app):
-	latest_release = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
-
-
 # ============================================
 #      App Page Editing
 # ============================================
@@ -352,6 +350,7 @@ def institution_names(app, request):
 
 
 isoDateRe = re.compile(r'(\d{4})-(\d{2})-(\d{2})')
+
 
 def _parse_iso_date(string):
 	matches = isoDateRe.match(string)
@@ -531,7 +530,7 @@ def _save_release_notes(app, request, release):
 			raise ValueError('release_id "%s" is invalid' % release_id)
 		notes_key = 'notes_' + str(i)
 		notes = request.POST.get(notes_key)
-		if notes == None:
+		if notes is None:
 			raise ValueError('expected ' + notes_key)
 		release.notes = notes
 		release.save()

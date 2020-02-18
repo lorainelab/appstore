@@ -14,8 +14,10 @@ def serve_file_pending(request):
     response.write(ET.tostring(data, encoding='unicode', method='xml'))
     return response
 
+
 def redirect_page(request):
     return html_response('redirect.html', {}, request)
+
 
 def serve_file_released(request):
     data = repogen.main('released')

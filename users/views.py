@@ -1,4 +1,3 @@
-from django.urls import reverse
 import logging
 
 from django.conf import settings
@@ -19,6 +18,7 @@ def login(request):
         return HttpResponseRedirect(next_url)
     return html_response('login.html', {'navbar_selected': 'signin', 'next_url': next_url}, request)
 
+
 logger = logging.getLogger(__name__)
 NAMESPACE = getattr(settings, setting_name('URL_NAMESPACE'), None) or 'social'
 
@@ -37,11 +37,11 @@ def login_done(request, backend, *args, **kwargs):
             logger.exception(e)
             return html_response('login.html', {'at_login': True, 'error': str(e)}, request)
 
+
 def logout(request):
     auth_logout(request)
     next_url = request.GET.get('next', reverse('default-page'))
     return HttpResponseRedirect(next_url)
-
 
 
 @csrf_exempt

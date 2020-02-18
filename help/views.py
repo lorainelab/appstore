@@ -29,14 +29,3 @@ def contact(request):
         c['message'] = message
     return html_response('contact.html', c, request)
 
-
-def getstarted(request):
-    return html_response('getstarted.html', {}, request)
-
-
-def getstarted_app_install(request):
-    return html_response('getstarted_app_install.html', {}, request)
-
-
-def md(request):
-    return html_response('md.html', {}, request)
