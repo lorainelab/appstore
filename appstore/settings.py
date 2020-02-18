@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'social_django',
     'apps.apps.AppsConfig',
-    'search.apps.SearchConfig',
     'submit_app.apps.SubmitAppConfig',
     'users.apps.UsersConfig',
     'help.apps.HelpConfig',
