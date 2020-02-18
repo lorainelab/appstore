@@ -20,21 +20,3 @@ class ReleaseDownloadsByDate(Model):
 
     def __unicode__(self):
         return unicode(self.release) + u' ' + unicode(self.when) + u': ' + unicode(self.count)
-
-
-class GeoLoc(Model):
-    country = CharField(max_length = 2) # when region & city are empty, country contains the total
-    region  = CharField(max_length = 2,  blank = True)
-    city    = CharField(max_length = 63, blank = True)
-
-    def __unicode__(self):
-        return self.country + u' ' + self.region + u' ' + self.city
-
-
-class AppDownloadsByGeoLoc(Model):
-    app    = ForeignKey(App, null = True, on_delete=models.CASCADE) # null app has total count across a given geoloc
-    geoloc = ForeignKey(GeoLoc, on_delete=models.CASCADE)
-    count  = PositiveIntegerField(default = 0)
-
-    def __unicode__(self):
-        return unicode(self.app) + u' ' + unicode(self.geoloc) + u': ' + unicode(self.count)
