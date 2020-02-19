@@ -1,7 +1,7 @@
 {% load app_buttons %}
 
 <div class="row no-gutters">
-    {% for app in apps %}
+    {% for app in releases %}
         {% if forloop.counter|divisibleby:2 %}
             <div class="col-md-6" id="right">
             {% app_button app forloop.counter releases %}

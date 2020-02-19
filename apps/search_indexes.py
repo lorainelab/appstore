@@ -1,18 +1,32 @@
 from haystack import indexes
-from apps.models import App
+from apps.models import Release
 
 
-class AppIndex(indexes.SearchIndex, indexes.Indexable):
+
+class ReleaseIndex(indexes.SearchIndex, indexes.Indexable):
     text = indexes.EdgeNgramField(document = True, use_template = True)
-    Bundle_Name = indexes.CharField(model_attr='Bundle_Name',null=True)
 
-    categories = indexes.MultiValueField(model_attr = 'categories', null=True)
+    Bundle_Description = indexes.CharField(model_attr='Bundle_Description', null=True)
 
-    stars = indexes.IntegerField(model_attr = 'stars',null = True)
+    authors = indexes.MultiValueField(model_attr='authors', null=True)
 
+    app = indexes.CharField(model_attr='app')
+
+    short_title = indexes.CharField(model_attr='short_title', null=True)
+
+    categories = indexes.MultiValueField()
+
+    Bundle_Name = indexes.CharField()
 
     def get_model(self):
-        return App
+        return Release
 
-    def prepare_tags(self, obj):
-        return [tag.id for tag in obj.categories.all()]
+    def prepare_authors(self, obj):
+        return [author.id for author in obj.authors.all()]
+
+    def prepare_app(self, obj):
+        return obj.app
+
+    def prepare_categories(self, obj):
+        return [category.id for category in obj.app.categories.all()]
+

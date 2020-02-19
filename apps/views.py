@@ -10,7 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.db.models import F
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
-from django.shortcuts import get_object_or_404
+from django.shortcuts import get_object_or_404, render
 from django.utils.text import unescape_entities
 
 from apps.models import Category, App, Author, OrderedAuthor, Screenshot, Release
@@ -18,7 +18,7 @@ from download.models import ReleaseDownloadsByDate
 from util.id_util import fullname_to_name
 from util.img_util import scale_img
 from util.view_util import json_response, html_response, obj_to_dict, get_object_or_none
-
+from haystack.query import SearchQuerySet
 logger = logging.getLogger(__name__)
 
 
@@ -632,3 +632,22 @@ def app_page_edit(request, app_name):
 		'app_description_maxlength': _AppPageEditConfig.app_description_maxlength,
 	}
 	return html_response('app_page_edit.html', c, request)
+
+
+def custom_search_query(request):
+	"""
+	This function strips the double quotes around the string that is to be searched
+	and searches whatever fields are marked ``document=True``
+	:param request:
+	:return:
+	"""
+	query_string = request.GET.get('q', None).strip("\"")
+	sqs = SearchQuerySet().auto_query(query_string).load_all()
+	setsqs = set()
+	for release in sqs:
+		setsqs.add(release.object.app)
+	if len(setsqs) <= 0:
+		return render(request, 'search/search.html', {'object_list': setsqs, 'query_string': query_string})
+	else:
+		return render(request, 'search/search.html', {'object_list': setsqs})
+
