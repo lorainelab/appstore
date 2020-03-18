@@ -174,6 +174,7 @@ var AppPageEdit = (function($)
     }
 
     function add_tag(tag, animate) {
+        document.getElementById('tag-input').value = '';
         // if we already have the tag we're adding, delete it first
         tags_list_tag.find('.app-tag').each(function() {
             var current_tag_name = $(this).find('.app-tag-name').text();
@@ -901,5 +902,6 @@ var AppPageEdit = (function($)
         'setup_save_btn': setup_save_btn,
         '_SaveActions': SaveActions,
         '_SaveActionsToAjax': SaveActionsToAjax,
+        'tags_modified' : tags_modified
     };
 })($);
