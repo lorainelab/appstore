@@ -69,6 +69,10 @@
 	margin-bottom: 2em;
 }
 
+#tag-input {
+	width: 43%;
+	text-align: center;
+}
 
 #app-screenshots {
 	height: 170px;
