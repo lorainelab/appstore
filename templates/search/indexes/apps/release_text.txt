@@ -1,5 +1,12 @@
 {{ object.Bundle_Description }}
+{{ object.app }}
+{{ object.Bundle_Name }}
+{{ object.short_title }}
+{{ object.app.Bundle_Name }}
 {% for author in object.authors.all %}
 {{ author.name }}
 {{ author.institution }}
+{% endfor %}
+{% for category in object.app.categories.all %}
+{{ category.fullname }}
 {% endfor %}
