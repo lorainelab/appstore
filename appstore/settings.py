@@ -224,12 +224,6 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
-#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-STATIC_URL = '/static/'
-STATICFILES_DIRS = [
-   os.path.join(BASE_DIR, "static"),
-]
-
 MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 
@@ -249,3 +243,9 @@ APP_PENDING_CLEANUP_CRONSTRING=config('APP_PENDING_CLEANUP_CRONSTRING', default=
 # This field has value in hours. It will delete entries which are more than 5 hours old
 # from the time when cron executes.
 APP_PENDING_CLEANUP_TIME_OFFSET=config('APP_PENDING_CLEANUP_TIME_OFFSET', default=5)
+
+#STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+   os.path.join(BASE_DIR, "static"),
+]
