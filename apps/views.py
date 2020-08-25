@@ -140,31 +140,6 @@ def all_apps(request):
 	return html_response('all_apps.html', c, request, processors=(_nav_panel_context,))
 
 
-def wall_of_apps(request):
-	nav_panel_context = _nav_panel_context(request)
-	tags = {}
-	ordered_tags, app_tag_instances = [], []
-	for tag in nav_panel_context['top_tags']:
-		ordered_tags.append(tag.fullname)
-		tags[tag.fullname] = []
-		for app_query in tag.app_set.all():
-			tags[tag.fullname].append(Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version'))
-			app_tag_instances.append(app_query.Bundle_SymbolicName)
-				
-	tags['other'] = []
-	ordered_tags.append('other')
-	for not_top_tag in nav_panel_context['not_top_tags']:
-		for app_query in not_top_tag.app_set.all():
-			tags['other'].append(Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version'))
-			app_tag_instances.append(app_query.Bundle_SymbolicName)
-	c = {
-		'total_apps_count': len(set(app_tag_instances)),
-		'tags': tags,
-		'ordered_tags': ordered_tags,
-	}
-	return html_response('wall_of_apps.html', c, request)
-
-
 def apps_with_tag(request, tag_name):
 	tag = get_object_or_404(Category, name=tag_name)
 	apps = App.objects.filter(categories=tag).order_by('Bundle_Name')
