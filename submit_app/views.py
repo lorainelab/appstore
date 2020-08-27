@@ -43,7 +43,7 @@ def submit_app(request):
                 version_pattern = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
                 version_pattern = re.compile(version_pattern)
                 if not bool(version_pattern.match(jar_details['Bundle_Version'])):
-                    raise ValueError("Bundle-Version %s is incorrect. Please use semantic versioning. " 
+                    raise ValueError("Bundle-Version %s is incorrect. Please use semantic versioning. "
                                                                                         "See https://semver.org/." %jar_details['Bundle_Version'])
                 return HttpResponseRedirect(reverse('confirm-submission', args=[pending.id]))
             except ValueError as e:
@@ -86,7 +86,7 @@ def confirm_submission(request, id):
         context['error_msg'] = str("Sorry, this App is not longer in our system because too much time has passed since "
                                    "you first uploaded it. No problem! Please try again.")
         return html_response('upload_form.html', context, request)
-    
+
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
     pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, Bundle_Version=pending.Bundle_Version)
@@ -94,7 +94,7 @@ def confirm_submission(request, id):
     # IGBF-2026 start
     app_summary, is_app_submission_error = _app_summary(pending)
     if is_app_submission_error:
-        return html_response('error.html', {'pending': pending, 'app_summary': app_summary}, request)
+        return html_response('error_msg.html', {'pending': pending, 'app_summary': app_summary}, request)
     # IGBF-2026 end
     error_message = "Please note: We read your App's repository.xml file but could not determine the IGB version it requires. Not to worry! You can enter this information manually after the App is released." \
         if pending.works_with is None else None
