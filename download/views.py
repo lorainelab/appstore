@@ -65,7 +65,7 @@ def app_stats(request, app_name):
         'app': app,
         'total_download': total_download
     }
-    return html_response('app_stats.html', c, request)
+    return html_response('download/app_stats.html', c, request)
 
 
 def app_stats_timeline(request, app_name):

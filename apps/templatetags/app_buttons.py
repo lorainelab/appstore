@@ -4,7 +4,7 @@ from download.models import ReleaseDownloadsByDate
 register = template.Library()
 
 
-@register.inclusion_tag('app_button.html')
+@register.inclusion_tag('apps/app_button.html')
 def app_button(app, order_index, release):
     try:
         releases = Release.objects.filter(app=app)
@@ -32,7 +32,7 @@ def app_button(app, order_index, release):
         c['total_download'] = total_download
         return c
 
-@register.inclusion_tag('app_button.html')
+@register.inclusion_tag('apps/app_button.html')
 def app_button_by_name(app_name):
     try:
         app = App.objects.get(name = app_name)
@@ -46,13 +46,13 @@ def app_button_by_name(app_name):
         return c
 
 
-@register.inclusion_tag('app_buttons.html')
+@register.inclusion_tag('apps/app_buttons.html')
 def app_buttons(apps, releases):
     return {'apps': apps,
             'releases': releases}
 
 
-@register.inclusion_tag('list_of_apps_search.html')
+@register.inclusion_tag('apps/list_of_apps_search.html')
 def list_of_apps_search(apps, releases, include_relevancy = False):
     # a list of sort buttons to display
     if releases == "Temp":
@@ -73,7 +73,7 @@ def list_of_apps_search(apps, releases, include_relevancy = False):
             'sort_criteria': sort_criteria}
 
 
-@register.inclusion_tag('list_of_apps.html')
+@register.inclusion_tag('apps/list_of_apps.html')
 def list_of_apps(apps, releases, include_relevancy = False):
 
     # a list of sort buttons to display

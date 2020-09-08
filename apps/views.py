@@ -123,7 +123,7 @@ def apps_default(request):
 		'search_query': '',
 		'selected_tag_name': '',
 	}
-	return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
+	return html_response('apps/apps_default.html', c, request, processors=(_nav_panel_context,))
 
 
 def all_apps(request):
@@ -137,7 +137,7 @@ def all_apps(request):
 		'navbar_selected_link': 'all',
 		'releases': releases
 	}
-	return html_response('all_apps.html', c, request, processors=(_nav_panel_context,))
+	return html_response('apps/all_apps.html', c, request, processors=(_nav_panel_context,))
 
 
 def apps_with_tag(request, tag_name):
@@ -152,7 +152,7 @@ def apps_with_tag(request, tag_name):
 		'releases': releases,
 		'selected_tag_name': tag_name
 	}
-	return html_response('apps_with_tag.html', c, request, processors=(_nav_panel_context,))
+	return html_response('apps/apps_with_tag.html', c, request, processors=(_nav_panel_context,))
 
 
 def apps_with_author(request, author_name):
@@ -173,7 +173,7 @@ def apps_with_author(request, author_name):
 		'apps': apps,
 		'releases': releases
 	}
-	return html_response('apps_with_author.html', c, request, processors=(_nav_panel_context,))
+	return html_response('apps/apps_with_author.html', c, request, processors=(_nav_panel_context,))
 
 
 
@@ -241,7 +241,7 @@ def _mk_app_page(app, released_apps, user, request, decoded_details, download_co
 		'search_query': '',
 		'repository_url': get_host_url(request) + '/obr/releases',
 	}
-	return html_response('app_page.html', c, request)
+	return html_response('apps/app_page.html', c, request)
 
 
 _AppActions = {
@@ -606,7 +606,7 @@ def app_page_edit(request, app_name):
 		'thumbnail_height_px': _AppPageEditConfig.thumbnail_height_px,
 		'app_description_maxlength': _AppPageEditConfig.app_description_maxlength,
 	}
-	return html_response('app_page_edit.html', c, request)
+	return html_response('apps/app_page_edit.html', c, request)
 
 
 def custom_search_query(request):
@@ -625,4 +625,3 @@ def custom_search_query(request):
 		return render(request, 'search/search.html', {'object_list': setsqs, 'query_string': query_string})
 	else:
 		return render(request, 'search/search.html', {'object_list': setsqs})
-
