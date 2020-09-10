@@ -52,7 +52,7 @@ def submit_app(request):
         expect_app_name = request.GET.get('expect_app_name')
         if expect_app_name:
             context['expect_app_name'] = expect_app_name
-    return html_response('upload_form.html', context, request)
+    return html_response('submit_app/upload_form.html', context, request)
 
 
 def _user_cancelled(request, pending):
@@ -69,14 +69,14 @@ def _user_accepted(request, pending):
         release = pending.make_release(app)
         pending.delete_files()
         pending.delete()
-        return html_response('update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
+        return html_response('submit_app/update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
                                                   'Bundle_Name': app.Bundle_Name,
                                                   'Bundle_Version': release.Bundle_Version}, request)
         #return HttpResponseRedirect(reverse('app_page_edit', args=[app.Bundle_SymbolicName]) + '?upload_release=true') # For Future Reference
     else:
         pending.submitter_approved = True
         pending.save()
-        return html_response('submit_done.html', {'app_name': pending.Bundle_Name}, request)
+        return html_response('submit_app/submit_done.html', {'app_name': pending.Bundle_Name}, request)
 
 
 def confirm_submission(request, id):
@@ -85,7 +85,7 @@ def confirm_submission(request, id):
     if pending is None:
         context['error_msg'] = str("Sorry, this App is not longer in our system because too much time has passed since "
                                    "you first uploaded it. No problem! Please try again.")
-        return html_response('upload_form.html', context, request)
+        return html_response('submit_app/upload_form.html', context, request)
 
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
@@ -94,7 +94,7 @@ def confirm_submission(request, id):
     # IGBF-2026 start
     app_summary, is_app_submission_error = _app_summary(pending)
     if is_app_submission_error:
-        return html_response('error_msg.html', {'pending': pending, 'app_summary': app_summary}, request)
+        return html_response('submit_app/error_msg.html', {'pending': pending, 'app_summary': app_summary}, request)
     # IGBF-2026 end
     error_message = "Please note: We read your App's repository.xml file but could not determine the IGB version it requires. Not to worry! You can enter this information manually after the App is released." \
         if pending.works_with is None else None
@@ -110,7 +110,7 @@ def confirm_submission(request, id):
             _send_email_for_pending(server_url, latest_pending_obj_)
             _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
-    return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary, 'info_msg': error_message}, request)
+    return html_response('submit_app/confirm.html',{'pending': pending, 'app_summary': app_summary, 'info_msg': error_message}, request)
 
 
 # Get the Current Directory Path to Temporarily store the Zip File
@@ -336,4 +336,4 @@ def pending_apps(request):
         if request.is_ajax():
             return json_response(True)
     pending_apps = AppPending.objects.all().filter(submitter_approved=True)
-    return html_response('pending_apps.html', {'pending_apps': pending_apps}, request)
+    return html_response('submit_app/pending_apps.html', {'pending_apps': pending_apps}, request)
