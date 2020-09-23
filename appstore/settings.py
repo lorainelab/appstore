@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'social_django',
     'apps.apps.AppsConfig',
     'submit_app.apps.SubmitAppConfig',
+    'curated_categories.apps.CuratedCategoriesConfig',
     'users.apps.UsersConfig',
     'help.apps.HelpConfig',
     'backend.apps.BackendConfig',
