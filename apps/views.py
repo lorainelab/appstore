@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404, render
 from django.utils.text import unescape_entities
 
 from apps.models import Category, App, Author, OrderedAuthor, Screenshot, Release
+from curated_categories.models import CuratedCategory, CuratedCategoriesMapping
 from download.models import ReleaseDownloadsByDate
 from util.id_util import fullname_to_name
 from util.img_util import scale_img
@@ -141,13 +142,33 @@ def all_apps(request):
 
 
 def apps_with_tag(request, tag_name):
-	tag = get_object_or_404(Category, name=tag_name)
-	apps = App.objects.filter(categories=tag).order_by('Bundle_Name')
+	apps = []
 	releases = dict()
-	for app_query in apps:
-		releases[app_query] = Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
+	tag = None
+	curated_cat = None
+	try:
+		tag = Category.objects.get(name=tag_name)
+		apps = App.objects.filter(categories=tag).order_by('Bundle_Name')
+		for app_query in apps:
+			releases[app_query] = Release.objects.filter(active=True, app=app_query).extra(
+				select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by(
+				'-natural_version')[:1][0]
+	except Category.DoesNotExist:
+		pass
+
+	try:
+		curated_cat = CuratedCategory.objects.get(curated_category=tag_name)
+		apps = CuratedCategoriesMapping.objects.filter(curated_categories=curated_cat)
+		for app_query in apps:
+			releases[app_query.app] = Release.objects.filter(active=True, app=app_query.app).extra(
+				select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by(
+				'-natural_version')[:1][0]
+	except CuratedCategoriesMapping.DoesNotExist:
+		pass
+
 	c = {
 		'tag': tag,
+		'curated_cat': curated_cat,
 		'apps': apps,
 		'releases': releases,
 		'selected_tag_name': tag_name
@@ -182,6 +203,7 @@ def apps_with_author(request, author_name):
 # ============================================
 
 # -- App Rating
+
 
 def _app_rate(app, user, post, latest_release):
 	rating_n = post.get('rating')
@@ -229,7 +251,7 @@ def _installed_count(app, user, post, release):
 # -- General app stuff
 
 
-def _mk_app_page(app, released_apps, user, request, decoded_details, download_count):
+def _mk_app_page(app, released_apps, user, request, decoded_details, download_count, curated_category_mapping):
 	c = {
 		'app': app,
 		'released_apps': released_apps,
@@ -240,6 +262,7 @@ def _mk_app_page(app, released_apps, user, request, decoded_details, download_co
 		'is_editor': app.is_editor(user),
 		'search_query': '',
 		'repository_url': get_host_url(request) + '/obr/releases',
+		'curated_category_mapping': curated_category_mapping
 	}
 	return html_response('apps/app_page.html', c, request)
 
@@ -279,6 +302,7 @@ def install_app(request, path):
 
 def app_page(request, app_name):
 	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
+	curated_category_mapping = get_object_or_none(CuratedCategoriesMapping, app=app)
 	released_apps = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
 	latest_release = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
 	decoded_details = latest_release.Bundle_Description
@@ -305,7 +329,7 @@ def app_page(request, app_name):
 				return result
 			if request.is_ajax():
 				return json_response(result)
-	return _mk_app_page(app, released_apps, user, request, decoded_details, download_count)
+	return _mk_app_page(app, released_apps, user, request, decoded_details, download_count, curated_category_mapping)
 
 # ============================================
 #      App Page Editing
@@ -376,6 +400,31 @@ def _save_tags(app, request, release):
 	for tag in tags:
 		tag_obj, _ = Category.objects.get_or_create(fullname=tag, name=fullname_to_name(tag))
 		app.categories.add(tag_obj)
+
+	_flush_tag_caches()
+
+
+def _save_curated_categories(app, request, release):
+	tag_count = request.POST.get('count')
+	if not tag_count:
+		raise ValueError('no tag_count specified')
+	try:
+		tag_count = int(tag_count)
+	except ValueError:
+		raise ValueError('tag_count is not an integer')
+
+	tags = []
+	for i in range(tag_count):
+		tag_key = 'cat_' + str(i)
+		tag = request.POST.get(tag_key)
+		if not tag:
+			raise ValueError('expected ' + tag_key)
+		tags.append(tag)
+	app_mapping, _ = CuratedCategoriesMapping.objects.get_or_create(app=app)
+	app_mapping.curated_categories.clear()
+	for tag in tags:
+		tag_obj = CuratedCategory.objects.get(curated_category=tag)
+		app_mapping.curated_categories.add(tag_obj)
 
 	_flush_tag_caches()
 
@@ -545,6 +594,7 @@ _AppEditActions = {
 	'save_contact_email': _mk_basic_field_saver('contact_email'),
 	'save_bundle_description': _mk_basic_field_saver('Bundle_Description'),
 	'save_tags': _save_tags,
+	'save_curated_categories': _save_curated_categories,
 	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
 	'delete_screenshot': _delete_screenshot,
@@ -596,11 +646,22 @@ def app_page_edit(request, app_name):
 			return json_response(result)
 
 	all_tags = [tag.fullname for tag in Category.objects.all()]
+
+	# -- IGBF-2520 -- START --
+	curated_cat = {}
+	for category_obj in CuratedCategory.objects.all():
+		if category_obj.curated_category_type in curated_cat.keys():
+			curated_cat[category_obj.curated_category_type].append(category_obj.curated_category)
+		else:
+			curated_cat[category_obj.curated_category_type] = [category_obj.curated_category]
+	# -- IGBF-2520 -- END --
+
 	c = {
 		'app': app,
-		'latest_released':latest_released,
-		'released_apps':released_apps,
+		'latest_released': latest_released,
+		'released_apps': released_apps,
 		'all_tags': all_tags,
+		'curated_cat': curated_cat,
 		'max_file_img_size_b': _AppPageEditConfig.max_img_size_b,
 		'max_icon_dim_px': _AppPageEditConfig.max_icon_dim_px,
 		'thumbnail_height_px': _AppPageEditConfig.thumbnail_height_px,
