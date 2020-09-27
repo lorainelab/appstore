@@ -54,7 +54,7 @@
                     Enter Link&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="url_val" name = "url_val" size="50">
                     &nbsp;<i id="delete_path_btn" class="fa fa-trash-o trash"></i>
                     <br />
-                    <i class="text-muted custom-text">Best for bitbucket pipeline users. <a href="#" id="doc_link"><u>Learn more</u></a></i>
+                    <i class="text-muted custom-text">Best for bitbucket pipeline users. <a href="{% url 'compile-app-with-pipeline' %}"><u>Learn more</u></a></i>
                 </div>
             </div>
             <br />
@@ -69,15 +69,9 @@
 </div>
 <br />
 <script type="text/javascript">
-    var message = "IGB Apps are OSGi bundles, which are ordinary Java jar files with some extra meta-data that enables them to run within IGB’s OSGi run-time. An IGB App also needs an OBR index file named repository.xml. See <a href='" + getDocLink() + "'> developer’s documentation.</a>";
+    var message = "IGB Apps are OSGi bundles, which are ordinary Java jar files with some extra meta-data that enables them to run within IGB’s OSGi run-time. An IGB App also needs an OBR index file named repository.xml. See <a href='" + "{% url 'compile-app-with-pipeline' %}" + "'> developer’s documentation.</a>";
 
     document.getElementById("tooltip-1").title= message
-
-    let learn_more_dom = document.getElementById("doc_link");
-    learn_more_dom.onclick = function() {
-        learn_more_dom.href= getDocLink();
-        learn_more_dom.setAttribute('target', '_blank')
-    };
 
     $(function() {
         $('form').submit(function() {
