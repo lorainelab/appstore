@@ -56,14 +56,38 @@
         <!-- Tab panes -->
         <div class="tab-content">
             <div class="tab-pane active" id="app-info" role="tabpanel" aria-labelledby="app-info-tab">
+                {# Curate Categories #}
+                <br />
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6 class="muted">CURATED CATEGORIES</h6>
+                        <hr />
+                        <div class="input-group">
+                            <select  name="curated_category" id="curated_category">
+                                {% for cat, subcat in curated_cat.items %}
+                                <optgroup label="{{ cat }}">
+                                    {% for sub in subcat %}
+                                    <option id="cur-cat" value="{{ sub }}">{{ sub }}</option>
+                                    {% endfor %}
+                                </optgroup>
+                                {% endfor %}
+                            </select>
+                            <span class="input-group-btn"><button type="button"  id="cur-cat-add-btn" class="btn btn-light" >
+                                <i class="fa fa-plus"></i> Add Category</button></span>
+                        </div>
+                    </div>
+                    <div class="col-md-9" id="app-cur-cat-list"></div>
+                </div>
+                {# End CuratedCategories #}
+
+                <br />
+                <hr />
                 {# Categories #}
-{#                {% if app.categories.all %}#}
                 <br />
                 <div class="row">
                     <div class="col-md-12">
                         <h6 class="muted">CATEGORIES</h6>
                         <hr />
-                        <div class="col-md-9" id="app-tags-list"></div>
                         <div class="input-group">
                             <input type="text" list="categoryList" id="tag-input" placeholder="Enter the app category" >
                             <datalist  id ="categoryList"></datalist>
@@ -71,8 +95,9 @@
                            <i class="fa fa-plus"></i> Add Category</button></span>
                         </div>
                     </div>
+
+                    <div class="col-md-9" id="app-tags-list"></div>
                 </div>
-{#                {% endif %}#}
                 {# End Categories #}
 
                 <br />
@@ -373,7 +398,7 @@
             })
         });
         var add_field = $('#tag-input');
-       $('#app-tag-add-btn').click(function() {
+        $('#app-tag-add-btn').click(function() {
             if ($(this).hasClass('disabled'))
                 return;
             if(add_field.val().length <= 1){
@@ -383,13 +408,27 @@
                 AppPageEdit.add_tag(add_field.val(), true);
                 AppPageEdit.tags_modified()
             }
-
         });
+
+        var curated_category_field = $('#curated_category');
+        $('#cur-cat-add-btn').click(function() {
+            console.log("Adding Curated Cat " + curated_category_field.val())
+            if ($(this).hasClass('disabled'))
+                return;
+            if(curated_category_field.val().length <= 1){
+                Msgs.add_msg('Whoops!Category Name should be more than one character', 'danger', 'category');
+                return;
+            } else {
+                AppPageEdit.add_curated_categories(curated_category_field.val(), true);
+                AppPageEdit.curated_cat_modified()
+            }
+        });
+
         AppPageEdit.set_max_file_img_size({{ max_file_img_size_b }});
         AppPageEdit.setup_text_fields();
         AppPageEdit.setup_icon_selection({{ max_icon_dim_px }});
 
-     //   AppPageEdit.setup_add_tag_btn();
+        //   AppPageEdit.setup_add_tag_btn();
         {% if app.categories %}
             {% for tag in app.categories.all %}
                 AppPageEdit.add_tag('{{ tag.fullname|escapejs}}', false);

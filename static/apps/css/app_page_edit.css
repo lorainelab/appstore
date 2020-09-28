@@ -74,6 +74,19 @@
 	text-align: center;
 }
 
+#app-tags-list {
+    margin-top: 1%;
+}
+
+#app-cur-cat-list {
+    margin-top: 1%
+}
+
+#curated_category {
+	width: 43%;
+	text-align: center;
+}
+
 #app-screenshots {
 	height: 170px;
 	overflow-x: auto;
