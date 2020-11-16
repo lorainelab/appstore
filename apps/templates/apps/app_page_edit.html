@@ -19,27 +19,26 @@
 
 {% block content %}
 {# app header #}
-<div class="row">
-    <div class="col-md-9">
-        {# App Name and Icon #}
-        <div class="row">
-            <div class="col-md-2">
-                <img class="appimg" id="app-icon" src="{{ latest_released.logo_url }}" data-toggle="tooltip" title="Click here to choose another logo">
-            </div>
-            <div class="col-md-10">
-                {# App Name and description #}
-                <h2 class="app-name-edit" data-toggle="tooltip" title="Your app name cannot be changed">
-                    {{ app.Bundle_Name }}
-                </h2>
-                <input class="form-control" type="text" id="app-description" placeholder="Enter a short description of your app here"
-                       value="{% if latest_released.short_title %}{{ latest_released.short_title|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}" />
-            </div>
-    {# End app header #}
+<div class="col-md-9">
+    {# App Name and Icon #}
+    <div class="row">
+        <div class="col-md-2">
+            <img class="appimg" id="app-icon" src="{{ latest_released.logo_url }}" data-toggle="tooltip" title="Click here to choose another logo">
         </div>
+        <div class="col-md-10">
+            {# App Name and description #}
+            <h2 class="app-name-edit" data-toggle="tooltip" title="Your app name cannot be changed">
+                {{ app.Bundle_Name }}
+            </h2>
+            <input class="form-control" type="text" id="app-description" placeholder="Enter a short description of your app here"
+                   value="{% if latest_released.short_title %}{{ latest_released.short_title|escape }}{% endif %}" maxlength="{{ app_description_maxlength }}" />
+        </div>
+    {# End app header #}
     </div>
-    <div class="col-md-3">
+</div>
+<div class="col-md-3">
     {# end app header #}
-    </div>
+</div>
 </div>
 <div class="row">
     {# tabs #}
@@ -434,6 +433,12 @@
                 AppPageEdit.add_tag('{{ tag.fullname|escapejs}}', false);
             {% endfor %}
         {% endif %}
+
+        {% if curated_cat %}
+            {% for tag in mapped_cc %}
+                AppPageEdit.add_curated_categories('{{ tag.curated_category }}', false);
+            {% endfor %}
+        {%endif%}
 
         AppPageEdit.setup_screenshot_btns({{ thumbnail_height_px }});
         {% if latest_released.screenshot_set.all %}

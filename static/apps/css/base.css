@@ -1,20 +1,61 @@
-html {
-    font-size: 16px;
-    position: relative;
+body {
+    font-family: 'Inter', sans-serif!important;
+    font-weight: normal;
+    font-style: normal;
 }
 
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
+@media (min-width: 700px) {
+    .container{
+        max-width: 95%;
+
+    }
+    .app-tile-col {
+        max-width: 100%;
     }
 }
 
-@media (min-width: 1200px) {
-    .container {
-        width: 1000px;
+@media (min-width: 901px) {
+    .container{
+        max-width: 95%;
+    }
+    .app-tile-col {
+        max-width: 33.33%;
     }
 }
 
+@media (min-width: 1600px) {
+    .container{
+        max-width: 65%;
+    }
+    .app-tile-col {
+        max-width: 33.33%;
+    }
+}
+
+.sub-header {
+    font-style: italic;
+}
+
+.orange {
+     border-top: 1px solid orange;
+}
+
+.submit-app {
+    width: 50%;
+    font-size: 20px;
+}
+
+.login {
+    font-size: 30px;
+}
+
+
+
+/*
+
+Old CSS
+
+*/
 .go-back {
     display:block;
 }

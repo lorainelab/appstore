@@ -2,22 +2,11 @@
 {% load app_buttons %}
 
 {% block main %}
-<div class="row">
-    <div class="col-lg-8 indent-left ">
-        <h2 style="color: black;">
-            <a style="text-decoration: none; color: black;" href="{% url 'all_apps'%}#downloads">Apps for IGB</a>
-        </h2>
-    </div>
-    <div class="col-lg-4 indent-right">
-        <a href="{% url 'submit-app' %}" class="btn btn-success submit-app pull-right" role="button" aria-disabled="true" style="margin-top:5px;">
-            <strong>Submit your App »</strong>
-        </a>
-    </div>
-</div>
 
-<div class="row zero-margin">
-    <div class="col-lg-12" style="margin-top:10px;">
+<div class="row">
+    <div class="col-lg-12">
         {% app_buttons downloaded_apps_pg releases %}
     </div>
 </div>
+
 {% endblock %}

@@ -1,77 +1,34 @@
 {% load static %}
+{% load title_modified %}
 <div class="box-part app_button"
         order_index="{{ order_index }}"
         Bundle_Name="{{ app.Bundle_Name }}"
         downloads="{{ total_download }}"
         created="{{ release.created_iso|date:'j M, H:i:s' }}"
+        curated_category="{{ curated_categories }}"
         onClick="window.location='{% url 'app_page' app.Bundle_SymbolicName %}';">
     <div class="row">
-        <div class="col-md-3">
-            <img src="{{ release.logo_url }}" class="custom-img">
+        <div class="col-md-12 mt-2 mb-3 ml-2">
+            <span class="tile-legend"> <i class="fa fa-user"></i> {{ curated_categories|title_modified }} </span>
         </div>
-        <div class="col-md-9">
-            <div class="row">
-                <div class="col-md-12">
-                    <!-- data-toggle="tooltip" data-title="{{ app.Bundle_Name }}" -->
-                    <h5 class="app-button-title">{{ app.Bundle_Name | truncatechars:40 }}</h5>
-                </div>
+        <div class="col-md-12">
+            <span class="true-divide">
+                <img src="{{ release.logo_url }}" class="custom-img">
+            </span>
+            <span class="right-divide">
+                <h5 class="app-button-title ml-3">{{ app.Bundle_Name | truncatechars:40 }}</h5>
+                {% if release.authors.all|get_authors != '' %}
+                    <span class="authored ml-3"> by {{ release.authors.all|get_authors }}</span>
+                {% endif %}
                 {% if release.short_title %}
-                <div class="col-md-12 desc-spaced">
-                    <span class="desc-box small-visible">{{ release.short_title }}</span>
-                    <span class="desc-box long-visible">{{ release.short_title }}</span>
+                <div class="desc-spaced">
+                    <p class="desc-box ml-3 mt-2">{{ release.short_title }}</p>
                 </div>
                 {% endif %}
                 {% if not release.short_title %}
-                    <span class="desc-box small-visible" style="visibility: hidden;">No Description</span>
-                    <span class="desc-box long-visible" style="visibility: hidden;">No Description</span>
+                    <h6 class="desc-box small-visible" style="visibility: hidden;">No Description</h6>
                 {% endif %}
-                 <div class="col-md-12">
-                    <div class="rating-stars stars" data-placement="bottom">
-                        {% if app.stars_percentage == 0 %}
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        {% endif %}
-                        {% if app.stars_percentage > 0 and app.stars_percentage < 20 %}
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        {% endif %}
-                        {% if app.stars_percentage >= 20 and app.stars_percentage < 40 %}
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        {% endif %}
-                        {% if app.stars_percentage >= 40 and app.stars_percentage < 60 %}
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star-o"></i>
-                        <i class="fa fa-star-o"></i>
-                        {% endif %}
-                        {% if app.stars_percentage >= 60 and app.stars_percentage < 80 %}
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star-o"></i>
-                        {% endif %}
-                        {% if app.stars_percentage >= 80 %}
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        <i class="fa fa-star"></i>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
+            </span>
         </div>
     </div>
 </div>
