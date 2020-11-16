@@ -32,57 +32,30 @@ def _unescape_and_unquote(s):
 #      Nav Panel
 # ============================================
 
-class _NavPanelConfig:
-	min_tag_count = 0
-	num_of_top_tags = 20
-	tag_cloud_max_font_size_em = 2.0
-	tag_cloud_min_font_size_em = 1.0
-	tag_cloud_delta_font_size_em = tag_cloud_max_font_size_em - tag_cloud_min_font_size_em
-
-
-def _all_tags_of_count(min_count):
-	return filter(lambda tag: tag.count > min_count, Category.objects.all())
-
-
 _NavPanelContextCache = None
 
 
 def _nav_panel_context(request):
 	global _NavPanelContextCache
+
 	if _NavPanelContextCache:
 		return _NavPanelContextCache
-	all_tags = _all_tags_of_count(_NavPanelConfig.min_tag_count)
-	sorted_tags = sorted(all_tags, key=lambda tag: tag.count)
-	sorted_tags.reverse()
-	try:
-		tag = get_object_or_404(Category, name='collections')
-		idx = sorted_tags.index(tag)
-		sorted_tags.pop(idx)
-		sorted_tags.insert(0, tag)
-	except Http404:
-		idx = 0
-	if len(sorted_tags) > 0:
-		max_count = sorted_tags[0].count
-		min_count = sorted_tags[-1].count
-	else:
-		max_count, min_count = (0, 0)
-	count_delta = float(max_count - min_count)
-	top_tags = sorted_tags[:_NavPanelConfig.num_of_top_tags]
-	not_top_tags = sorted_tags[_NavPanelConfig.num_of_top_tags:]
 
-	for tag in all_tags:
-		try:
-			rel_count = (tag.count - min_count) / count_delta
-		except ZeroDivisionError:
-			rel_count = 1
-		font_size_em = rel_count * _NavPanelConfig.tag_cloud_delta_font_size_em + _NavPanelConfig.tag_cloud_min_font_size_em
-		tag.font_size_em = '%.2f' % font_size_em
+	all_curated_categories = {}
+
+	curated_categories = CuratedCategory.objects.all()
+	for categories in curated_categories:
+		if categories.curated_category_type in all_curated_categories:
+			all_curated_categories[categories.curated_category_type].append(categories)
+		else:
+			all_curated_categories[categories.curated_category_type] = [categories]
+
 	result = {
-		'all_tags': all_tags,
-		'top_tags': top_tags,
-		'not_top_tags': not_top_tags
+		'all_curated_categories': all_curated_categories
 	}
+
 	_NavPanelContextCache = result
+
 	return result
 
 
@@ -655,12 +628,18 @@ def app_page_edit(request, app_name):
 		else:
 			curated_cat[category_obj.curated_category_type] = [category_obj.curated_category]
 	# -- IGBF-2520 -- END --
+	mapped_cc = []
+	for mapping in CuratedCategoriesMapping.objects.filter(app=app):
+		for cc in mapping.curated_categories.all():
+			mapped_cc.append(cc)
 
+	# print(mapped_cc)
 	c = {
 		'app': app,
 		'latest_released': latest_released,
 		'released_apps': released_apps,
 		'all_tags': all_tags,
+		'mapped_cc': mapped_cc,
 		'curated_cat': curated_cat,
 		'max_file_img_size_b': _AppPageEditConfig.max_img_size_b,
 		'max_icon_dim_px': _AppPageEditConfig.max_icon_dim_px,
@@ -683,6 +662,6 @@ def custom_search_query(request):
 	for release in sqs:
 		setsqs.add(release.object.app)
 	if len(setsqs) <= 0:
-		return render(request, 'search/search.html', {'object_list': setsqs, 'query_string': query_string})
+		return html_response('search/search.html', {'object_list': setsqs, 'query_string': query_string}, request, processors=(_nav_panel_context,))
 	else:
-		return render(request, 'search/search.html', {'object_list': setsqs})
+		return html_response('search/search.html', {'object_list': setsqs}, request, processors=(_nav_panel_context,))

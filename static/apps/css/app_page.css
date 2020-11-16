@@ -1,4 +1,8 @@
 /* App PAge Edit and App Page CSS */
+.inline-list li {
+   width: 100%
+}
+
 .appimg{
     width: 90px;
     height: 90px;
@@ -203,12 +207,6 @@ small .timeago {
 {
 	display: none;
 	text-align: center;
-}
-
-.custom-editor {
-    padding-left:15%;
-    padding-top: 15%;
-    margin-bottom: 15%
 }
 
 #app_version {

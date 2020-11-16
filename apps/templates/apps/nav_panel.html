@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load static %}
 {% load pagination %}
+{% load title_modified %}
 
 {% block more_head %}
 <link href="{% get_static_prefix %}apps/css/nav_panel.css" rel="stylesheet">
@@ -8,70 +9,44 @@
 {% endblock %}
 
 {% block content %}
-<div class="row no-gutters">
-    <div class="col-md-4">
-        <div class="navigation-panel">
-            {% ifequal navbar_selected_link "all" %}
-                <a href="{% url 'all_apps' %}">
-                    <span class="all-apps-title title active">All Apps</span>
-                </a>
-            {% else %}
-                <a href="{% url 'all_apps' %}">
-                    <span class="all-apps-title title">All Apps</span>
-                </a>
-            {% endifequal %}
-            <h3>
-                <strong>Categories</strong>
-            </h3>
-            <div>
-                <ul class="navigation-list">
-                    <li style="margin-bottom:15px;">
+    <div class="col-md-3 mt-4">
+        <!-- Search Functionality -->
+        <span class="title nav-size"> Name / Description / Author </span>
+        <form class="mt-2 mr-3" role="search" action="{% url 'search' %}" method="get">
+            <div class="form-group has-search">
+                <div class="input-group">
+                    <span class="fa fa-search form-control-feedback"></span>
+                    <input type="text" class="form-control" placeholder="Search" name="q" value="{{ search_query }}">
+                </div>
+            </div>
+        </form>
 
-                    </li>
-                    {% for tag in top_tags %}
-                        {% if tag.count > 0 %}
-                    <li>
-                        <span {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
-                            <a href="{% url 'tag_page' tag.name %}">
-                                <span class="title">{{ tag.fullname }}</span>
-                                <span class="count">({{ tag.count }})</span>
-                            </a>
-                        </span>
-                    </li>
-                        {% endif %}
-                    {% endfor %}
-		    <li>
-                        <ul class="navigation-list" id="not-top-tags">
-                            {% for tag in not_top_tags %}
-                                {% if tag.count > 0 %}
-                            <li>
-                                <span {% ifequal tag.name selected_tag_name %} class="active" {% endifequal %}>
-                                    <a href="{% url 'tag_page' tag.name %}">
-                                        <span class="title">{{ tag.fullname }}</span>
-                                        <span class="count">({{ tag.count }})</span>
-                                    </a>
-                                </span>
-                            </li>
-                                {% endif %}
-                            {% endfor %}
-                        </ul>
-                    </li>
-                </ul>
-		{% if not_top_tags %}
-                    <button class="btn btn-info btn-md more-btn" id="more-button">More</button>
-                {% endif %}
+        <!-- Curated Categories -->
+        {% for type, category in all_curated_categories.items %}
+        <form id="cat_select" class="mt-4">
+            <span class="title nav-size"> {{ type|title_modified }}: </span>
+            <div class="mt-2 mb-5">
+                <div class="form-check mt-2">
+                   <input class="form-check-input" type="radio" name="q" id="any" value="any_{{ type }}" checked>
+                   <label class="form-check-label" for="any">
+                   Any
+                   </label>
+                </div>
+                {% for sub in category %}
+                <div class="form-check mt-2">
+                   <input class="form-check-input" type="radio" name="q" id="{{ sub.curated_category }}" value="{{ sub.curated_category }}">
+                   <label class="form-check-label" for="{{ sub.curated_category }}">
+                   {{ sub.curated_category|title_modified }}
+                   </label>
+                </div>
+                {% endfor %}
             </div>
-            <div id="tag-cloud">
-              {% for tag in all_tags %}
-              <a {% ifequal tag.name selected_tag_name %} class="tag-cloud-active" {% endifequal %} style="font-size: {{ tag.font_size_em }}em" href="{% url 'tag_page' tag.name %}">{{tag.fullname}}</a>
-              {% endfor %}
-            </div>
-        </div>
+        </form>
+        {% endfor %}
     </div>
-    <div class="col-md-8">
-        {% block main %}{% endblock %}
+    <div class="col-md-9 mt-4">
+      {% block main %}{% endblock %}
     </div>
-</div>
 
 <script type="text/javascript" src="{% get_static_prefix %}apps/js/nav_panel.js"></script>
 {% endblock %}

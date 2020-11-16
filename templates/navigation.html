@@ -15,22 +15,7 @@
                             <input class="search_input" type="text" placeholder="Search the Appstore" name="q" aria-label="Search" value="{{ search_query }}">
                         </div>
                 </form>
-                {# User menu #}
-                {% if user.is_authenticated %}
-                <div class="btn-group">
-                    <a class="text-light user-dropdown dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    {{ user.username }}
-                    </a>
-                    <div class="dropdown-menu">
-                        {% if user.is_staff %}
-                        <a class="dropdown-item" href="{% url 'pending-apps' %}">Pending Apps</a>
-                        {% endif %}
-                        <a class="dropdown-item" href="{% url 'logout' %}?next={{ request.get_full_path|escape }}"> Sign out</a>
-                    </div>
-                </div>
-                {% else %}
-                    <a class="text-light" href="{% url 'login' %}?next={{ request.get_full_path|escape }}">Sign In</a>
-                {% endif %}
+
             </div>
         </div>
     </nav>
