@@ -26,11 +26,15 @@
         <!-- Custom styles for this template -->
         <link href="{% get_static_prefix %}apps/css/base.css" rel="stylesheet">
         <link href="{% get_static_prefix %}common/css/nav_header.css" rel="stylesheet">
+        <link href="{% get_static_prefix %}apps/css/menu.css" rel="stylesheet">
         {% block more_head %}{% endblock %}
 
     </head>
     <body>
-        <div class="container pt-5">
+        <div id="TopMenu">
+            {% include "menu.html" %}
+        </div>
+        <div class="container mt-5 pt-5">
             <div class="row">
                 <div class="col-md-4">
                     <h1>Apps for IGB</h1>

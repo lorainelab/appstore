@@ -38,3 +38,5 @@ venv
 .DS_Store
 *bak[0-9]*
 db.sqlite3
+static/apps/css/menu.css
+templates/menu.html
