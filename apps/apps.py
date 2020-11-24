@@ -17,4 +17,5 @@ class AppsConfig(AppConfig):
         css_file.close()
 
         html_file.writelines(req_html.content.decode("utf-8"))
+        html_file.write('<span id="bioviz-url" style="visibility:hidden;">' + settings.BIOVIZ_URL + '</span>')
         html_file.close()
