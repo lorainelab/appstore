@@ -16,5 +16,4 @@ $('#TopMenu').find('a').each(function() {
     if(!current_link.startsWith('http')){
         $(this).attr('href', bioviz_url + current_link);
     }
-    console.log($(this).attr('href'));
 });
