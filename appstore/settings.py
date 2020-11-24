@@ -29,7 +29,8 @@ DEBUG=True
 
 # Navigation Bar settings
 BIOVIZ_REPOSITORY = config('BITBUCKET_REPOSITORY', default='https://bitbucket.org/lorainelab/bioviz/')
-BIOVIZ_BRANCH = config('BITBUCKET_BRANCH', default='master')
+BIOVIZ_BRANCH = config('BIOVIZ_BRANCH', default='master')
+BIOVIZ_URL = config('BIOVIZ_URL', default='https://bioviz.org/')
 
 
 # add allowed hosts here
