@@ -179,8 +179,9 @@ def _create_pending(submitter, jar_details, release_file, client_ip):
     pending.release_file_name = file_name
     pending.logo = ""
     pending.save()
+    file.close()
     if isinstance(release_file, str):
-        os.remove(dir_path + file_name)
+        os.remove(os.path.join(dir_path, file_name))
     return pending
 
 
@@ -211,11 +212,13 @@ def _get_jar_file(release_file):
     :return:
     """
     file_name = basename(release_file) if isinstance(release_file, str) else basename(release_file.name)
+    file_path = os.path.join(dir_path, file_name)
     if isinstance(release_file, str):
         url_data = urlopen(release_file).read()
-        with open(dir_path + file_name, 'wb') as file:
+        with open(file_path, 'wb') as file:
             file.write(url_data)
-        file = open(dir_path + file_name, 'rb')
+        file.close()
+        file = open(file_path, 'rb')
     else:
         file = release_file
     return file, file_name

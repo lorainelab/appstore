@@ -27,6 +27,12 @@ SECRET_KEY = config('SECRET_KEY',default="XXXX")
 
 DEBUG=True
 
+# Navigation Bar settings
+BIOVIZ_REPOSITORY = config('BIOVIZ_REPOSITORY', default='https://bitbucket.org/lorainelab/bioviz/')
+BIOVIZ_BRANCH = config('BIOVIZ_BRANCH', default='master')
+BIOVIZ_URL = config('BIOVIZ_URL', default='https://bioviz.org/')
+
+
 # add allowed hosts here
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv(), default='localhost')
 

@@ -163,6 +163,42 @@ var AppPageEdit = (function($)
     }
 
     /* ===============================
+         Curated Categories
+       =============================== */
+
+    var curated_category_list = $('#app-cur-cat-list');
+
+    function curated_cat_modified() {
+        SaveActions['curated_catergories'] = true;
+        save_btn_tag.removeClass('disabled');
+    }
+
+    function add_curated_categories(cat, animate) {
+        // if we already have the tag we're adding, delete it first
+        curated_category_list.find('.app-tag').each(function() {
+            var current_tag_name = $(this).find('.app-tag-name').text();
+            if (cat === current_tag_name) {
+                fade_out_and_remove($(this), 'slow');
+            }
+        });
+
+        var curated_cat = $('#tag-tmpl').tmpl({'tag': cat}).appendTo(curated_category_list);
+        setup_remove_curated_cat_btn(curated_cat);
+
+        if (animate)
+            curated_cat.hide().fadeIn('fast');
+    }
+
+    // Each tag box has an X. When the user clicks the X, remove the box.
+    function setup_remove_curated_cat_btn(curated_cat) {
+        curated_cat.find('.app-tag-remove').click(function() {
+            fade_out_and_remove($(this).parent(), 'fast');
+            curated_cat_modified();
+        });
+    }
+
+
+    /* ===============================
          Tags
        =============================== */
 
@@ -668,6 +704,20 @@ var AppPageEdit = (function($)
                 'data': data
             };
         },
+        'curated_catergories': function() {
+            var cur_cat = $('#app-cur-cat-list .app-tag-name');
+            var data = new Object();
+            data['action'] = 'save_curated_categories';
+            data['count'] = cur_cat.length;
+            cur_cat.each(function(i) {
+                data['cat_' + i] = $(this).text();
+            });
+
+            return {
+                'msg': 'Saving categories',
+                'data': data
+            };
+        },
         'logo': mk_file_save_action('Uploading icon <tt>%s</tt>',  'upload_logo'),
         'screenshots': function(screenshots) {
             var ajax_maker = mk_file_save_action('Uploading screenshot <tt>%s</tt>', 'upload_screenshot');
@@ -886,6 +936,7 @@ var AppPageEdit = (function($)
         'setup_text_fields': setup_text_fields,
         'setup_icon_selection': setup_icon_selection,
         'add_tag': add_tag,
+        'add_curated_categories': add_curated_categories,
         'setup_add_tag_btn': setup_add_tag_btn,
         'add_screenshot': add_screenshot,
         'setup_screenshot_btns': setup_screenshot_btns,
@@ -902,6 +953,7 @@ var AppPageEdit = (function($)
         'setup_save_btn': setup_save_btn,
         '_SaveActions': SaveActions,
         '_SaveActionsToAjax': SaveActionsToAjax,
-        'tags_modified' : tags_modified
+        'tags_modified' : tags_modified,
+        'curated_cat_modified': curated_cat_modified
     };
 })($);

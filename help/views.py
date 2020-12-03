@@ -9,6 +9,8 @@ def about(request):
     c['google_api_key'] = settings.GOOGLE_API_KEY
     return html_response('help/about.html', c, request)
 
+def compile_app_with_pipeline(request):
+    return html_response('help/compile_app_with_pipeline.html', {}, request)
 
 def contact(request):
     c = { 'footer_selected': 'contact' }

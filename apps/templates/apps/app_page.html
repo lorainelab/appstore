@@ -23,288 +23,299 @@ logger = logging.getLogger("apps/app_page.html") %}
 {% block content %}
 
 {% csrf_token %}
-
-<div class="row">
-	<br />
-	{# App header #}
-	<div class="col-md-12">
-		{# App Name and Icon #}
-		<div class="row">
-			<div class="col-md-9">
-				<div class="row">
-					<div class="col-md-2 img-div" style="background-image: url('{{latest_released.logo_url}}');background-size: contain;"></div>
-					<div class="col-md-8">
-						{# App Name and description #}
-						<h2 class="app-name" id="app-name">
-							{{ app.Bundle_Name }}
-						</h2>
-						<span class="app-def-desc">{% if latest_released.short_title %}{{ latest_released.short_title }}{% endif %}</span>
-						<br />
-						{# Ratings #}
-						<span class="get-app-stars">{{ app.stars_percentage }}</span>
-						<x-star-rating data-authenticated="{{ is_logged_in }}"></x-star-rating>
-						{# End Ratings #}
-						{# Downloads #}
-						<span class="app-usage-info-divider"></span>
-						{{ download_count }}
-						<a href="{% url 'app_stats' app.Bundle_SymbolicName %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
-							 Downloads
-						</a>
-						{# End Downloads #}
-
-						{# Helpdesk #}
-						<span> | </span>
-						<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
-						{# End Helpdesk #}
-						{# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
-						{% if latest_released.citation or  latest_released.code_repository_url %}
-						{# Citations #}
-						{% if latest_released.citation %}
-						<span> | </span>
-						<a href="https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed_citedin&from_uid={{ latest_released.citation }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search PubMed for articles citing this app.">{% trans "  Citations" %}</a>
-
-						{% endif %}
-						{# End Citations #}
-						<span class="app-usage-info-divider"></span>
-
-						{% if latest_released.code_repository_url %}
-						<a href="{{ latest_released.code_repository_url }}" target="_blank">
-							<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
-						</a>
-						{% endif %}
-						{# end badges #}
-
-						{% endif %}
-						{# End app usage info #}
-					</div>
-				</div>
-				<div class="row custom-margin">
-						<div class="col-md-12">
-						<!-- Nav tabs -->
-						<ul class="nav nav-tabs" id="myTab" role="tablist">
-							<li class="nav-item">
-								<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">About this App</a>
-							</li>
-							<li class="nav-item">
-								<a class="nav-link" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
-							</li>
-						</ul>
-						<!-- Tab panes -->
-						<div class="tab-content">
-							<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab"
-                            {# App Version #}
-                            <br /> <br />
-                                <div class="row" style="font-size: large">
-                                    <div class="col-md-12">
-                                        Version:    {{ latest_released.Bundle_Version }}
-                                    </div>
-                                </div>
-
-								{# Categories #}
-								{% if app.categories.all %}
-								<br />
-								<div class="row">
-									<div class="col-md-12">
-										Categories:
-										{% for tag in app.categories.all %}
-										<a class="link" href="{% url 'tag_page' tag.name %}">{{ tag.fullname }}</a>{% if not forloop.last %}, {% endif %}
-										{% endfor %}
-									</div>
-								</div>
-								{% endif %}
-								{# End Categories #}
-
-								{# Screenshots #}
-								{% if latest_released.screenshot_set.all %}
-								<div class="row">
-									<div class="col-md-12" id="app-screenshots">
-										{% for screenshot in latest_released.screenshot_set.all %}
-										<a href="{{ screenshot.screenshot.url }}" data-toggle="lightbox" data-gallery="screen-gallery">
-											<img src="{{ screenshot.thumbnail.url }}" class="img-fluid"/>
-										</a>
-										{% endfor %}
-									</div>
-								</div>
-								{% endif %}
-								{# End Screenshots #}
-
-								<br />
-
-								{# Details #}
-								{% if decoded_details %}
-								<div class="row">
-									<div class="col-md-12 app-details-custom" id="app-details-md">{{ decoded_details | markdown_parser | safe }}</div>
-								</div>
-								{% endif %}
-								{# End Details #}
-
-								{# Authors #}
-								{% if latest_released.authors.all %}
-								<div class="row">
-									<div class="col-md-8">
-										Authors:
-										<ul>
-											{% for author in latest_released.ordered_authors %}
-											<li>
-												<a href="{% url 'author_page' author.name %}">
-													{{ author.name }} {% if author.institution %} ({{ author.institution }}){% endif %}
-												</a>
-											</li>
-											{% endfor %}
-										</ul>
-									</div>
-								</div>
-								{% endif %}
-								{# End Authors #}
-							</div>
-						<div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
-							{% for release in released_apps %}
-								<div class="row">
-									<div class="col-md-12">
-										<div class="row">
-											<div class="col-md-3 img-div" style="background-image: url('{{release.logo_url}}');background-size: contain; margin-top: 30px;"></div>
-											<div class="col-md-9">
-												{# Release version #}
-												<br />
-												{% if forloop.first %}
-													<h5>
-														Current Version :
-														<!-- Removed release.version argument href="% url 'release_download' app.name %-->
-														{{ release.Bundle_Version }}
-													</h5>
-												{% else %}
-													<h5>
-														Version :
-														<!-- Removed release.version argument href="% url 'release_download' app.name %-->
-														{{ release.Bundle_Version }}
-													</h5>
-												{% endif %}
-												<p><strong>Release Date : </strong> {{ release.created_iso|date:"j M, Y" }}</p>
-												{# End Release version #}
-
-												{# Works with #}
-												<p>
-													<strong>Works with</strong> IGB
-													{{ release.platform_compatibility | strip_double_quotes}}
-												</p>
-											</div>
-										</div>
-										<hr />
-									</div>
-								</div>
-								{% endfor %} {# end looping thru each release #}
-							</div>
-						</div>
-						</div>
-				</div>
-			</div>
-			<div class="col-md-3">
-				{# Editor menu #}
-				<div class="btn-group custom-editor">
-					{% if is_editor %}
-					<button class="btn btn-md btn-warning" onclick="document.location.href='{% url 'app_page_edit' app.Bundle_SymbolicName %}';">
-						<i class="fa fa-pencil text-white"></i>
-						&nbsp;Edit this page
-					</button>
-					{% endif %}
-				</div>
-				{# End editor menu #}
-				{# Right-hand panels #}
-				{# 3.0 download panel #}
-				<div class="box-release-info" id="app_status_block">
-					<h6 align="center" class="panel-title text-muted">To install and run this App, start IGB! Then come back and refresh this page.</h6>
-					<a href="https://bioviz.org" id="change-url">
-					<button class="btn btn-block btn-info" id="app-install-btn">
-						{# <-- download button icon will go here #}
-						<h6><i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;Get latest IGB</h6> {# <-- download button text will go here #}
-					</button>
-					</a>
-					<p id="app_version"></p>
-					{% if app.license_url %}
-					<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
+<br />
+{# App header #}
+<div class="col-md-12">
+	{# App Name and Icon #}
+	<div class="row">
+		<div class="col-md-9">
+			<div class="row">
+				<div class="col-md-2 img-div" style="background-image: url('{{latest_released.logo_url}}');background-size: contain;"></div>
+				<div class="col-md-8">
+					{# App Name and description #}
+					<h2 class="app-name" id="app-name">
+						{{ app.Bundle_Name }}
+					</h2>
+					<span class="app-def-desc">{% if latest_released.short_title %}{{ latest_released.short_title }}{% endif %}</span>
 					<br />
+					{# Ratings #}
+					<span class="get-app-stars">{{ app.stars_percentage }}</span>
+					<x-star-rating data-authenticated="{{ is_logged_in }}"></x-star-rating>
+					{# End Ratings #}
+					{# Downloads #}
+					<span class="app-usage-info-divider"></span>
+					{{ download_count }}
+					<a href="{% url 'app_stats' app.Bundle_SymbolicName %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
+						 Downloads
+					</a>
+					{# End Downloads #}
+
+					{# Helpdesk #}
+					<span> | </span>
+					<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
+					{# End Helpdesk #}
+					{# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
+					{% if latest_released.citation or  latest_released.code_repository_url %}
+					{# Citations #}
+					{% if latest_released.citation %}
+					<span> | </span>
+					<a href="https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed_citedin&from_uid={{ latest_released.citation }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search PubMed for articles citing this app.">{% trans "  Citations" %}</a>
+
 					{% endif %}
-					<strong class="custom-font"> App Version </strong> {{ latest_released.Bundle_Version }}<br />
-					<strong class="custom-font" id="igb_version">Works with IGB</strong> {{ latest_released.platform_compatibility | strip_double_quotes}}
+					{# End Citations #}
+					<span class="app-usage-info-divider"></span>
+
+					{% if latest_released.code_repository_url %}
+					<a href="{{ latest_released.code_repository_url }}" target="_blank">
+						<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
+					</a>
+					{% endif %}
+					{# end badges #}
+
+					{% endif %}
+					{# End app usage info #}
 				</div>
-
-				{# end 3.0 download panel #}
-
-				{# latest_released resources #}
-				<div class="alert alert-warning box-resource">
-					<ul class="nav nav-list">
-					<h5>RESOURCES</h5>
-
-						<li>
-							<i class="fa fa-question-circle"></i>
-							<a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
-								Ask a question
-							</a>
+			</div>
+			<div class="row custom-margin">
+					<div class="col-md-12">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" id="myTab" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">About this App</a>
 						</li>
-
-						<li>
-							<i class="fa fa-comments"></i>
-							<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank">
-								Search helpdesk
-							</a>
+						<li class="nav-item">
+							<a class="nav-link" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
 						</li>
-
-						{% if latest_released.website_url %}
-						<li>
-							<i class="fa fa-home"></i>
-							<a href="{{ latest_released.website_url }}" target="_blank" style="padding-right:50px;">
-								Website
-							</a>
-						</li>
-						{% endif %}
-
-						{% if latest_released.tutorial_url %}
-						<li>
-							<i class="fa fa-book"></i>
-							<a href="{{ latest_released.tutorial_url }}" target="_blank" style="padding-right:50px;">
-								Tutorial
-							</a>
-						</li>
-						{% endif %}
-
-						{% if latest_released.citation %}
-						<li>
-							<i class="fa fa-heart"></i>
-							<a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ latest_released.citation }}" target="_blank" style="padding-right:50px;">
-								Cite this App
-							</a>
-						</li>
-						{% endif %}
-
-						{% if latest_released.code_repository_url %}
-						<li>
-							<i class="fa fa-code-fork"></i>
-							<a href="{{ latest_released.code_repository_url }}" target="_blank">
-								Code Repository
-							</a>
-						</li>
-						{% endif %}
-
-						{% if latest_released.contact_email %}
-						<li>
-							<i class="fa fa-envelope"></i>
-							<a href="mailto:{{ latest_released.contact_email }}" target="_blank" style="padding-right:50px;">
-								 E-mail
-							</a>
-						</li>
-						{% endif %}
 					</ul>
-				</div>
-				{# end latest_released resources #}
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab"
+						<!-- App Version #} -->
+						<br /> <br />
+							<div class="row" style="font-size: large">
+								<div class="col-md-12">
+									Version:    {{ latest_released.Bundle_Version }}
+								</div>
+							</div>
+
+							{# Curated Categories #}
+							{% if curated_category_mapping.curated_categories.all %}
+							<br />
+							<div class="row">
+								<div class="col-md-12">
+									Curated Categories:
+									{% for cat in curated_category_mapping.curated_categories.all %}
+									<a class="link" href="{% url 'tag_page' cat.curated_category %}">{{ cat.curated_category }}</a>{% if not forloop.last %}, {% endif %}
+									{% endfor %}
+								</div>
+							</div>
+							{% endif %}
+							{# End Categories #}
+
+
+							{# Categories #}
+							{% if app.categories.all %}
+							<br />
+							<div class="row">
+								<div class="col-md-12">
+									Categories:
+									{% for tag in app.categories.all %}
+									<a class="link" href="{% url 'tag_page' tag.name %}">{{ tag.fullname }}</a>{% if not forloop.last %}, {% endif %}
+									{% endfor %}
+								</div>
+							</div>
+							{% endif %}
+							{# End Categories #}
+
+							{# Screenshots #}
+							{% if latest_released.screenshot_set.all %}
+							<div class="row">
+								<div class="col-md-12" id="app-screenshots">
+									{% for screenshot in latest_released.screenshot_set.all %}
+									<a href="{{ screenshot.screenshot.url }}" data-toggle="lightbox" data-gallery="screen-gallery">
+										<img src="{{ screenshot.thumbnail.url }}" class="img-fluid"/>
+									</a>
+									{% endfor %}
+								</div>
+							</div>
+							{% endif %}
+							{# End Screenshots #}
+
+							<br />
+
+							{# Details #}
+							{% if decoded_details %}
+							<div class="row">
+								<div class="col-md-12 app-details-custom" id="app-details-md">{{ decoded_details | markdown_parser | safe }}</div>
+							</div>
+							{% endif %}
+							{# End Details #}
+
+							{# Authors #}
+							{% if latest_released.authors.all %}
+							<div class="row">
+								<div class="col-md-8">
+									Authors:
+									<ul>
+										{% for author in latest_released.ordered_authors %}
+										<li>
+											<a href="{% url 'author_page' author.name %}">
+												{{ author.name }} {% if author.institution %} ({{ author.institution }}){% endif %}
+											</a>
+										</li>
+										{% endfor %}
+									</ul>
+								</div>
+							</div>
+							{% endif %}
+							{# End Authors #}
+						</div>
+					<div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
+						{% for release in released_apps %}
+							<div class="row">
+								<div class="col-md-12">
+									<div class="row">
+										<div class="col-md-3 img-div" style="background-image: url('{{release.logo_url}}');background-size: contain; margin-top: 30px;"></div>
+										<div class="col-md-9">
+											{# Release version #}
+											<br />
+											{% if forloop.first %}
+												<h5>
+													Current Version :
+													<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+													{{ release.Bundle_Version }}
+												</h5>
+											{% else %}
+												<h5>
+													Version :
+													<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+													{{ release.Bundle_Version }}
+												</h5>
+											{% endif %}
+											<p><strong>Release Date : </strong> {{ release.created_iso|date:"j M, Y" }}</p>
+											{# End Release version #}
+
+											{# Works with #}
+											<p>
+												<strong>Works with</strong> IGB
+												{{ release.platform_compatibility | strip_double_quotes}}
+											</p>
+										</div>
+									</div>
+									<hr />
+								</div>
+							</div>
+							{% endfor %} {# end looping thru each release #}
+						</div>
+					</div>
+					</div>
 			</div>
-			</div>
-			{# End app header #}
 		</div>
+		<div class="col-md-3">
+			{# Editor menu #}
+			<div class="btn-group mt-5">
+				{% if is_editor %}
+				<button class="btn btn-lg btn-warning" onclick="document.location.href='{% url 'app_page_edit' app.Bundle_SymbolicName %}';">
+					<i class="fa fa-pencil text-white"></i>
+					&nbsp;Edit this page
+				</button>
+				{% endif %}
+			</div>
+			{# End editor menu #}
+			{# Right-hand panels #}
+			{# 3.0 download panel #}
+			<div class="box-release-info" id="app_status_block">
+				<h6 align="center" class="panel-title text-muted">To install and run this App, start IGB! Then come back and refresh this page.</h6>
+				<a href="https://bioviz.org" id="change-url">
+				<button class="btn btn-block btn-info" id="app-install-btn">
+					{# <-- download button icon will go here #}
+					<h6><i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;Get latest IGB</h6> {# <-- download button text will go here #}
+				</button>
+				</a>
+				<p id="app_version"></p>
+				{% if app.license_url %}
+				<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
+				<br />
+				{% endif %}
+				<strong class="custom-font"> App Version </strong> {{ latest_released.Bundle_Version }}<br />
+				<strong class="custom-font" id="igb_version">Works with IGB</strong> {{ latest_released.platform_compatibility | strip_double_quotes}}
+			</div>
+
+			{# end 3.0 download panel #}
+
+			{# latest_released resources #}
+			<div class="alert alert-warning box-resource">
+				<h5>RESOURCES</h5>
+				<ul class="nav nav-list inline-list">
+					<li>
+						<i class="fa fa-question-circle"></i>
+						<a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
+							Ask a question
+						</a>
+					</li>
+
+					<li>
+						<i class="fa fa-comments"></i>
+						<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank">
+							Search helpdesk
+						</a>
+					</li>
+
+					{% if latest_released.website_url %}
+					<li>
+						<i class="fa fa-home"></i>
+						<a href="{{ latest_released.website_url }}" target="_blank" style="padding-right:50px;">
+							Website
+						</a>
+					</li>
+					{% endif %}
+
+					{% if latest_released.tutorial_url %}
+					<li>
+						<i class="fa fa-book"></i>
+						<a href="{{ latest_released.tutorial_url }}" target="_blank" style="padding-right:50px;">
+							Tutorial
+						</a>
+					</li>
+					{% endif %}
+
+					{% if latest_released.citation %}
+					<li>
+						<i class="fa fa-heart"></i>
+						<a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ latest_released.citation }}" target="_blank" style="padding-right:50px;">
+							Cite this App
+						</a>
+					</li>
+					{% endif %}
+
+					{% if latest_released.code_repository_url %}
+					<li>
+						<i class="fa fa-code-fork"></i>
+						<a href="{{ latest_released.code_repository_url }}" target="_blank">
+							Code Repository
+						</a>
+					</li>
+					{% endif %}
+
+					{% if latest_released.contact_email %}
+					<li>
+						<i class="fa fa-envelope"></i>
+						<a href="mailto:{{ latest_released.contact_email }}" target="_blank" style="padding-right:50px;">
+							 E-mail
+						</a>
+					</li>
+					{% endif %}
+				</ul>
+			</div>
+			{# end latest_released resources #}
+		</div>
+		</div>
+		{# End app header #}
 	</div>
-	<br />
+</div>
+<br />
 {# Main app page content #}
 </div>
-	</div>
 {# end main app page content #}
 
 {# Delete all ratings modal dialog #}
