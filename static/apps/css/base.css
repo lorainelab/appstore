@@ -10,7 +10,7 @@ body {
 
     }
     .app-tile-col {
-        max-width: 100%;
+        min-width: 100%;
     }
 }
 
@@ -19,6 +19,7 @@ body {
         max-width: 95%;
     }
     .app-tile-col {
+        min-width: 33.33%;
         max-width: 33.33%;
     }
 }
@@ -28,6 +29,7 @@ body {
         max-width: 65%;
     }
     .app-tile-col {
+        min-width: 33.33%;
         max-width: 33.33%;
     }
 }
@@ -49,126 +51,12 @@ body {
     font-size: 30px;
 }
 
-
-
-/*
-
-Old CSS
-
-*/
-.go-back {
-    display:block;
+.cm-10 {
+    margin-left: -10px;
 }
 
-.custom-margin {
-    margin-top: 15px;
-}
+.cat-desc {
+    color: grey;
+    font-weight: strong;
 
-#tag-add-popover ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-}
-
-.hide {
-    display: none;
-}
-
-.center{
-    text-align: center;
-}
-
-.user-dropdown {
-    cursor: pointer;
-}
-
-.search-head {
-    font-weight: 500;
-}
-
-.transparent {
-    background-color: transparent;
-}
-
-.trash {
-    font-size: 20px;
-    color: black;
-}
-
-.custom-legend {
-    color: black;
-    font-size: 16px;
-}
-
-.custom-text {
-    margin-left: 15%;
-}
-
-.center-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60%;
-    padding-top: 5%;
-}
-
-.big-button {
-    width: 30%;
-    height: 45px;
-    font-size:18px;
-}
-
-.block {
-    display: block;
-    min-height: 65px;
-}
-
-input[type=file]{
-    width:110px;
-    color:transparent;
-}
-
-.input-file-label {
-    width: max-content;
-    font-style: italic;
-    margin-right: 10px;
-}
-
-.or-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30%;
-    font-weight: 500;
-}
-
-.spaced {
-    margin-left: 10px;
-}
-
-/* Footer Styling */
-.custom-link{
-    padding:5px;
-}
-
-.custom-font {
-    font-size: 15px;
-}
-
-#sticky-footer {
-    bottom:0;
-    left:0;
-    right:0;
-    max-height: 10%;
-    position:absolute;
-}
-
-#sticky-footer .container {
-  position: absolute;
-  bottom: 25%;
-  left: 0;
-  right: 0;
-}
-
-#footer-hr, #sticky-footer {
-  margin-bottom: 20%;
 }

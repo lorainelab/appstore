@@ -42,6 +42,7 @@ def _nav_panel_context(request):
 		return _NavPanelContextCache
 
 	all_curated_categories = {}
+	curated_cat_description = {}
 
 	curated_categories = CuratedCategory.objects.all()
 	for categories in curated_categories:
@@ -49,9 +50,12 @@ def _nav_panel_context(request):
 			all_curated_categories[categories.curated_category_type].append(categories)
 		else:
 			all_curated_categories[categories.curated_category_type] = [categories]
+		curated_cat_description[categories.curated_category_type] = categories.type_description
+		curated_cat_description[categories.curated_category] = categories.curated_category_description
 
 	result = {
-		'all_curated_categories': all_curated_categories
+		'all_curated_categories': all_curated_categories,
+		'curated_cat_description': curated_cat_description
 	}
 
 	_NavPanelContextCache = result
