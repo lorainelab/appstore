@@ -8,7 +8,7 @@ class CuratedCategoriesConfig(AppConfig):
         from curated_categories.models import CuratedCategory
 
         CATEGORIES = (
-            ('app_type', 'IGB_Plug_in', 'How an App changes the IGB interface',
+            ('app_type', 'Plugin', 'How an App changes the IGB interface',
              'Plugin Apps add new menus to the IGB interface'),
 
             ('app_type', 'Application', 'How an App changes the IGB interface',
