@@ -3,6 +3,7 @@
 {% load static %}
 {% load markdown %}
 {% load timestamp_converter %}
+{% load title_modified %}
 
 {% block more_head %}
     <!-- Required JS for App Edit Page -->
@@ -40,33 +41,32 @@
     {# end app header #}
 </div>
 </div>
-<div class="row">
+<div class="row mt-4">
     {# tabs #}
-    <div class="col-md-9 margin-top">
+    <div class="col-md-9">
         <!-- Nav tabs -->
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             <li class="nav-item">
-                <a class="nav-link active" id="app-info-tab" data-toggle="tab" href="#app-info" role="tab" aria-controls="app-info" aria-selected="true">Bundle Description</a>
+                <a class="nav-link pl-2 pr-2 text-dark font-weight-bold active" id="app-info-tab" data-toggle="tab" href="#app-info" role="tab" aria-controls="app-info" aria-selected="true">Bundle Description</a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
+                <a class="nav-link pl-2 pr-2 text-dark font-weight-bold" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
             </li>
         </ul>
         <!-- Tab panes -->
         <div class="tab-content">
             <div class="tab-pane active" id="app-info" role="tabpanel" aria-labelledby="app-info-tab">
                 {# Curate Categories #}
-                <br />
-                <div class="row">
+                <div class="row mt-5">
                     <div class="col-md-12">
-                        <h6 class="muted">CURATED CATEGORIES</h6>
+                        <h6 class="muted font-weight-bold text-uppercase">Curated Categories</h6>
                         <hr />
-                        <div class="input-group">
+                        <div class="input-group mb-2">
                             <select  name="curated_category" id="curated_category">
                                 {% for cat, subcat in curated_cat.items %}
-                                <optgroup label="{{ cat }}">
+                                <optgroup label="{{ cat|title_modified:True }}">
                                     {% for sub in subcat %}
-                                    <option id="cur-cat" value="{{ sub }}">{{ sub }}</option>
+                                    <option id="cur-cat" value="{{ sub }}">{{ sub|title_modified:False }}</option>
                                     {% endfor %}
                                 </optgroup>
                                 {% endfor %}
@@ -78,34 +78,13 @@
                     <div class="col-md-9" id="app-cur-cat-list"></div>
                 </div>
                 {# End CuratedCategories #}
-
-                <br />
-                <hr />
-                {# Categories #}
-                <br />
-                <div class="row">
-                    <div class="col-md-12">
-                        <h6 class="muted">CATEGORIES</h6>
-                        <hr />
-                        <div class="input-group">
-                            <input type="text" list="categoryList" id="tag-input" placeholder="Enter the app category" >
-                            <datalist  id ="categoryList"></datalist>
-                            <span class="input-group-btn"><button type="button"  id="app-tag-add-btn" class="btn btn-light" >
-                           <i class="fa fa-plus"></i> Add Category</button></span>
-                        </div>
-                    </div>
-
-                    <div class="col-md-9" id="app-tags-list"></div>
-                </div>
-                {# End Categories #}
-
                 <br />
                 <hr />
                 {# Screenshots #}
                 <div class="row">
                     <div class="col-md-12">
-                        <h6 class="muted">SCREENSHOTS</h6>
-                        <div class="col-md-9" id="app-screenshots"></div>
+                        <h6 class="muted font-weight-bold text-uppercase">Screenshots</h6>
+                        <div class="col-md-9 mt-3" id="app-screenshots"></div>
                     </div>
                     <div class="col-md-12">
                         <button id="app-screenshot-add-btn" data-toggle="popover" class="btn btn-light">
@@ -119,12 +98,10 @@
                 </div>
                 {# End Screenshots #}
 
-                <br />
-
                 {# Bundle Description #}
                 <div class="row">
                     <div class="col-md-12">
-                        <h6 class="muted">Bundle Description</h6>
+                        <h6 class="muted font-weight-bold text-uppercase mb-4">Bundle Description</h6>
                     </div>
                 </div>
                 <div class="row">
@@ -132,7 +109,7 @@
                         <textarea id="app-details" class="col-md-12" rows="15">{% if latest_released.Bundle_Description %}{{ latest_released.Bundle_Description }}{% endif %}</textarea>
                     </div>
                     <div class="col-md-12 margin-top">
-                        <h6 class="muted">PREVIEW</h6>
+                        <h6 class="muted font-weight-bold text-uppercase mt-4 mb-4">Preview</h6>
                     </div>
                 </div>
 
@@ -146,7 +123,11 @@
                 {# End Bundle Description #}
                 <hr />
                 {# authors #}
-                <div class="row"><div class="col-md-12"><h6 class="muted">AUTHORS</h6></div></div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <h6 class="muted font-weight-bold text-uppercase">Authors</h6>
+                    </div>
+                </div>
 
                 <div class="row">
                   <div class="col-md-12">
@@ -217,7 +198,7 @@
     {# right panels #}
     <div class="col-md-3 margin-top">
         {# save & cancel buttons #}
-        <div id="save-actions">
+        <div id="save-actions" class="mb-2">
           <button type="button" id="save-btn" class="btn btn-success btn-md disabled"><i class="fa fa-check"></i> Save</button>
           <button type="button" id="cancel-btn" class="btn btn-danger btn-md"><i class="fa fa-cross"></i> Cancel</button>
         </div>
@@ -225,7 +206,7 @@
 
         {# editors #}
         <div class="box-release-info">
-            <h6 class="muted panel-title">Editors</h6>
+            <h6 class="muted panel-title text-uppercase font-weight-bold">Editors</h6>
             <ul class="nav nav-list custom-break" id="editors-list">
 
             </ul>
@@ -237,7 +218,7 @@
 
         {# resources #}
         <div class="box-release-info">
-            <h6 class="muted panel-title">Resources</h6>
+            <h6 class="muted panel-title text-uppercase font-weight-bold">Resources</h6>
             <div class="form-group margin-top" id="platform-compatibility">
                 <label><i class="fa fa-globe"></i> Works With: </label>
                 <input class="form-control" type="text" value="{% if latest_released.platform_compatibility %}{{ latest_released.platform_compatibility }}{% endif %}">
@@ -328,14 +309,14 @@
     </script>
     {# end messages popup #}
 
-    {# tag template #}
+{# tag template #}
     <script type="text/html" id="tag-tmpl">
         <span class="app-tag">
             <span class="app-tag-name">${ tag }</span>
             <span class="app-tag-remove">&times;</span>
         </span>
     </script>
-    {# end tag template #}
+{# end tag template #}
 
 
     {# Handel Tab Keypress in Text Area#}
@@ -384,34 +365,8 @@
     <script type="text/javascript" src="{% get_static_prefix %}apps/js/app_page_edit.js"></script>
 
     <script type="text/javascript">
-      $(document).ready(function() {
-           var categoryList = document.getElementById('categoryList');
-           var options = []
-            {% for tag in all_tags %}
-                options.push('{{ tag }}')
-            {% endfor %}
-            options.forEach(item =>{
-                let option = document.createElement('option');
-                option.value = item;
-                categoryList.appendChild(option);
-            })
-        });
-        var add_field = $('#tag-input');
-        $('#app-tag-add-btn').click(function() {
-            if ($(this).hasClass('disabled'))
-                return;
-            if(add_field.val().length <= 1){
-                Msgs.add_msg('Whoops!Category Name should be more than one character', 'danger', 'category');
-                return;
-            } else {
-                AppPageEdit.add_tag(add_field.val(), true);
-                AppPageEdit.tags_modified()
-            }
-        });
-
         var curated_category_field = $('#curated_category');
         $('#cur-cat-add-btn').click(function() {
-            console.log("Adding Curated Cat " + curated_category_field.val())
             if ($(this).hasClass('disabled'))
                 return;
             if(curated_category_field.val().length <= 1){
@@ -426,13 +381,6 @@
         AppPageEdit.set_max_file_img_size({{ max_file_img_size_b }});
         AppPageEdit.setup_text_fields();
         AppPageEdit.setup_icon_selection({{ max_icon_dim_px }});
-
-        //   AppPageEdit.setup_add_tag_btn();
-        {% if app.categories %}
-            {% for tag in app.categories.all %}
-                AppPageEdit.add_tag('{{ tag.fullname|escapejs}}', false);
-            {% endfor %}
-        {% endif %}
 
         {% if curated_cat %}
             {% for tag in mapped_cc %}

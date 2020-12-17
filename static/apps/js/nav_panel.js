@@ -43,8 +43,10 @@ let category_information_box = (selected_categories) => {
         }
     if(count < 3){
         $('#category-info').removeClass('d-none')
+        $('#head_cc').addClass('d-none')
     } else {
         $('#category-info').addClass('d-none')
+        $('#head_cc').removeClass('d-none')
     }
     });
 }
@@ -53,11 +55,24 @@ let category_information_box = (selected_categories) => {
 // Populating Curated Categories Tiles
 var global_tiles = $('[curated_category]').parent();
 
-$( document ).ready(function() {
-    global_tiles.each((idx, element) =>{
-        var cats = element.children[0].attributes.curated_category.value.replaceAll('_', ' ').split(',')
-        element.children[0].children[0].children[0].children[0].innerText = cats.join(', ');
+let remove_tile = () => {
+    var all_checked = $('input[type=radio]:checked');
+    var count = 0
+    all_checked.each((idx, element) => {
+       if(element.value.includes('any')){
+        count += 1
+       }
     });
+    if(count != 3){
+        global_tiles.each((idx, element) =>{
+            var cats = element.children[0].attributes.curated_category.value.replaceAll('_', ' ').split(',')
+            element.children[0].children[0].children[0].children[0].innerText = cats.join(', ');
+        });
+    }
+}
+
+$(document).ready(function() {
+    remove_tile()
 });
 
 Set.prototype.subSet = function(otherSet)
