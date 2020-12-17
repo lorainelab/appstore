@@ -14,8 +14,6 @@ class ReleaseIndex(indexes.SearchIndex, indexes.Indexable):
 
     short_title = indexes.CharField(model_attr='short_title', null=True)
 
-    categories = indexes.MultiValueField()
-
     Bundle_Name = indexes.CharField()
 
     def get_model(self):
@@ -26,7 +24,3 @@ class ReleaseIndex(indexes.SearchIndex, indexes.Indexable):
 
     def prepare_app(self, obj):
         return obj.app
-
-    def prepare_categories(self, obj):
-        return [category.id for category in obj.app.categories.all()]
-

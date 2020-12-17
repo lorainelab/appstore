@@ -2,14 +2,8 @@ import os
 import os.path
 from django.core.management.base import BaseCommand
 from django.conf import settings
-from apps.models import App, Release, Screenshot, Tag, Author
+from apps.models import App, Release, Screenshot, Author
 from submit_app.models import AppPending
-
-def rm_empty_tags():
-	for tag in Category.objects.all():
-		if not App.objects.filter(categories = tag).count():
-			tag.delete()
-			yield tag.name
 
 def rm_empty_authors():
 	for author in Author.objects.all():
@@ -57,18 +51,6 @@ def rm_unused_media_files():
 
 class Command(BaseCommand):
 	def handle(self, *args, **options):
-		print 'Tag:'
-		for tag in rm_empty_tags():
-			print '  ' + tag
-		print
-
-		print 'Author:'
+		print('Author:')
 		for author in rm_empty_authors():
-			print '  ' + author
-		print
-
-    '''
-		print 'Media:'
-		for file_path in rm_unused_media_files():
-			print '  ' + file_path
-    '''
+			print('  ' + author)
