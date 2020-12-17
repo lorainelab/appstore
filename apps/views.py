@@ -13,7 +13,7 @@ from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpRespo
 from django.shortcuts import get_object_or_404, render
 from django.utils.text import unescape_entities
 
-from apps.models import Category, App, Author, OrderedAuthor, Screenshot, Release
+from apps.models import App, Author, OrderedAuthor, Screenshot, Release
 from curated_categories.models import CuratedCategory, CuratedCategoriesMapping
 from download.models import ReleaseDownloadsByDate
 from util.id_util import fullname_to_name
@@ -121,17 +121,7 @@ def all_apps(request):
 def apps_with_tag(request, tag_name):
 	apps = []
 	releases = dict()
-	tag = None
 	curated_cat = None
-	try:
-		tag = Category.objects.get(name=tag_name)
-		apps = App.objects.filter(categories=tag).order_by('Bundle_Name')
-		for app_query in apps:
-			releases[app_query] = Release.objects.filter(active=True, app=app_query).extra(
-				select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by(
-				'-natural_version')[:1][0]
-	except Category.DoesNotExist:
-		pass
 
 	try:
 		curated_cat = CuratedCategory.objects.get(curated_category=tag_name)
@@ -144,7 +134,6 @@ def apps_with_tag(request, tag_name):
 		pass
 
 	c = {
-		'tag': tag,
 		'curated_cat': curated_cat,
 		'apps': apps,
 		'releases': releases,
@@ -356,31 +345,6 @@ def _mk_basic_field_saver(field, func=None):
 
 	return saver
 
-
-def _save_tags(app, request, release):
-	tag_count = request.POST.get('tag_count')
-	if not tag_count:
-		raise ValueError('no tag_count specified')
-	try:
-		tag_count = int(tag_count)
-	except ValueError:
-		raise ValueError('tag_count is not an integer')
-
-	tags = []
-	for i in range(tag_count):
-		tag_key = 'tag_' + str(i)
-		tag = request.POST.get(tag_key)
-		if not tag:
-			raise ValueError('expected ' + tag_key)
-		tags.append(tag)
-	app.categories.clear()
-	for tag in tags:
-		tag_obj, _ = Category.objects.get_or_create(fullname=tag, name=fullname_to_name(tag))
-		app.categories.add(tag_obj)
-
-	_flush_tag_caches()
-
-
 def _save_curated_categories(app, request, release):
 	tag_count = request.POST.get('count')
 	if not tag_count:
@@ -570,7 +534,6 @@ _AppEditActions = {
 	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
 	'save_contact_email': _mk_basic_field_saver('contact_email'),
 	'save_bundle_description': _mk_basic_field_saver('Bundle_Description'),
-	'save_tags': _save_tags,
 	'save_curated_categories': _save_curated_categories,
 	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
@@ -622,7 +585,6 @@ def app_page_edit(request, app_name):
 		if request.is_ajax():
 			return json_response(result)
 
-	all_tags = [tag.fullname for tag in Category.objects.all()]
 
 	# -- IGBF-2520 -- START --
 	curated_cat = {}
@@ -642,7 +604,6 @@ def app_page_edit(request, app_name):
 		'app': app,
 		'latest_released': latest_released,
 		'released_apps': released_apps,
-		'all_tags': all_tags,
 		'mapped_cc': mapped_cc,
 		'curated_cat': curated_cat,
 		'max_file_img_size_b': _AppPageEditConfig.max_img_size_b,

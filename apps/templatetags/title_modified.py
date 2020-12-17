@@ -4,8 +4,13 @@ register = template.Library()
 
 
 @register.filter
-def title_modified(title):
-    return title.replace('_', ' ').capitalize()
+def title_modified(title, isTitle):
+    if '_' in title:
+        return title.replace('_', ' ').capitalize()
+    if isTitle:
+        return title.capitalize()
+    else:
+        return title
 
 def get_authors(relese_authors_queryset):
     authors = ', '.join(x.name for x in list(relese_authors_queryset))
