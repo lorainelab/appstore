@@ -9,34 +9,10 @@ from django.db import models
 from django.dispatch import receiver
 from django.urls import reverse
 
-
-class Category(models.Model):
-    name     = models.CharField(max_length=255, unique=True)
-    fullname = models.CharField(max_length=255)
-
-    def __str__(self):
-        return self.fullname
-
-    @property
-    def count(self):
-        return App.objects.filter(categories = self).count()
-
-    search_schema = ('fullname', )
-    search_key = 'name'
-
-    def __unicode__(self):
-        return self.name
-
-    class Meta:
-        ordering = ["name"]
-        verbose_name_plural = "categories"
-
-
 class App(models.Model):
     Bundle_Name         = models.CharField(max_length=127, unique=True)
     Bundle_SymbolicName = models.CharField(max_length=127, unique=True)
 
-    categories          = models.ManyToManyField(Category, blank=True)
     editors             = models.ManyToManyField(User, blank=True)
 
     stars               = models.PositiveIntegerField(default=0)
