@@ -76,24 +76,23 @@ logger = logging.getLogger("apps/app_page.html") %}
 					{# End app usage info #}
 				</div>
 			</div>
-			<div class="row custom-margin">
+			<div class="row mt-3">
 					<div class="col-md-12">
 					<!-- Nav tabs -->
 					<ul class="nav nav-tabs" id="myTab" role="tablist">
 						<li class="nav-item">
-							<a class="nav-link active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">About this App</a>
+							<a class="nav-link pl-2 pr-2 text-dark font-weight-bold active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">Overview</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
+							<a class="nav-link pl-2 pr-2 text-dark font-weight-bold" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
 						</li>
 					</ul>
 					<!-- Tab panes -->
 					<div class="tab-content">
-						<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab"
+						<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab">
 						<!-- App Version #} -->
-						<br /> <br />
-							<div class="row" style="font-size: large">
-								<div class="col-md-12">
+							<div class="row mt-4" style="font-size: large">
+								<div class="col-md-12 font-weight-bold">
 									Version:    {{ latest_released.Bundle_Version }}
 								</div>
 							</div>
@@ -103,24 +102,9 @@ logger = logging.getLogger("apps/app_page.html") %}
 							<br />
 							<div class="row">
 								<div class="col-md-12">
-									Curated Categories:
+									<span class="font-weight-bold">Curated Categories:</span>
 									{% for cat in curated_category_mapping.curated_categories.all %}
 									<a class="link" href="{% url 'tag_page' cat.curated_category %}">{{ cat.curated_category }}</a>{% if not forloop.last %}, {% endif %}
-									{% endfor %}
-								</div>
-							</div>
-							{% endif %}
-							{# End Categories #}
-
-
-							{# Categories #}
-							{% if app.categories.all %}
-							<br />
-							<div class="row">
-								<div class="col-md-12">
-									Categories:
-									{% for tag in app.categories.all %}
-									<a class="link" href="{% url 'tag_page' tag.name %}">{{ tag.fullname }}</a>{% if not forloop.last %}, {% endif %}
 									{% endfor %}
 								</div>
 							</div>
@@ -130,7 +114,8 @@ logger = logging.getLogger("apps/app_page.html") %}
 							{# Screenshots #}
 							{% if latest_released.screenshot_set.all %}
 							<div class="row">
-								<div class="col-md-12" id="app-screenshots">
+								<div class="col-md-12 mt-3" id="app-screenshots">
+									<p class="font-weight-bold mb-3">Screenshots:</p>
 									{% for screenshot in latest_released.screenshot_set.all %}
 									<a href="{{ screenshot.screenshot.url }}" data-toggle="lightbox" data-gallery="screen-gallery">
 										<img src="{{ screenshot.thumbnail.url }}" class="img-fluid"/>
@@ -146,7 +131,12 @@ logger = logging.getLogger("apps/app_page.html") %}
 							{# Details #}
 							{% if decoded_details %}
 							<div class="row">
-								<div class="col-md-12 app-details-custom" id="app-details-md">{{ decoded_details | markdown_parser | safe }}</div>
+								<div class="col-md-12" id="app-details-md">
+									<p class="font-weight-bold mb-3">Description:</p>
+									<div class="app-details-custom pt-2 pl-2 pr-2">
+										{{ decoded_details | markdown_parser | safe }}
+									</div>
+								</div>
 							</div>
 							{% endif %}
 							{# End Details #}
@@ -155,7 +145,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 							{% if latest_released.authors.all %}
 							<div class="row">
 								<div class="col-md-8">
-									Authors:
+									<span class="font-weight-bold">Authors:</span>
 									<ul>
 										{% for author in latest_released.ordered_authors %}
 										<li>
@@ -217,7 +207,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 				{% if is_editor %}
 				<button class="btn btn-lg btn-warning" onclick="document.location.href='{% url 'app_page_edit' app.Bundle_SymbolicName %}';">
 					<i class="fa fa-pencil text-white"></i>
-					&nbsp;Edit this page
+					&nbsp;<small class="font-weight-bold text-dark">Edit this page</small>
 				</button>
 				{% endif %}
 			</div>
@@ -227,36 +217,36 @@ logger = logging.getLogger("apps/app_page.html") %}
 			<div class="box-release-info" id="app_status_block">
 				<h6 align="center" class="panel-title text-muted">To install and run this App, start IGB! Then come back and refresh this page.</h6>
 				<a href="https://bioviz.org" id="change-url">
-				<button class="btn btn-block btn-info" id="app-install-btn">
+				<button class="btn btn-block btn-info pt-3 mb-2" id="app-install-btn">
 					{# <-- download button icon will go here #}
-					<h6><i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;Get latest IGB</h6> {# <-- download button text will go here #}
+					<h6 class="font-weight-bold"><i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;Get latest IGB</h6> {# <-- download button text will go here #}
 				</button>
 				</a>
-				<p id="app_version"></p>
+				<p class="mb-2" id="app_version"></p>
 				{% if app.license_url %}
-				<strong class="custom-font">License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
+				<strong>License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
 				<br />
 				{% endif %}
-				<strong class="custom-font"> App Version </strong> {{ latest_released.Bundle_Version }}<br />
-				<strong class="custom-font" id="igb_version">Works with IGB</strong> {{ latest_released.platform_compatibility | strip_double_quotes}}
+				<strong> App Version </strong> {{ latest_released.Bundle_Version }}<br />
+				<strong id="igb_version">Works with IGB</strong> {{ latest_released.platform_compatibility | strip_double_quotes}}
 			</div>
 
 			{# end 3.0 download panel #}
 
 			{# latest_released resources #}
 			<div class="alert alert-warning box-resource">
-				<h5>RESOURCES</h5>
+				<h5 class="font-weight-bold">RESOURCES</h5>
 				<ul class="nav nav-list inline-list">
 					<li>
 						<i class="fa fa-question-circle"></i>
-						<a href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
+						<a class="text-dark" href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
 							Ask a question
 						</a>
 					</li>
 
 					<li>
 						<i class="fa fa-comments"></i>
-						<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank">
+						<a class="text-dark" href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank">
 							Search helpdesk
 						</a>
 					</li>
@@ -264,7 +254,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 					{% if latest_released.website_url %}
 					<li>
 						<i class="fa fa-home"></i>
-						<a href="{{ latest_released.website_url }}" target="_blank" style="padding-right:50px;">
+						<a class="text-dark" href="{{ latest_released.website_url }}" target="_blank" style="padding-right:50px;">
 							Website
 						</a>
 					</li>
@@ -273,7 +263,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 					{% if latest_released.tutorial_url %}
 					<li>
 						<i class="fa fa-book"></i>
-						<a href="{{ latest_released.tutorial_url }}" target="_blank" style="padding-right:50px;">
+						<a class="text-dark" href="{{ latest_released.tutorial_url }}" target="_blank" style="padding-right:50px;">
 							Tutorial
 						</a>
 					</li>
@@ -282,7 +272,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 					{% if latest_released.citation %}
 					<li>
 						<i class="fa fa-heart"></i>
-						<a href="http://www.ncbi.nlm.nih.gov/pubmed/{{ latest_released.citation }}" target="_blank" style="padding-right:50px;">
+						<a class="text-dark" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ latest_released.citation }}" target="_blank" style="padding-right:50px;">
 							Cite this App
 						</a>
 					</li>
@@ -291,7 +281,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 					{% if latest_released.code_repository_url %}
 					<li>
 						<i class="fa fa-code-fork"></i>
-						<a href="{{ latest_released.code_repository_url }}" target="_blank">
+						<a class="text-dark" href="{{ latest_released.code_repository_url }}" target="_blank">
 							Code Repository
 						</a>
 					</li>
@@ -300,7 +290,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 					{% if latest_released.contact_email %}
 					<li>
 						<i class="fa fa-envelope"></i>
-						<a href="mailto:{{ latest_released.contact_email }}" target="_blank" style="padding-right:50px;">
+						<a class="text-dark" href="mailto:{{ latest_released.contact_email }}" target="_blank" style="padding-right:50px;">
 							 E-mail
 						</a>
 					</li>
