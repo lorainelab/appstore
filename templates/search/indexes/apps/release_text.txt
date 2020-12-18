@@ -7,6 +7,3 @@
 {{ author.name }}
 {{ author.institution }}
 {% endfor %}
-{% for category in object.app.categories.all %}
-{{ category.fullname }}
-{% endfor %}
