@@ -1,31 +1,6 @@
-#app-title {
-	margin: 0;
-}
-
-.box-release-info i {
-    color:black;
-}
-
 .app-name-edit {
     font-size: 1.5em;
     margin: 0.2em 0;
-}
-
-.panel-title {
-	margin: 0;
-	text-transform: uppercase;
-}
-
-#save-actions {
-	margin-bottom: 1.2em;
-}
-
-#save-actions button {
-	width: 49%;
-}
-
-.box-release-info button {
-    width: 48%;
 }
 
 #app-icon {
@@ -38,9 +13,57 @@
 	display: compact;
 }
 
+#save-actions button {
+	width: 49%;
+}
 
-#app-details-tab .row {
-	margin-bottom: 1em;
+.box-release-info button {
+    width: 49%;
+}
+
+.app-details-custom {
+    text-align: justify;
+    background-color:#eaeaea;
+    border-radius:5px;
+}
+
+#curated_category {
+	width: 50%;
+	text-align: center;
+}
+
+#app-screenshots {
+	min-height: 35%;
+	overflow-x: auto;
+	overflow-y: hidden;
+	-ms-overflow-x: auto;
+	-ms-overflow-y: hidden;
+	white-space: nowrap;
+}
+
+#app-screenshots img {
+	border: 2px solid white;
+	display: inline-block;
+}
+
+#app-details-preview {
+	border: 2px dashed #aaa;
+	padding: 1em;
+	position: relative;
+}
+
+.help-block {
+	font-size: 0.87em;
+}
+
+.release-notes {
+    margin-left: 0.4em;
+	width: 95%;
+}
+
+.custom-break {
+    word-break: break-word !important;
+    cursor: pointer;
 }
 
 .app-tag {
@@ -60,96 +83,4 @@
 
 .app-tag-remove:hover {
 	opacity: 1.0;
-}
-
-#tag-add-popover ul {
-	height: 20em;
-	overflow: scroll;
-	overflow-x: hidden;
-	margin-bottom: 2em;
-}
-
-#tag-input {
-	width: 43%;
-	text-align: center;
-}
-
-#app-tags-list {
-    margin-top: 1%;
-}
-
-#app-cur-cat-list {
-    margin-top: 1%
-}
-
-#curated_category {
-	width: 43%;
-	text-align: center;
-}
-
-#app-screenshots {
-	height: 170px;
-	overflow-x: auto;
-	overflow-y: hidden;
-	-ms-overflow-x: auto;
-	-ms-overflow-y: hidden;
-	white-space: nowrap;
-}
-
-#app-screenshots img {
-	border: 2px solid white;
-	display: inline-block;
-}
-
-.selected-screenshot {
-	border: 2px solid #F89406 !important;
-}
-
-#app-details-preview {
-	border: 2px dashed #aaa;
-	padding: 1em;
-	position: relative;
-}
-
-.right-panel .help-block {
-	font-size: 0.87em;
-}
-
-.right-panel fieldset {
-	margin: 1.5em 0 0 0;
-}
-
-small .timeago[title] {
-	cursor: auto;
-	border: none;
-}
-
-h4 small {
-	margin-left: 1em;
-}
-
-h4 button {
-	float: right;
-}
-
-.release-notes {
-    margin-left: 0.4em;
-	width: 95%;
-}
-
-.release-notes-preview {
-	border: 2px dashed #aaa;
-	padding: 1em;
-	position: relative;
-	margin-top: 0.5em;
-	margin-bottom: 1em;
-}
-
-.row-drag {
-	background-color: #F5EFA4;
-}
-
-.custom-break {
-    word-break: break-word !important;
-    cursor: pointer;
 }
