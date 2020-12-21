@@ -20,6 +20,7 @@ from util.id_util import fullname_to_name
 from util.img_util import scale_img
 from util.view_util import json_response, html_response, obj_to_dict, get_object_or_none
 from haystack.query import SearchQuerySet
+from django.shortcuts import redirect
 logger = logging.getLogger(__name__)
 
 
@@ -622,6 +623,8 @@ def custom_search_query(request):
 	:return:
 	"""
 	query_string = request.GET.get('q', None).strip("\"")
+	if len(query_string)==0:
+		return redirect('/') 
 	sqs = SearchQuerySet().auto_query(query_string).load_all()
 	setsqs = set()
 	for release in sqs:
