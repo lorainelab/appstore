@@ -2,6 +2,7 @@
 {% load static %}
 {% load markdown %}
 {% load timestamp_converter %}
+{% load title_modified %}
 {% load i18n %}
 {% import logging
 
@@ -104,7 +105,8 @@ logger = logging.getLogger("apps/app_page.html") %}
 								<div class="col-md-12">
 									<span class="font-weight-bold">Curated Categories:</span>
 									{% for cat in curated_category_mapping.curated_categories.all %}
-									<a class="link" href="{% url 'tag_page' cat.curated_category %}">{{ cat.curated_category }}</a>{% if not forloop.last %}, {% endif %}
+									{{ cat.curated_category|title_modified:False }}
+									{% if not forloop.last %}, {% endif %}
 									{% endfor %}
 								</div>
 							</div>
@@ -370,6 +372,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 	{% if latest_released.Bundle_Description %}
 	AppPage.setup_details();
 	{% endif %}
+
 
 	// Javascript to enable link to tab
 	var url = document.location.toString();
