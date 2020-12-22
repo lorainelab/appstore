@@ -81,7 +81,7 @@ class _DefaultConfig:
 
 def apps_default(request):
 
-	apps = App.objects.all()
+	apps = App.objects.order_by('Bundle_Name')
 	releases = {}
 	downloaded_apps = dict()
 	for app in apps:
