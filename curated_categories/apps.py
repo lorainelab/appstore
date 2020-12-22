@@ -16,11 +16,11 @@ class CuratedCategoriesConfig(AppConfig):
 
             ('app_type', 'Panel', 'How an App changes the IGB interface',
               'Panel Apps introduced a new tabbed panel to the IGB interface'),
-
-            ('biology', 'Microbial_Genomics', 'Apps categorized by biological research area',
+              
+            ('biology', 'Microbial Genomics', 'Apps categorized by biological research area',
              'Apps for analysis and visualization of microbial genomic data'),
 
-            ('biology', 'Plant_Genomics', 'Apps categorized by biological research area',
+            ('biology', 'Plant Genomics', 'Apps categorized by biological research area',
              'Apps for analysis and visualization of genomes from photosynthetic organisms'),
 
             ('biology', 'Protein', 'Apps categorized by biological research area',
@@ -29,7 +29,7 @@ class CuratedCategoriesConfig(AppConfig):
             ('biology', 'Epigenome', 'Apps categorized by biological research area',
              'Apps for visualizing or searching DNA or histone modification diversity'),
 
-            ('biology', 'Alternative_Splicing', 'Apps categorized by biological research area',
+            ('biology', 'Alternative Splicing', 'Apps categorized by biological research area',
              'Apps that show splicing pattern diversity'),
 
             ('biology', 'Transcriptome', 'Apps categorized by biological research area',
