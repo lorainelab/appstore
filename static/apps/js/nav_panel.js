@@ -7,6 +7,16 @@ $(function() {
     });
 });
 
+// load search bar with search query
+$(function() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const search_query = urlParams.get('q')
+    if(search_query!=""){
+      document.getElementById("q").value = search_query;
+    }
+});
+
 // Extracting Category information
 var cat_info = {}
 
