@@ -53,10 +53,8 @@ let category_information_box = (selected_categories) => {
         }
     if(count < 3){
         $('#category-info').removeClass('d-none')
-        $('#head_cc').addClass('d-none')
     } else {
         $('#category-info').addClass('d-none')
-        $('#head_cc').removeClass('d-none')
     }
     });
 }
@@ -138,3 +136,6 @@ $('input[type=radio]').change(function() {
     category_information_box(get_attribs);
 });
 
+$(function(){
+  $("input[type=radio]").trigger('change');
+});
