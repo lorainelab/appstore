@@ -1,0 +1,44 @@
+/* upload_form page CSS*/
+.trash {
+    font-size: 20px;
+    color: black;
+}
+
+.custom-legend {
+    color: black;
+    font-size: 16px;
+}
+
+.center-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60%;
+    padding-top: 5%;
+}
+
+.big-button {
+
+    width: 30%;
+    height: 45px;
+    font-size:18px;
+}
+
+input[type=file]{
+    width:110px;
+    color:transparent;
+}
+       
+.input-file-label {
+    width: max-content;
+    font-style: italic;
+    margin-right: 10px;
+}
+
+.or-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30%;
+    font-weight: 500;
+}

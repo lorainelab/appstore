@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block more_head %}
+    <link href="{% get_static_prefix %}submit_app/css/app_upload.css" rel="stylesheet">
     <script type="text/javascript" src="{% get_static_prefix %}common/js/doc_link.js"></script>
 
     <style type="text/css">
@@ -49,12 +50,14 @@
                     &nbsp;<i id="delete_file_btn" class="fa fa-trash-o trash"></i>
                     <br />
                     <br />
-                    <label class="custom-legend or-button">or</label>
+                    <label class="custom-legend or-button font-weight-bold">or</label>
                     <br />
                     Enter Link&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="url_val" name = "url_val" size="50">
                     &nbsp;<i id="delete_path_btn" class="fa fa-trash-o trash"></i>
                     <br />
-                    <i class="text-muted custom-text">Best for bitbucket pipeline users. <a href="{% url 'compile-app-with-pipeline' %}"><u>Learn more</u></a></i>
+                    <p class="ml-4">
+                        <i class="text-muted ml-5 pl-5">Best for bitbucket pipeline users. <a href="{% url 'compile-app-with-pipeline' %}"><u>Learn more</u></a></i>
+                    </p>
                 </div>
             </div>
             <br />
