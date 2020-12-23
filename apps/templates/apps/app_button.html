@@ -18,7 +18,7 @@
             <span class="right-divide ml-3">
                 <h5 class="app-button-title mr-3">{{ app.Bundle_Name | truncatechars:40 }}</h5>
                 {% if release.authors.all|get_authors != '' %}
-                    <span class="authored mr-3"> by {{ release.authors.all|get_authors }}</span>
+                    <p class="authored mr-3"> by {{ release.authors.all|get_authors }}</p>
                 {% endif %}
                 {% if release.short_title %}
                 <div class="desc-spaced mr-3">
