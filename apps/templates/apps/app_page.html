@@ -367,13 +367,13 @@ logger = logging.getLogger("apps/app_page.html") %}
 </script>
 
 <script type="text/javascript">
-    AppPage.setup_install("{{ app.Bundle_Name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}", "{{ latest_released.Bundle_Version | escapejs }}");
+	if(!AppPage.isSafari()){
+		AppPage.setup_install("{{ app.Bundle_Name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}", "{{ latest_released.Bundle_Version | escapejs }}");
 
-	{% if latest_released.Bundle_Description %}
-	AppPage.setup_details();
-	{% endif %}
-
-
+		{% if latest_released.Bundle_Description %}
+		AppPage.setup_details();
+		{% endif %}
+	}
 	// Javascript to enable link to tab
 	var url = document.location.toString();
 	if (url.match('#')) {
