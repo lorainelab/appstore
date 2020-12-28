@@ -98,21 +98,6 @@ logger = logging.getLogger("apps/app_page.html") %}
 								</div>
 							</div>
 
-							{# Curated Categories #}
-							{% if curated_category_mapping.curated_categories.all %}
-							<br />
-							<div class="row">
-								<div class="col-md-12">
-									<span class="font-weight-bold">Curated Categories:</span>
-									{% for cat in curated_category_mapping.curated_categories.all %}
-									{{ cat.curated_category }}
-									{% if not forloop.last %}, {% endif %}
-									{% endfor %}
-								</div>
-							</div>
-							{% endif %}
-							{# End Categories #}
-
 							{# Screenshots #}
 							{% if latest_released.screenshot_set.all %}
 							<div class="row">
