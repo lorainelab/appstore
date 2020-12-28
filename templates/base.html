@@ -24,15 +24,17 @@
         <script type="text/javascript" src="{% get_static_prefix %}common/js/setup_ajax_for_csrf.js"></script>
 
         <!-- Custom styles for this template -->
+        <link href="{% get_static_prefix %}common/css/base.css" rel="stylesheet">
         <link href="{% get_static_prefix %}apps/css/base.css" rel="stylesheet">
         <link href="{% get_static_prefix %}common/css/nav_header.css" rel="stylesheet">
         <link href="{% get_static_prefix %}apps/css/menu.css" rel="stylesheet">
+
         {% block more_head %}{% endblock %}
 
     </head>
     <body>
         <div id="TopMenu">
-            <div class="match mr-2">
+            <div class="match container">
                 {% include "menu.html" %}
             </div>
         </div>
