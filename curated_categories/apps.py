@@ -16,6 +16,9 @@ class CuratedCategoriesConfig(AppConfig):
 
             ('app_type', 'Panel', 'How an App changes the IGB interface',
               'Panel Apps introduced a new tabbed panel to the IGB interface'),
+            
+            ('app_type', 'Demo', 'How an App changes the IGB interface',
+              'Demo Apps show developers how to create IGB Apps'),
               
             ('biology', 'Microbial Genomics', 'Apps categorized by biological research area',
              'Apps for analysis and visualization of microbial genomic data'),
