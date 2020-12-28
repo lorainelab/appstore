@@ -180,6 +180,28 @@ var AppPage = (function($) {
 		setup_install_btn('btn-success', 'fa fa-check', 'Installed', appVersion, igbVersion);
 	}
 
+    function isSafari() {
+        let userAgentString = navigator.userAgent;
+
+        // Detect Chrome
+        let chromeAgent = userAgentString.indexOf("Chrome") > -1;
+
+        // Detect Safari
+        let safariAgent = userAgentString.indexOf("Safari") > -1;
+
+        // Discard Safari since it also matches Chrome
+        if ((chromeAgent) && (safariAgent)) safariAgent = false;
+
+        if(safariAgent) {
+            document.getElementById("change-url").href = "#";
+            document.getElementById("app-install-btn").disabled= "disabled";
+            setTimeout(function() {
+                Msgs.add_msg("Safari is not supported by Appstore. Please use either Google Chrome, FireFox or any other browser.", "danger");
+            }, 3000);
+            return safariAgent
+        }
+        return safariAgent
+    }
 
 	function setup_install(app_bundleName, app_bundleSymbolicName, repository_url, release_BundleVersion) {
 		get_app_info(app_bundleSymbolicName, repository_url, function(app_status, is_running) {
@@ -354,5 +376,6 @@ var AppPage = (function($) {
 //      'setup_twox_download_popover': setup_twox_download_popover,
         'setup_stars': setup_stars,
         'setup_details': setup_details,
+        'isSafari':isSafari,
     }
 })($);
