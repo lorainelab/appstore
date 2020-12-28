@@ -24,7 +24,7 @@
         <!-- Curated Categories -->
         {% for type, category in all_curated_categories.items %}
         <form id="cat_select" class="mt-4">
-            <span class="title nav-size"> {{ type|title_modified:True }}:
+            <span class="title nav-size"> {{ type|title_modified }}:
                 <i id="{{type}}" class="tooltip_info fa fa-question-circle" data-toggle="tooltip" data-placement="top" title=""></i>
             </span>
             <div class="mt-2 mb-5">
@@ -35,11 +35,11 @@
                    </label>
                 </div>
                 <!-- Sorting sub categories in the curated category, please refer IGBF-2678 for more details -->
-                {% for sub in category|dictsort:"curated_category"%}
+                {% for sub in category|dictsort:"curated_category" %}
                 <div class="form-check mt-2">
                    <input class="form-check-input" type="radio" name="q" id="{{ sub.curated_category }}" value="{{ sub.curated_category }}">
                    <label class="form-check-label" for="{{ sub.curated_category }}">
-                   {{ sub.curated_category|title_modified:False }}
+                   {{ sub.curated_category }}
                    </label>
                 </div>
                 {% endfor %}
