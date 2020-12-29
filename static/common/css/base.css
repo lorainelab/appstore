@@ -54,3 +54,7 @@ body {
         padding: 0.5rem 0rem .5rem 0rem
     }
 }
+
+.app-tile-col {
+    height: 230px;
+}
