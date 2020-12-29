@@ -47,6 +47,8 @@
 .right-divide {
     float: right;
     position:absolute;
+    max-height: 150px;
+    overflow: hidden;
 }
 
 p.desc-box {
@@ -72,4 +74,8 @@ p.desc-box {
 .authored {
     color: grey;
     font-size: 0.8rem;
+}
+
+.desc-spaced {
+    line-height: 1.35em;
 }

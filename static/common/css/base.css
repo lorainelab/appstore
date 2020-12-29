@@ -1,26 +1,60 @@
 body {
-  padding-top: 8em;
-  padding-bottom: 10em;
-}
-.footer-divider {
-  margin-left: 3em;
+    font-family: 'Inter', sans-serif!important;
+    font-weight: normal;
+    font-style: normal;
 }
 
-.navbar .navbar-inner .container {
-    width:1.5em;
-    height:1.5em;
+@media (min-width: 500px) {
+    .container{
+        max-width: 100%;
+    }
+    .app-tile-col {
+        min-width: 100%;
+    }
+    .navbar {
+        padding: 0.5rem 1rem .5rem 0rem
+    }
 }
 
-.navbar .navbar-inner .container .appstore-navbar-item{
-    padding: 0.3em 0em;
+@media (min-width: 700px) {
+    .container{
+        max-width: 95%;
+
+    }
+    .app-tile-col {
+        min-width: 360px;
+    }
+    .navbar {
+        padding: 0.5rem 1rem .5rem 0rem
+    }
 }
 
-.navbar .navbar-inner .container .appstore-name{
-    padding-left:0.2em;
-    font-weight:bold;
-    color:#d5d5d5
+@media (min-width: 901px) {
+    .container{
+        max-width: 100%;
+    }
+    .app-tile-col {
+        min-width: 360px;
+        max-width: 33.33%;
+    }
+    .navbar {
+        padding: 0.5rem 1rem .5rem 0rem
+    }
 }
 
-.container{
-    width:1200px !important;
+@media (min-width: 1600px) {
+    .container{
+        max-width: 1600px;
+    }
+    .app-tile-col {
+        min-width: 360px;
+        max-width: 33.33%;
+    }
+    .navbar {
+        padding: 0.5rem 0rem .5rem 0rem
+    }
+}
+
+.app-tile-col {
+    height: 230px;
 }
