@@ -93,7 +93,9 @@ Set.prototype.subSet = function(otherSet)
     return true;
 }
 
-$('input[type=radio]').change(function() {
+
+// On initialization Populate Categories on App Tiles
+let show_categories = () => {
     var get_attribs = [];
     var all_checked = $('input[type=radio]:checked')
 
@@ -134,8 +136,10 @@ $('input[type=radio]').change(function() {
         });
     }
     category_information_box(get_attribs);
-});
+}
 
-$(function(){
-  $("input[type=radio]").trigger('change');
+show_categories();
+
+$('input[type=radio]').change(function() {
+    show_categories();
 });

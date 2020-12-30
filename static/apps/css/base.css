@@ -28,3 +28,7 @@
 #bioviz-url {
     display:none;
 }
+
+#TopMenu {
+  height: auto !important;
+}

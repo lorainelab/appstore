@@ -98,21 +98,6 @@ logger = logging.getLogger("apps/app_page.html") %}
 								</div>
 							</div>
 
-							{# Curated Categories #}
-							{% if curated_category_mapping.curated_categories.all %}
-							<br />
-							<div class="row">
-								<div class="col-md-12">
-									<span class="font-weight-bold">Curated Categories:</span>
-									{% for cat in curated_category_mapping.curated_categories.all %}
-									{{ cat.curated_category }}
-									{% if not forloop.last %}, {% endif %}
-									{% endfor %}
-								</div>
-							</div>
-							{% endif %}
-							{# End Categories #}
-
 							{# Screenshots #}
 							{% if latest_released.screenshot_set.all %}
 							<div class="row">
@@ -134,10 +119,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 							{% if decoded_details %}
 							<div class="row">
 								<div class="col-md-12" id="app-details-md">
-									<p class="font-weight-bold mb-3">Description:</p>
-									<div class="app-details-custom pt-2 pl-2 pr-2">
-										{{ decoded_details | markdown_parser | safe }}
-									</div>
+									{{ decoded_details | markdown_parser | safe }}
 								</div>
 							</div>
 							{% endif %}
@@ -206,7 +188,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 		<div class="col-md-3">
 			{# Editor menu #}
 			{% if is_editor %}
-			<div class="btn-group mt-5 mb-2">
+			<div class="btn-group mt-5 mb-3">
 				<button class="btn btn-lg btn-warning" onclick="document.location.href='{% url 'app_page_edit' app.Bundle_SymbolicName %}';">
 					<i class="fa fa-pencil text-white"></i>
 					&nbsp;<small class="font-weight-bold text-dark">Edit this page</small>
@@ -216,7 +198,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 			{# End editor menu #}
 			{# Right-hand panels #}
 			{# 3.0 download panel #}
-			<div class="box-release-info mt-0" id="app_status_block">
+			<div class="box-release-info mt-1" id="app_status_block">
 				<h6 align="center" class="panel-title text-muted">To install and run this App, start IGB! Then come back and refresh this page.</h6>
 				<a href="https://bioviz.org" id="change-url">
 				<button class="btn btn-block btn-info pt-3 mb-2" id="app-install-btn">

@@ -8,7 +8,6 @@
     min-height: 13.5rem;
     border-radius: 4px;
     padding:6px 14px;
-    margin: 5px 5px 5px 5px;
     cursor: pointer;
     overflow: hidden;
     border: 0.5px solid #d6d6d6;
@@ -47,9 +46,11 @@
 .right-divide {
     float: right;
     position:absolute;
+    max-height: 155px;
+    overflow: hidden;
 }
 
-p.desc-box {
+.desc-spaced p {
     font-size: 0.95rem;
     padding-bottom: 5px;
     display: block;
@@ -72,4 +73,8 @@ p.desc-box {
 .authored {
     color: grey;
     font-size: 0.8rem;
+}
+
+.desc-spaced {
+    line-height: 1.35em;
 }
