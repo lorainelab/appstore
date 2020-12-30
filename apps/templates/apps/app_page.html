@@ -119,10 +119,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 							{% if decoded_details %}
 							<div class="row">
 								<div class="col-md-12" id="app-details-md">
-									<p class="font-weight-bold mb-3">Description:</p>
-									<div class="app-details-custom pt-2 pl-2 pr-2">
-										{{ decoded_details | markdown_parser | safe }}
-									</div>
+									{{ decoded_details | markdown_parser | safe }}
 								</div>
 							</div>
 							{% endif %}
