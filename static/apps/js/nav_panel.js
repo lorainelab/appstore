@@ -45,7 +45,7 @@ let category_information_box = (selected_categories) => {
             if($('#category-description').text() != ''){
                 temp.push($('#category-description').text());
             }
-            temp.push(category.split('_').join(' ') + " - " + cat_info[category])
+            temp.push(category + " - " + cat_info[category])
             let text_append =  temp.join(', ')
             $('#category-description').text(text_append);
         } else {
@@ -73,7 +73,7 @@ let remove_tile = () => {
     });
     if(count != 3){
         global_tiles.each((idx, element) =>{
-            var cats = element.children[0].attributes.curated_category.value.replaceAll('_', ' ').split(',')
+            var cats = element.children[0].attributes.curated_category.value.split(',')
             element.children[0].children[0].children[0].children[0].innerText = cats.join(', ');
         });
     }
@@ -93,7 +93,9 @@ Set.prototype.subSet = function(otherSet)
     return true;
 }
 
-$('input[type=radio]').change(function() {
+
+// On initialization Populate Categories on App Tiles
+let show_categories = () => {
     var get_attribs = [];
     var all_checked = $('input[type=radio]:checked')
 
@@ -124,18 +126,20 @@ $('input[type=radio]').change(function() {
             });
             element.style.display = display;
             var temp_text = cc_head_legend.join(', ');
-            element.children[0].children[0].children[0].children[0].innerText = temp_text.replaceAll('_', ' ');
+            element.children[0].children[0].children[0].children[0].innerText = temp_text;
         });
     } else {
         global_tiles.each((idx, element) =>{
             element.style.display = 'block';
             var cats = element.children[0].attributes.curated_category.value.split(',')
-            element.children[0].children[0].children[0].children[0].innerText = cats.join(', ').replaceAll('_', ' ');
+            element.children[0].children[0].children[0].children[0].innerText = cats.join(', ');
         });
     }
     category_information_box(get_attribs);
-});
+}
 
-$(function(){
-  $("input[type=radio]").trigger('change');
+show_categories();
+
+$('input[type=radio]').change(function() {
+    show_categories();
 });

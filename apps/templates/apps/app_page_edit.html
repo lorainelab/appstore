@@ -64,9 +64,9 @@
                         <div class="input-group mb-2">
                             <select  name="curated_category" id="curated_category">
                                 {% for cat, subcat in curated_cat.items %}
-                                <optgroup label="{{ cat|title_modified:True }}">
+                                <optgroup label="{{ cat|title_modified }}">
                                     {% for sub in subcat %}
-                                    <option id="cur-cat" value="{{ sub }}">{{ sub|title_modified:False }}</option>
+                                    <option id="cur-cat" value="{{ sub }}">{{ sub }}</option>
                                     {% endfor %}
                                 </optgroup>
                                 {% endfor %}
