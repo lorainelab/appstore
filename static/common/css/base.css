@@ -4,57 +4,6 @@ body {
     font-style: normal;
 }
 
-@media (min-width: 500px) {
-    .container{
-        max-width: 100%;
-    }
-    .app-tile-col {
-        min-width: 100%;
-    }
-    .navbar {
-        padding: 0.5rem 1rem .5rem 0rem
-    }
-}
-
-@media (min-width: 700px) {
-    .container{
-        max-width: 95%;
-
-    }
-    .app-tile-col {
-        min-width: 360px;
-    }
-    .navbar {
-        padding: 0.5rem 1rem .5rem 0rem
-    }
-}
-
-@media (min-width: 901px) {
-    .container{
-        max-width: 100%;
-    }
-    .app-tile-col {
-        min-width: 360px;
-        max-width: 33.33%;
-    }
-    .navbar {
-        padding: 0.5rem 1rem .5rem 0rem
-    }
-}
-
-@media (min-width: 1600px) {
-    .container{
-        max-width: 1600px;
-    }
-    .app-tile-col {
-        min-width: 360px;
-        max-width: 33.33%;
-    }
-    .navbar {
-        padding: 0.5rem 0rem .5rem 0rem
-    }
-}
-
 .app-tile-col {
     height: 230px;
 }
