@@ -19,49 +19,59 @@
 {% endblock %}
 
 {% block content %}
-<div class="row">
-    <div class="col-md-12">
-        <h1 class="text-success">Submit your App
-            <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle"
-             title = "">
-                <i class="fa fa-question-circle" style="font-size: 30px"></i>
-            </button>
-        </h1>
-    </div>
-{{ doc_link }}
-    <br/><br/>
-    <br/><br/>
-    <div class="col-md-12">
-        <form action="{% url 'submit-app' %}" method="POST" enctype="multipart/form-data">
-            {% csrf_token %}
-            {% if expect_app_name %}
-            <input type="hidden" name="expect_app_name" value="{{ expect_app_name }}">
-            {% endif %}
-            <div class="row">
-                <div class="col-md-12">
-                    <input type="file" name="file" id="input-file" title="No file selected">
-                    <label for="input-file" class="input-file-label text-muted" id="input-file-label"> No file selected </label>
-                    &nbsp;<i id="delete_file_btn" class="fa fa-trash-o trash"></i>
-                    <br />
-                    <br />
-                    <label class="custom-legend or-button font-weight-bold">or</label>
-                    <br />
-                    Enter Link&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="url_val" name = "url_val" size="50">
-                    &nbsp;<i id="delete_path_btn" class="fa fa-trash-o trash"></i>
-                    <br />
-                    <p class="ml-4">
-                        <i class="text-muted ml-5 pl-5">Best for bitbucket pipeline users. <a href="{% url 'compile-app-with-pipeline' %}"><u>Learn more</u></a></i>
-                    </p>
-                </div>
+<div class="col-md-12 error-margin">
+    <div class="row justify-content-center align-items-center">
+        <div class="col-10 col-md-12 col-lg-9">
+            <div class="col-md-12 mt-4">
+                {% if expect_app_name %}
+                    <h1>
+                        Submit a New Release
+                        <small>{{ expect_app_name }}</small>
+                    </h1>
+                {% else %}
+                    <h1 class="text-success">Submit your App
+                        <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle"
+                        title = "">
+                            <i class="fa fa-question-circle" style="font-size: 30px"></i>
+                        </button>
+                {% endif %}
+                    </h1>
             </div>
-            <br />
-            <span class="center-button">
-                <button type="submit" class="btn btn-success big-button">Next</button>
-                <div id="loading">
-                    <img src="{% get_static_prefix %}common/img/loading.gif">
-                </div>
-            </span>
-        </form>
+        {{ doc_link }}
+        <br/><br/>
+            <div class="col-md-12">
+                <form action="{% url 'submit-app' %}" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {% if expect_app_name %}
+                    <input type="hidden" name="expect_app_name" value="{{ expect_app_name }}">
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-md-12">
+                            <input type="file" name="file" id="input-file" title="No file selected">
+                            <label for="input-file" class="input-file-label text-muted" id="input-file-label"> No file selected </label>
+                            &nbsp;<i id="delete_file_btn" class="fa fa-trash-o trash"></i>
+                            <br />
+                            <br />
+                            <label class="custom-legend or-button font-weight-bold">or</label>
+                            <br />
+                            Enter Link&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="url_val" name = "url_val" size="70">
+                            &nbsp;<i id="delete_path_btn" class="fa fa-trash-o trash"></i>
+                            <br />
+                            <p class="ml-4">
+                                <i class="text-muted ml-5 pl-5">Best for bitbucket pipeline users. <a href="{% url 'compile-app-with-pipeline' %}"><u>Learn more</u></a></i>
+                            </p>
+                        </div>
+                    </div>
+                    <br />
+                    <span class="center-button">
+                        <button type="submit" class="btn btn-success big-button">Next</button>
+                        <div id="loading">
+                            <img src="{% get_static_prefix %}common/img/loading.gif">
+                        </div>
+                    </span>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 <br />
