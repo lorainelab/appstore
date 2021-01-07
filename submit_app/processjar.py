@@ -15,7 +15,7 @@ _MAX_MANIFEST_FILE_SIZE_B = 1024 * 1024
 logger = logging.getLogger(__name__)
 
 
-def process_jar(jar_file, expect_app_name):
+def process_jar(jar_file):
     details_dict = {}
     try:
         if isinstance(jar_file, str):
@@ -64,8 +64,6 @@ def process_jar(jar_file, expect_app_name):
     details_dict['has_export_pkg'] = has_export_pkg
 
     details_dict['Bundle_Name'] = smart_text(app_name, errors='replace')
-    if expect_app_name and (not app_name == expect_app_name):
-        raise ValueError('The file you submitted has app name as <tt>%s</tt> but must be <tt>%s</tt>' % (app_name, expect_app_name))
     details_dict['Bundle_Version'] = smart_text(app_ver, errors='replace')
     details_dict['Bundle_SymbolicName'] = smart_text(Bundle_SymbolicName, errors='replace')
     return details_dict

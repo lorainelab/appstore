@@ -33,12 +33,11 @@ def submit_app(request):
         request.META['REMOTE_ADDR'] = ip
     client_ip = request.META['REMOTE_ADDR']
     if request.method == 'POST':
-        expect_app_name = request.POST.get('expect_app_name')
         f = request.FILES.get('file')
         f = request.POST.get('url_val', None) if f is None else f
         if f:
             try:
-                jar_details = process_jar(f, expect_app_name)
+                jar_details = process_jar(f)
                 pending = _create_pending(request.user, jar_details, f, client_ip)
                 version_pattern = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
                 version_pattern = re.compile(version_pattern)
@@ -48,10 +47,7 @@ def submit_app(request):
                 return HttpResponseRedirect(reverse('confirm-submission', args=[pending.id]))
             except ValueError as e:
                 context['error_msg'] = str(e)
-    else:
-        expect_app_name = request.GET.get('expect_app_name')
-        if expect_app_name:
-            context['expect_app_name'] = expect_app_name
+
     return html_response('submit_app/upload_form.html', context, request)
 
 
@@ -89,6 +85,7 @@ def confirm_submission(request, id):
 
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
+
     pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, Bundle_Version=pending.Bundle_Version)
     is_pending_replace = True if pending_obj.count() > 1 else False
     # IGBF-2026 start
