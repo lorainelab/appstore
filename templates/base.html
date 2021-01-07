@@ -11,7 +11,7 @@
         <title>IGB App Store {% block title %}{% endblock %}</title>
 
         <!-- Bootstrap core CSS -->
-        <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="//code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 
@@ -24,37 +24,73 @@
         <script type="text/javascript" src="{% get_static_prefix %}common/js/setup_ajax_for_csrf.js"></script>
 
         <!-- Custom styles for this template -->
+        <link href="{% get_static_prefix %}common/css/base.css" rel="stylesheet">
         <link href="{% get_static_prefix %}apps/css/base.css" rel="stylesheet">
         <link href="{% get_static_prefix %}common/css/nav_header.css" rel="stylesheet">
+        <link href="{% get_static_prefix %}apps/css/menu.css" rel="stylesheet">
+
         {% block more_head %}{% endblock %}
+
     </head>
     <body>
-        {# Navigation bar #}
-        {% block navbar %}
-            {% include "navigation.html" %}
-        {% endblock %}
-        {# Content Area for Base Template | all the extended code will visible here  #}
-        <div class="container" style="margin-top: 10px; margin-bottom: 10%;">
-            <!-- Error Tab -->
-            {% block error_pop %}
-                {% include "error.html" %}
-            {% endblock %}
-            {# Content #}
-            {% block content %}{% endblock %}
-        </div> <!-- /container -->
-        <hr id="footer-hr" style="margin-top: 6em; padding-bottom: 5%; width:60%">
-        {# Footer #}
-        <footer id="sticky-footer" class="py-4">
-            <div class="container text-center">
-                <div class="row">
-                    <div class="col-12 col-md">
-                        <a class="text-dark custom-link" href="{% url 'about' %}">About</a> &bull;
-                        <a class="text-dark custom-link" href="{% url 'contact' %}">Get Help</a> &bull;
-                        <a class="text-dark custom-link" href="{% url 'wall_of_apps' %}">Wall of Apps</a>
+        <div id="TopMenu">
+            <div class="match">
+                {% include "menu.html" %}
+            </div>
+        </div>
+        <div class="container pl-0 pr-0 mt-5 pt-4">
+            <div class="row no-gutters">
+                <div class="col-md-4">
+                    <h1>
+                        <a href="/" style="color:black" onMouseOver="this.style.textDecoration='none'" onMouseOut="this.style.textDecoration='none'">Apps for IGB</a>
+                    </h1>
+                    <h6 class="title">From Loraine Lab and Community Contributors</h6>
+                </div>
+                <div class="col-md-4 d-flex align-items-center justify-content-center">
+                    <div class="reserved center">
+                        <p style="text-align:center;"> Curious about App Store? <a href="https://www.youtube.com/watch?v=t3-Fv3n4M0M">Watch a demo.</a>
+                        </p>
+                    </div>
+                </div>
+                <div class="col-md-4" style="text-align: right;">
+                    <a href="{% url 'submit-app' %}" class="btn btn-success submit-app ml-5 mt-2">
+                        Submit App
+                        <i class="fa fa-angle-double-right"></i>
+                    </a>
+                    <button class="btn login ml-3 mt-2" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fa fa-user"></i>
+                    </button>
+                    <div class="dropdown-menu">
+                        {% if user.is_authenticated %}
+                            <p class="dropdown-item"> {{ user.username|title }} </p>
+                            <hr />
+                            {% if user.is_staff %}
+                            <a class="dropdown-item" href="{% url 'pending-apps' %}">Pending Apps</a>
+                            {% endif %}
+                            <a class="dropdown-item" href="{% url 'logout' %}?next={{ request.get_full_path|escape }}"> Sign out</a>
+                        {% else %}
+                            <a class="dropdown-item" href="{% url 'login' %}?next={{ request.get_full_path|escape }}">Sign In</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>
-        </footer>
+            <div class="row no-gutters">
+                <div class="col-md-12">
+                    <hr class="orange" />
+                </div>
+            </div>
+            <div class="row no-gutters">
+                <!-- Error Tab -->
+                {% block error_pop %}
+                    {% include "error.html" %}
+                {% endblock %}
+
+                {# Content #}
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+
+
         <!-- jQuery first, then Popper.js, then Bootstrap JS -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
@@ -64,6 +100,5 @@
         <script src="{% get_static_prefix %}common/js/msgs.js"></script>
 
         {% block footer %}{% endblock %}
-
     </body>
 </html>

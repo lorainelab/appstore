@@ -1,0 +1,34 @@
+{% load static %}
+{% load title_modified %}
+<div class="box-part app_button"
+        order_index="{{ order_index }}"
+        Bundle_Name="{{ app.Bundle_Name }}"
+        downloads="{{ total_download }}"
+        created="{{ release.created_iso|date:'j M, H:i:s' }}"
+        curated_category="{{ curated_categories }}"
+        onClick="window.location='{% url 'app_page' app.Bundle_SymbolicName %}';">
+    <div class="row">
+        <div class="col-md-12 mt-2 mb-3">
+            <span class="tile-legend head_cc"></span>
+        </div>
+        <div class="col-md-12">
+            <span class="true-divide">
+                <img src="{{ release.logo_url }}" class="custom-img">
+            </span>
+            <span class="right-divide ml-3">
+                <h5 class="app-button-title mr-3">{{ app.Bundle_Name | truncatechars:40 }}</h5>
+                {% if release.authors.all|get_authors != '' %}
+                    <p class="authored mr-3"> by {{ release.authors.all|get_authors }}</p>
+                {% endif %}
+                {% if release.short_title %}
+                <div class="desc-spaced mr-3">
+                    <p class="mt-2">{{ release.short_title }}</p>
+                </div>
+                {% endif %}
+                {% if not release.short_title %}
+                    <h6 class="desc-box small-visible" style="visibility: hidden;">No Description</h6>
+                {% endif %}
+            </span>
+        </div>
+    </div>
+</div>

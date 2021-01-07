@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+{% load pagination %}
+{% load title_modified %}
+
+{% block more_head %}
+<link href="{% get_static_prefix %}apps/css/nav_panel.css" rel="stylesheet">
+<link href="{% get_static_prefix %}apps/css/app_button.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="col-md-3 pr-3 mt-4">
+        <!-- Search Functionality -->
+        <span class="title nav-size"> Name / Description / Author </span>
+        <form class="mt-2 mr-3" role="search" action="{% url 'search' %}" method="get">
+            <div class="form-group has-search">
+                <div class="input-group">
+                    <span class="fa fa-search form-control-feedback"></span>
+                    <input type="search" class="form-control" id="q" placeholder="Search" name="q" value="{{ search_query }}">
+                </div>
+            </div>
+        </form>
+
+        <!-- Curated Categories -->
+        {% for type, category in all_curated_categories.items %}
+        <form id="cat_select" class="mt-4">
+            <span class="title nav-size"> {{ type|title_modified }}:
+                <i id="{{type}}" class="tooltip_info fa fa-question-circle" data-toggle="tooltip" data-placement="top" title=""></i>
+            </span>
+            <div class="mt-2 mb-5">
+                <div class="form-check">
+                   <input class="form-check-input" type="radio" name="q" id="any" value="any_{{ type }}" checked>
+                   <label class="form-check-label" for="any">
+                   Any
+                   </label>
+                </div>
+                <!-- Sorting sub categories in the curated category, please refer IGBF-2678 for more details -->
+                {% for sub in category|dictsort:"curated_category" %}
+                <div class="form-check">
+                   <input class="form-check-input" type="radio" name="q" id="{{ sub.curated_category }}" value="{{ sub.curated_category }}">
+                   <label class="form-check-label" for="{{ sub.curated_category }}">
+                   {{ sub.curated_category }}
+                   </label>
+                </div>
+                {% endfor %}
+            </div>
+        </form>
+        {% endfor %}
+    </div>
+    <div class="col-md-9 mt-4">
+        <div class="row">
+            <div class="col-md-12 mb-3">
+                <div id="catdesc" style="display:none">
+                    {% for k,v in curated_cat_description.items %}
+                        {{ k }} -- {{ v }}
+                    {% endfor %}
+                </div>
+                <div id="category-info" class="card cm-10 d-none">
+                    <div id="category-description" class="card-body cat-desc">
+                    </div>
+                </div>
+            </div>
+        </div>
+      {% block main %}{% endblock %}
+    </div>
+
+<script type="text/javascript" src="{% get_static_prefix %}apps/js/nav_panel.js"></script>
+{% endblock %}

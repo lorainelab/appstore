@@ -1,0 +1,374 @@
+{% extends "base.html" %}
+{% load static %}
+{% load markdown %}
+{% load timestamp_converter %}
+{% load title_modified %}
+{% load i18n %}
+{% import logging
+
+# Get an instance of a logger
+logger = logging.getLogger("apps/app_page.html") %}
+
+{% block more_head %}
+<!-- Screenshot Popup Box and Fontawesome libraries -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.css" integrity="sha256-HAaDW5o2+LelybUhfuk0Zh2Vdk8Y2W2UeKmbaXhalfA=" crossorigin="anonymous" />
+
+<!-- Custom Css libraries -->
+<link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_page.css" />
+<link rel="stylesheet" type="text/css" media="all" href="{% get_static_prefix %}apps/css/app_stars.css" />
+{% endblock %}
+
+{% block title %}- {{ app.Bundle_Name }}{% endblock %}
+
+{% block content %}
+
+{% csrf_token %}
+<br />
+{# App header #}
+<div class="col-md-12">
+	{# App Name and Icon #}
+	<div class="row">
+		<div class="col-md-9">
+			<div class="row">
+				<div class="col-md-2 img-div" style="background-image: url('{{latest_released.logo_url}}');background-size: contain;"></div>
+				<div class="col-md-8">
+					{# App Name and description #}
+					<h2 class="app-name" id="app-name">
+						{{ app.Bundle_Name }}
+					</h2>
+					<span class="app-def-desc">{% if latest_released.short_title %}{{ latest_released.short_title }}{% endif %}</span>
+					<br />
+					{# Ratings #}
+					<span class="get-app-stars">{{ app.stars_percentage }}</span>
+					<x-star-rating data-authenticated="{{ is_logged_in }}"></x-star-rating>
+					{# End Ratings #}
+					{# Downloads #}
+					<span class="app-usage-info-divider"></span>
+					{{ download_count }}
+					<a href="{% url 'app_stats' app.Bundle_SymbolicName %}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Click to view the download stats.">
+						 Downloads
+					</a>
+					{# End Downloads #}
+
+					{# Helpdesk #}
+					<span> | </span>
+					<a href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search IGB Helpdesk for questions about this app.">Helpdesk</a>
+					{# End Helpdesk #}
+					{# App usage info (ratings, downloads, helpdesk, citations, discussions) #}
+					{% if latest_released.citation or  latest_released.code_repository_url %}
+					{# Citations #}
+					{% if latest_released.citation %}
+					<span> | </span>
+					<a href="https://www.ncbi.nlm.nih.gov/pubmed?linkname=pubmed_pubmed_citedin&from_uid={{ latest_released.citation }}" target="_blank" class="has-tooltip" data-toggle="tooltip" data-title="Search PubMed for articles citing this app.">{% trans "  Citations" %}</a>
+
+					{% endif %}
+					{# End Citations #}
+					<span class="app-usage-info-divider"></span>
+
+					{% if latest_released.code_repository_url %}
+					<a href="{{ latest_released.code_repository_url }}" target="_blank">
+						<img src="{% get_static_prefix %}apps/img/open-source.png" class="has-tooltip" data-toggle="tooltip" data-title="This app is open source.">
+					</a>
+					{% endif %}
+					{# end badges #}
+
+					{% endif %}
+					{# End app usage info #}
+				</div>
+			</div>
+			<div class="row mt-3">
+					<div class="col-md-12">
+					<!-- Nav tabs -->
+					<ul class="nav nav-tabs" id="myTab" role="tablist">
+						<li class="nav-item">
+							<a class="nav-link pl-2 pr-2 text-dark font-weight-bold active" id="app-details-tab" data-toggle="tab" href="#app-details" role="tab" aria-controls="app-details" aria-selected="true">Overview</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link pl-2 pr-2 text-dark font-weight-bold" id="app-releases-tab" data-toggle="tab" href="#app-releases" role="tab" aria-controls="app-releases" aria-selected="false">Release History</a>
+						</li>
+					</ul>
+					<!-- Tab panes -->
+					<div class="tab-content">
+						<div class="tab-pane active" id="app-details" role="tabpanel" aria-labelledby="app-details-tab">
+						<!-- App Version #} -->
+							<div class="row mt-4" style="font-size: large">
+								<div class="col-md-12 font-weight-bold">
+									Version:    {{ latest_released.Bundle_Version }}
+								</div>
+							</div>
+
+							{# Screenshots #}
+							{% if latest_released.screenshot_set.all %}
+							<div class="row">
+								<div class="col-md-12 mt-3" id="app-screenshots">
+									<p class="font-weight-bold mb-3">Screenshots:</p>
+									{% for screenshot in latest_released.screenshot_set.all %}
+									<a href="{{ screenshot.screenshot.url }}" data-toggle="lightbox" data-gallery="screen-gallery">
+										<img src="{{ screenshot.thumbnail.url }}" class="img-fluid"/>
+									</a>
+									{% endfor %}
+								</div>
+							</div>
+							{% endif %}
+							{# End Screenshots #}
+
+							<br />
+
+							{# Details #}
+							{% if decoded_details %}
+							<div class="row">
+								<div class="col-md-12" id="app-details-md">
+									{{ decoded_details | markdown_parser | safe }}
+								</div>
+							</div>
+							{% endif %}
+							{# End Details #}
+
+							{# Authors #}
+							{% if latest_released.authors.all %}
+							<div class="row">
+								<div class="col-md-8">
+									<span class="font-weight-bold">Authors:</span>
+									<ul>
+										{% for author in latest_released.ordered_authors %}
+										<li>
+											<a href="{% url 'author_page' author.name %}">
+												{{ author.name }} {% if author.institution %} ({{ author.institution }}){% endif %}
+											</a>
+										</li>
+										{% endfor %}
+									</ul>
+								</div>
+							</div>
+							{% endif %}
+							{# End Authors #}
+						</div>
+					<div class="tab-pane" id="app-releases" role="tabpanel" aria-labelledby="app-releases-tab">
+						{% for release in released_apps %}
+							<div class="row">
+								<div class="col-md-12">
+									<div class="row">
+										<div class="col-md-3 img-div" style="background-image: url('{{release.logo_url}}');background-size: contain; margin-top: 30px;"></div>
+										<div class="col-md-9">
+											{# Release version #}
+											<br />
+											{% if forloop.first %}
+												<h5>
+													Current Version :
+													<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+													{{ release.Bundle_Version }}
+												</h5>
+											{% else %}
+												<h5>
+													Version :
+													<!-- Removed release.version argument href="% url 'release_download' app.name %-->
+													{{ release.Bundle_Version }}
+												</h5>
+											{% endif %}
+											<p><strong>Release Date : </strong> {{ release.created_iso|date:"j M, Y" }}</p>
+											{# End Release version #}
+
+											{# Works with #}
+											<p>
+												<strong>Works with</strong> IGB
+												{{ release.platform_compatibility | strip_double_quotes}}
+											</p>
+										</div>
+									</div>
+									<hr />
+								</div>
+							</div>
+							{% endfor %} {# end looping thru each release #}
+						</div>
+					</div>
+					</div>
+			</div>
+		</div>
+		<div class="col-md-3">
+			{# Editor menu #}
+			{% if is_editor %}
+			<div class="btn-group mt-5 mb-3">
+				<button class="btn btn-lg btn-warning" onclick="document.location.href='{% url 'app_page_edit' app.Bundle_SymbolicName %}';">
+					<i class="fa fa-pencil text-white"></i>
+					&nbsp;<small class="font-weight-bold text-dark">Edit this page</small>
+				</button>
+			</div>
+			{% endif %}
+			{# End editor menu #}
+			{# Right-hand panels #}
+			{# 3.0 download panel #}
+			<div class="box-release-info mt-1" id="app_status_block">
+				<h6 align="center" class="panel-title text-muted">To install and run this App, start IGB! Then come back and refresh this page.</h6>
+				<a href="https://bioviz.org" id="change-url">
+				<button class="btn btn-block btn-info pt-3 mb-2" id="app-install-btn">
+					{# <-- download button icon will go here #}
+					<h6 class="font-weight-bold"><i class="fa fa-download"></i>&nbsp;&nbsp;&nbsp;Get latest IGB</h6> {# <-- download button text will go here #}
+				</button>
+				</a>
+				<p class="mb-2" id="app_version"></p>
+				{% if app.license_url %}
+				<strong>License</strong> <a href="{{ app.license_url }}" target="_blank">Click here</a>
+				<br />
+				{% endif %}
+				<strong> App Version </strong> {{ latest_released.Bundle_Version }}<br />
+				<strong id="igb_version">Works with IGB</strong> {{ latest_released.platform_compatibility | strip_double_quotes}}
+			</div>
+
+			{# end 3.0 download panel #}
+
+			{# latest_released resources #}
+			<div class="alert alert-warning box-resource">
+				<h5 class="font-weight-bold">RESOURCES</h5>
+				<ul class="nav nav-list inline-list">
+					<li>
+						<i class="fa fa-question-circle"></i>
+						<a class="text-dark" href="https://groups.google.com/forum/#!forum/integrated-genome-browser-help-desk" target="_blank">
+							Ask a question
+						</a>
+					</li>
+
+					<li>
+						<i class="fa fa-comments"></i>
+						<a class="text-dark" href="https://groups.google.com/forum/?fromgroups#!searchin/integrated-genome-browser-help-desk/{{ app.Bundle_Name }}" target="_blank">
+							Search helpdesk
+						</a>
+					</li>
+
+					{% if latest_released.website_url %}
+					<li>
+						<i class="fa fa-home"></i>
+						<a class="text-dark" href="{{ latest_released.website_url }}" target="_blank" style="padding-right:50px;">
+							Website
+						</a>
+					</li>
+					{% endif %}
+
+					{% if latest_released.tutorial_url %}
+					<li>
+						<i class="fa fa-book"></i>
+						<a class="text-dark" href="{{ latest_released.tutorial_url }}" target="_blank" style="padding-right:50px;">
+							Tutorial
+						</a>
+					</li>
+					{% endif %}
+
+					{% if latest_released.citation %}
+					<li>
+						<i class="fa fa-heart"></i>
+						<a class="text-dark" href="http://www.ncbi.nlm.nih.gov/pubmed/{{ latest_released.citation }}" target="_blank" style="padding-right:50px;">
+							Cite this App
+						</a>
+					</li>
+					{% endif %}
+
+					{% if latest_released.code_repository_url %}
+					<li>
+						<i class="fa fa-code-fork"></i>
+						<a class="text-dark" href="{{ latest_released.code_repository_url }}" target="_blank">
+							Code Repository
+						</a>
+					</li>
+					{% endif %}
+
+					{% if latest_released.contact_email %}
+					<li>
+						<i class="fa fa-envelope"></i>
+						<a class="text-dark" href="mailto:{{ latest_released.contact_email }}" target="_blank" style="padding-right:50px;">
+							 E-mail
+						</a>
+					</li>
+					{% endif %}
+				</ul>
+			</div>
+			{# end latest_released resources #}
+		</div>
+		</div>
+		{# End app header #}
+	</div>
+</div>
+<br />
+{# Main app page content #}
+</div>
+{# end main app page content #}
+
+{# Delete all ratings modal dialog #}
+<div class="modal fade" role="dialog" id="delete_ratings_modal">
+	<div class="modal-dialog" role="document">
+    	<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title">Delete All Ratings</h5>
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+			<div class="modal-body">
+				<p>Are you sure you want to delete all of your app's ratings?</p>
+			</div>
+			<div class="modal-footer">
+				<form target="" method="post" style="margin: 0;">
+					{% csrf_token %}
+					<input type="hidden" name="action" value="ratings_delete_all">
+					<a href="#" class="btn" data-dismiss="modal">Cancel</a>
+					<input type="submit" class="btn btn-danger" value="Yes, I'm Sure">
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
+{# End modal dialog #}
+
+{# License modal dialog #}
+{% if latest_released.license_confirm and latest_released.license_url %}
+<div class="modal hide fade in" id="license_modal">
+	<div class="modal-header">
+		<a class="close" data-dismiss="modal">&times;</a>
+		<h3>License Agreement</h3>
+	</div>
+	<div class="modal-body">
+		<iframe data-src="{{ latest_released.license_url }}" width="500" height="400"></iframe>
+	</div>
+	<div class="modal-footer">
+		<a href="#" class="btn" data-dismiss="modal">Don't Accept</a>
+		<a href="#" class="btn btn-primary">Accept</a>
+	</div>
+</div>
+{% endif %}
+{# End license modal dialog #}
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ekko-lightbox/5.3.0/ekko-lightbox.min.js" integrity="sha256-Y1rRlwTzT5K5hhCBfAFWABD4cU13QGuRN6P5apfWzVs=" crossorigin="anonymous"></script>
+<script type="text/javascript" src="{% get_static_prefix %}apps/js/app_page.js"></script>
+
+<script>
+	$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+		event.preventDefault();
+		$(this).ekkoLightbox();
+	});
+</script>
+
+<script type="text/javascript">
+	if(!AppPage.isSafari()){
+		AppPage.setup_install("{{ app.Bundle_Name | escapejs }}", "{{ app.Bundle_SymbolicName | escapejs }}",  "{{ repository_url | escapejs }}", "{{ latest_released.Bundle_Version | escapejs }}");
+
+		{% if latest_released.Bundle_Description %}
+		AppPage.setup_details();
+		{% endif %}
+	}
+	// Javascript to enable link to tab
+	var url = document.location.toString();
+	if (url.match('#')) {
+		$('.nav-tabs a[href="#' + url.split('#')[1] + '"]').tab('show');
+	}
+
+</script>
+{% endblock %}
+
+</div>
+
+{% block footer %}
+	<!-- Markdown Library -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.6.2/marked.min.js"></script>
+    <script type="text/javascript" src="{% get_static_prefix %}apps/js/star_rating.js"></script>
+{% endblock %}

@@ -10,6 +10,7 @@
 {% endblock %}
 
 {% block more_head %}
+    <link href="{% get_static_prefix %}submit_app/css/upload_form.css" rel="stylesheet">
     <script type="text/javascript" src="{% get_static_prefix %}common/js/doc_link.js"></script>
 
     <style type="text/css">
@@ -18,24 +19,18 @@
 {% endblock %}
 
 {% block content %}
-<div class="error-margin">
+<div class="row">
     <div class="col-md-12">
-        {% if expect_app_name %}
-            <h1>
-                Submit a New Release
-                <small>{{ expect_app_name }}</small>
-            </h1>
-        {% else %}
-            <h1 class="text-success">Submit your App
-                <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle"
-                 title = "">
-                    <i class="fa fa-question-circle" style="font-size: 30px"></i>
-                </button>
-            </h1>
-        {% endif %}
+        <h1 class="text-success">Submit your App
+            <button id="tooltip-1" class="btn btn-default btn-circle" data-toggle="tooltip" data-placement="right" data-html = "true" data-trigger="toggle"
+             title = "">
+                <i class="fa fa-question-circle" style="font-size: 30px"></i>
+            </button>
+        </h1>
     </div>
 {{ doc_link }}
-<br/><br/>
+    <br/><br/>
+    <br/><br/>
     <div class="col-md-12">
         <form action="{% url 'submit-app' %}" method="POST" enctype="multipart/form-data">
             {% csrf_token %}
@@ -49,12 +44,14 @@
                     &nbsp;<i id="delete_file_btn" class="fa fa-trash-o trash"></i>
                     <br />
                     <br />
-                    <label class="custom-legend or-button">or</label>
+                    <label class="custom-legend or-button font-weight-bold">or</label>
                     <br />
                     Enter Link&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" id="url_val" name = "url_val" size="50">
                     &nbsp;<i id="delete_path_btn" class="fa fa-trash-o trash"></i>
                     <br />
-                    <i class="text-muted custom-text">Best for bitbucket pipeline users. <a href="#" id="doc_link"><u>Learn more</u></a></i>
+                    <p class="ml-4">
+                        <i class="text-muted ml-5 pl-5">Best for bitbucket pipeline users. <a href="{% url 'compile-app-with-pipeline' %}"><u>Learn more</u></a></i>
+                    </p>
                 </div>
             </div>
             <br />
@@ -69,15 +66,9 @@
 </div>
 <br />
 <script type="text/javascript">
-    var message = "IGB Apps are OSGi bundles, which are ordinary Java jar files with some extra meta-data that enables them to run within IGB’s OSGi run-time. An IGB App also needs an OBR index file named repository.xml. See <a href='" + getDocLink() + "'> developer’s documentation.</a>";
+    var message = "IGB Apps are OSGi bundles, which are ordinary Java jar files with some extra meta-data that enables them to run within IGB’s OSGi run-time. An IGB App also needs an OBR index file named repository.xml. See <a href='" + "{% url 'compile-app-with-pipeline' %}" + "'> developer’s documentation.</a>";
 
     document.getElementById("tooltip-1").title= message
-
-    let learn_more_dom = document.getElementById("doc_link");
-    learn_more_dom.onclick = function() {
-        learn_more_dom.href= getDocLink();
-        learn_more_dom.setAttribute('target', '_blank')
-    };
 
     $(function() {
         $('form').submit(function() {

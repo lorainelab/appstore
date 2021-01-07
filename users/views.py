@@ -16,7 +16,7 @@ def login(request):
     next_url = request.GET.get('next', reverse('default-page'))
     if request.user.is_authenticated:
         return HttpResponseRedirect(next_url)
-    return html_response('login.html', {'navbar_selected': 'signin', 'next_url': next_url}, request)
+    return html_response('users/login.html', {'navbar_selected': 'signin', 'next_url': next_url}, request)
 
 
 logger = logging.getLogger(__name__)
@@ -35,7 +35,7 @@ def login_done(request, backend, *args, **kwargs):
             return do_complete(request, backend, *args, **kwargs)
         except Exception as e:
             logger.exception(e)
-            return html_response('login.html', {'at_login': True, 'error': str(e)}, request)
+            return html_response('users/login.html', {'at_login': True, 'error': str(e)}, request)
 
 
 def logout(request):

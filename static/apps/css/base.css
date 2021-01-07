@@ -1,133 +1,34 @@
-html {
-    font-size: 16px;
-    position: relative;
-}
-
-@media (min-width: 768px) {
-    html {
-        font-size: 16px;
-    }
-}
-
-@media (min-width: 1200px) {
-    .container {
-        width: 1000px;
-    }
-}
-
-.go-back {
-    display:block;
-}
-
-.custom-margin {
-    margin-top: 15px;
-}
-
-#tag-add-popover ::-webkit-scrollbar {
-    width: 0px;
-    background: transparent; /* make scrollbar transparent */
-}
-
-.hide {
-    display: none;
-}
-
-.center{
-    text-align: center;
-}
-
-.user-dropdown {
-    cursor: pointer;
-}
-
-.search-head {
-    font-weight: 500;
-}
-
-.transparent {
-    background-color: transparent;
-}
-
-.trash {
-    font-size: 20px;
-    color: black;
-}
-
-.custom-legend {
-    color: black;
-    font-size: 16px;
-}
-
-.custom-text {
-    margin-left: 15%;
-}
-
-.center-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 60%;
-    padding-top: 5%;
-}
-
-.big-button {
-    width: 30%;
-    height: 45px;
-    font-size:18px;
-}
-
-.block {
-    display: block;
-    min-height: 65px;
-}
-
-input[type=file]{
-    width:110px;
-    color:transparent;
-}
-
-.input-file-label {
-    width: max-content;
+.sub-header {
     font-style: italic;
-    margin-right: 10px;
 }
 
-.or-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 30%;
-    font-weight: 500;
+.orange {
+     border-top: 1px solid orange;
 }
 
-.spaced {
-    margin-left: 10px;
+.submit-app {
+    width: 50%;
+    font-size: 20px;
 }
 
-/* Footer Styling */
-.custom-link{
-    padding:5px;
+.login {
+    font-size: 30px;
 }
 
-.custom-font {
-    font-size: 15px;
+.cm-10 {
+    margin-left: -10px;
 }
 
-#sticky-footer {
-    bottom:0;
-    left:0;
-    right:0;
-    max-height: 10%;
-    position:absolute;
+.cat-desc {
+    color: grey;
+    font-weight: strong;
+
 }
 
-#sticky-footer .container {
-  position: absolute;
-  bottom: 25%;
-  left: 0;
-  right: 0;
+#bioviz-url {
+    display:none;
 }
 
-#footer-hr, #sticky-footer {
-  margin-bottom: 20%;
+#TopMenu {
+  height: auto !important;
 }

@@ -7,8 +7,10 @@ def about(request):
     c = dict()
     c['footer_selected'] = 'about'
     c['google_api_key'] = settings.GOOGLE_API_KEY
-    return html_response('about.html', c, request)
+    return html_response('help/about.html', c, request)
 
+def compile_app_with_pipeline(request):
+    return html_response('help/compile_app_with_pipeline.html', {}, request)
 
 def contact(request):
     c = { 'footer_selected': 'contact' }
@@ -24,8 +26,7 @@ def contact(request):
             c['error_no_robot'] = True
         else:
             send_mail('IGB App Store - User Submitted Contact', 'From: %s\n\n%s' % (user_email, message), user_email, settings.CONTACT_EMAILS, fail_silently=False)
-            return html_response('contact_thanks.html', c, request)
+            return html_response('help/contact_thanks.html', c, request)
         c['user_email'] = user_email
         c['message'] = message
-    return html_response('contact.html', c, request)
-
+    return html_response('help/contact.html', c, request)

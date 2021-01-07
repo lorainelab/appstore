@@ -1,0 +1,9 @@
+{% load app_buttons %}
+
+<div class="row">
+    {% for app in releases %}
+        <div class="col-lg-4 col-md-6 col-xs-12 app-tile-col pl-0 mb-3">
+        {% app_button app forloop.counter releases %}
+        </div>
+    {% endfor %}
+</div>

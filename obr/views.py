@@ -16,7 +16,7 @@ def serve_file_pending(request):
 
 
 def redirect_page(request):
-    return html_response('redirect.html', {}, request)
+    return html_response('obr/redirect.html', {}, request)
 
 
 def serve_file_released(request):

@@ -33,26 +33,22 @@ def submit_app(request):
         request.META['REMOTE_ADDR'] = ip
     client_ip = request.META['REMOTE_ADDR']
     if request.method == 'POST':
-        expect_app_name = request.POST.get('expect_app_name')
         f = request.FILES.get('file')
         f = request.POST.get('url_val', None) if f is None else f
         if f:
             try:
-                jar_details = process_jar(f, expect_app_name)
+                jar_details = process_jar(f)
                 pending = _create_pending(request.user, jar_details, f, client_ip)
                 version_pattern = r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$"
                 version_pattern = re.compile(version_pattern)
                 if not bool(version_pattern.match(jar_details['Bundle_Version'])):
-                    raise ValueError("Bundle-Version %s is incorrect. Please use semantic versioning. " 
+                    raise ValueError("Bundle-Version %s is incorrect. Please use semantic versioning. "
                                                                                         "See https://semver.org/." %jar_details['Bundle_Version'])
                 return HttpResponseRedirect(reverse('confirm-submission', args=[pending.id]))
             except ValueError as e:
                 context['error_msg'] = str(e)
-    else:
-        expect_app_name = request.GET.get('expect_app_name')
-        if expect_app_name:
-            context['expect_app_name'] = expect_app_name
-    return html_response('upload_form.html', context, request)
+
+    return html_response('submit_app/upload_form.html', context, request)
 
 
 def _user_cancelled(request, pending):
@@ -69,14 +65,14 @@ def _user_accepted(request, pending):
         release = pending.make_release(app)
         pending.delete_files()
         pending.delete()
-        return html_response('update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
+        return html_response('submit_app/update_apps.html', {'Bundle_SymbolicName': app.Bundle_SymbolicName,
                                                   'Bundle_Name': app.Bundle_Name,
                                                   'Bundle_Version': release.Bundle_Version}, request)
         #return HttpResponseRedirect(reverse('app_page_edit', args=[app.Bundle_SymbolicName]) + '?upload_release=true') # For Future Reference
     else:
         pending.submitter_approved = True
         pending.save()
-        return html_response('submit_done.html', {'app_name': pending.Bundle_Name}, request)
+        return html_response('submit_app/submit_done.html', {'app_name': pending.Bundle_Name}, request)
 
 
 def confirm_submission(request, id):
@@ -85,16 +81,17 @@ def confirm_submission(request, id):
     if pending is None:
         context['error_msg'] = str("Sorry, this App is not longer in our system because too much time has passed since "
                                    "you first uploaded it. No problem! Please try again.")
-        return html_response('upload_form.html', context, request)
-    
+        return html_response('submit_app/upload_form.html', context, request)
+
     if not pending.can_confirm(request.user):
         return HttpResponseRedirect('/')
+
     pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, Bundle_Version=pending.Bundle_Version)
     is_pending_replace = True if pending_obj.count() > 1 else False
     # IGBF-2026 start
     app_summary, is_app_submission_error = _app_summary(pending)
     if is_app_submission_error:
-        return html_response('error.html', {'pending': pending, 'app_summary': app_summary}, request)
+        return html_response('submit_app/error_msg.html', {'pending': pending, 'app_summary': app_summary}, request)
     # IGBF-2026 end
     error_message = "Please note: We read your App's repository.xml file but could not determine the IGB version it requires. Not to worry! You can enter this information manually after the App is released." \
         if pending.works_with is None else None
@@ -110,7 +107,7 @@ def confirm_submission(request, id):
             _send_email_for_pending(server_url, latest_pending_obj_)
             _send_email_for_pending_user(latest_pending_obj_)
             return _user_accepted(request, latest_pending_obj_)
-    return html_response('confirm.html',{'pending': pending, 'app_summary': app_summary, 'info_msg': error_message}, request)
+    return html_response('submit_app/confirm.html',{'pending': pending, 'app_summary': app_summary, 'info_msg': error_message}, request)
 
 
 # Get the Current Directory Path to Temporarily store the Zip File
@@ -179,8 +176,9 @@ def _create_pending(submitter, jar_details, release_file, client_ip):
     pending.release_file_name = file_name
     pending.logo = ""
     pending.save()
+    file.close()
     if isinstance(release_file, str):
-        os.remove(dir_path + file_name)
+        os.remove(os.path.join(dir_path, file_name))
     return pending
 
 
@@ -211,11 +209,13 @@ def _get_jar_file(release_file):
     :return:
     """
     file_name = basename(release_file) if isinstance(release_file, str) else basename(release_file.name)
+    file_path = os.path.join(dir_path, file_name)
     if isinstance(release_file, str):
         url_data = urlopen(release_file).read()
-        with open(dir_path + file_name, 'wb') as file:
+        with open(file_path, 'wb') as file:
             file.write(url_data)
-        file = open(dir_path + file_name, 'rb')
+        file.close()
+        file = open(file_path, 'rb')
     else:
         file = release_file
     return file, file_name
@@ -336,4 +336,4 @@ def pending_apps(request):
         if request.is_ajax():
             return json_response(True)
     pending_apps = AppPending.objects.all().filter(submitter_approved=True)
-    return html_response('pending_apps.html', {'pending_apps': pending_apps}, request)
+    return html_response('submit_app/pending_apps.html', {'pending_apps': pending_apps}, request)

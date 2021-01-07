@@ -1,16 +1,14 @@
 {% block error_pop %}
-<div class="row">
-    <div class="col-md-12 block" id="alerts">
-        {% if error_msg %}
-        <div class="alert alert-danger">
-            {% autoescape off %}{{ error_msg }}{% endautoescape %}
-        </div>
-        {% endif %}
-        {% if info_msg %}
-        <div class="alert alert-primary">
-            {% autoescape off %}{{ info_msg }}{% endautoescape %}
-        </div>
-        {% endif %}
+<div class="col-md-12" id="alerts">
+    {% if error_msg %}
+    <div class="alert alert-danger">
+        {% autoescape off %}{{ error_msg }}{% endautoescape %}
     </div>
+    {% endif %}
+    {% if info_msg %}
+    <div class="alert alert-primary">
+        {% autoescape off %}{{ info_msg }}{% endautoescape %}
+    </div>
+    {% endif %}
 </div>
 {% endblock%}

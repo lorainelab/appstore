@@ -1,37 +1,17 @@
-{% extends "search_panel.html" %}
+{% extends "apps/search_panel.html" %}
 {% load static %}
 {% load i18n %}
 {% load app_buttons %}
 {% load split %}
 {% block main %}
 
-<form class="form-group" method="get" action="." style="position:relative;">
-    {% if object_list %}
-    <div class="col-md-9">
-        <h3>Apps</h3>
-    </div>
-    {% list_of_apps_search object_list 'Temp' %}
-    <div class="col-md-9">
-        <h3>Categories</h3>
-        <hr />
-        {% for result in object_list %}
-        <span class="search-head text-muted">{{ result }}</span>
-        {% for tag in result.categories.all %}
-        <ul>
-            <li>
-                <a href="{% url 'tag_page' tag.name %}">{{ tag.name|title }}</a>
-            </li>
-        </ul>
-        {% endfor %}
-        {% empty %}
-        <p></p>
-        {% endfor %}
-    </div>
-    {% else %}
-    <h3 class="text-center"> No Search Results found </h3>
-    <p class="text-center"> Your search for
-        <strong> {{ query_string }}</strong> did not match any content.
-    </p>
-    {% endif %}
-</form>
+{% if object_list %}
+{% list_of_apps_search object_list 'Temp' %}
+{% else %}
+<h3 class="text-center"> No Search Results found </h3>
+<p class="text-center"> Your search for
+    <strong> {{ query_string }}</strong> did not match any content.
+</p>
+{% endif %}
+
 {% endblock %}

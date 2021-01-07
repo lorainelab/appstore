@@ -13,12 +13,14 @@ from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpRespo
 from django.shortcuts import get_object_or_404, render
 from django.utils.text import unescape_entities
 
-from apps.models import Category, App, Author, OrderedAuthor, Screenshot, Release
+from apps.models import App, Author, OrderedAuthor, Screenshot, Release
+from curated_categories.models import CuratedCategory, CuratedCategoriesMapping
 from download.models import ReleaseDownloadsByDate
 from util.id_util import fullname_to_name
 from util.img_util import scale_img
 from util.view_util import json_response, html_response, obj_to_dict, get_object_or_none
 from haystack.query import SearchQuerySet
+from django.shortcuts import redirect
 logger = logging.getLogger(__name__)
 
 
@@ -31,57 +33,34 @@ def _unescape_and_unquote(s):
 #      Nav Panel
 # ============================================
 
-class _NavPanelConfig:
-	min_tag_count = 0
-	num_of_top_tags = 20
-	tag_cloud_max_font_size_em = 2.0
-	tag_cloud_min_font_size_em = 1.0
-	tag_cloud_delta_font_size_em = tag_cloud_max_font_size_em - tag_cloud_min_font_size_em
-
-
-def _all_tags_of_count(min_count):
-	return filter(lambda tag: tag.count > min_count, Category.objects.all())
-
-
 _NavPanelContextCache = None
 
 
 def _nav_panel_context(request):
 	global _NavPanelContextCache
+
 	if _NavPanelContextCache:
 		return _NavPanelContextCache
-	all_tags = _all_tags_of_count(_NavPanelConfig.min_tag_count)
-	sorted_tags = sorted(all_tags, key=lambda tag: tag.count)
-	sorted_tags.reverse()
-	try:
-		tag = get_object_or_404(Category, name='collections')
-		idx = sorted_tags.index(tag)
-		sorted_tags.pop(idx)
-		sorted_tags.insert(0, tag)
-	except Http404:
-		idx = 0
-	if len(sorted_tags) > 0:
-		max_count = sorted_tags[0].count
-		min_count = sorted_tags[-1].count
-	else:
-		max_count, min_count = (0, 0)
-	count_delta = float(max_count - min_count)
-	top_tags = sorted_tags[:_NavPanelConfig.num_of_top_tags]
-	not_top_tags = sorted_tags[_NavPanelConfig.num_of_top_tags:]
 
-	for tag in all_tags:
-		try:
-			rel_count = (tag.count - min_count) / count_delta
-		except ZeroDivisionError:
-			rel_count = 1
-		font_size_em = rel_count * _NavPanelConfig.tag_cloud_delta_font_size_em + _NavPanelConfig.tag_cloud_min_font_size_em
-		tag.font_size_em = '%.2f' % font_size_em
+	all_curated_categories = {}
+	curated_cat_description = {}
+
+	curated_categories = CuratedCategory.objects.all()
+	for categories in curated_categories:
+		if categories.curated_category_type in all_curated_categories:
+			all_curated_categories[categories.curated_category_type].append(categories)
+		else:
+			all_curated_categories[categories.curated_category_type] = [categories]
+		curated_cat_description[categories.curated_category_type] = categories.type_description
+		curated_cat_description[categories.curated_category] = categories.curated_category_description
+
 	result = {
-		'all_tags': all_tags,
-		'top_tags': top_tags,
-		'not_top_tags': not_top_tags
+		'all_curated_categories': all_curated_categories,
+		'curated_cat_description': curated_cat_description
 	}
+
 	_NavPanelContextCache = result
+
 	return result
 
 
@@ -102,7 +81,7 @@ class _DefaultConfig:
 
 def apps_default(request):
 
-	apps = App.objects.all()
+	apps = App.objects.order_by('Bundle_Name')
 	releases = {}
 	downloaded_apps = dict()
 	for app in apps:
@@ -123,7 +102,7 @@ def apps_default(request):
 		'search_query': '',
 		'selected_tag_name': '',
 	}
-	return html_response('apps_default.html', c, request, processors=(_nav_panel_context,))
+	return html_response('apps/apps_default.html', c, request, processors=(_nav_panel_context,))
 
 
 def all_apps(request):
@@ -137,47 +116,31 @@ def all_apps(request):
 		'navbar_selected_link': 'all',
 		'releases': releases
 	}
-	return html_response('all_apps.html', c, request, processors=(_nav_panel_context,))
-
-
-def wall_of_apps(request):
-	nav_panel_context = _nav_panel_context(request)
-	tags = {}
-	ordered_tags, app_tag_instances = [], []
-	for tag in nav_panel_context['top_tags']:
-		ordered_tags.append(tag.fullname)
-		tags[tag.fullname] = []
-		for app_query in tag.app_set.all():
-			tags[tag.fullname].append(Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version'))
-			app_tag_instances.append(app_query.Bundle_SymbolicName)
-				
-	tags['other'] = []
-	ordered_tags.append('other')
-	for not_top_tag in nav_panel_context['not_top_tags']:
-		for app_query in not_top_tag.app_set.all():
-			tags['other'].append(Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version'))
-			app_tag_instances.append(app_query.Bundle_SymbolicName)
-	c = {
-		'total_apps_count': len(set(app_tag_instances)),
-		'tags': tags,
-		'ordered_tags': ordered_tags,
-	}
-	return html_response('wall_of_apps.html', c, request)
+	return html_response('apps/all_apps.html', c, request, processors=(_nav_panel_context,))
 
 
 def apps_with_tag(request, tag_name):
-	tag = get_object_or_404(Category, name=tag_name)
-	apps = App.objects.filter(categories=tag).order_by('Bundle_Name')
+	apps = []
 	releases = dict()
-	for app_query in apps:
-		releases[app_query] = Release.objects.filter(active=True, app=app_query).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
+	curated_cat = None
+
+	try:
+		curated_cat = CuratedCategory.objects.get(curated_category=tag_name)
+		apps = CuratedCategoriesMapping.objects.filter(curated_categories=curated_cat)
+		for app_query in apps:
+			releases[app_query.app] = Release.objects.filter(active=True, app=app_query.app).extra(
+				select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by(
+				'-natural_version')[:1][0]
+	except CuratedCategoriesMapping.DoesNotExist:
+		pass
+
 	c = {
-		'tag': tag,
+		'curated_cat': curated_cat,
 		'apps': apps,
 		'releases': releases,
 		'selected_tag_name': tag_name
 	}
-	return html_response('apps_with_tag.html', c, request, processors=(_nav_panel_context,))
+	return html_response('apps/apps_with_tag.html', c, request, processors=(_nav_panel_context,))
 
 
 def apps_with_author(request, author_name):
@@ -198,7 +161,7 @@ def apps_with_author(request, author_name):
 		'apps': apps,
 		'releases': releases
 	}
-	return html_response('apps_with_author.html', c, request, processors=(_nav_panel_context,))
+	return html_response('apps/apps_with_author.html', c, request, processors=(_nav_panel_context,))
 
 
 
@@ -207,6 +170,7 @@ def apps_with_author(request, author_name):
 # ============================================
 
 # -- App Rating
+
 
 def _app_rate(app, user, post, latest_release):
 	rating_n = post.get('rating')
@@ -254,7 +218,7 @@ def _installed_count(app, user, post, release):
 # -- General app stuff
 
 
-def _mk_app_page(app, released_apps, user, request, decoded_details, download_count):
+def _mk_app_page(app, released_apps, user, request, decoded_details, download_count, curated_category_mapping):
 	c = {
 		'app': app,
 		'released_apps': released_apps,
@@ -265,8 +229,9 @@ def _mk_app_page(app, released_apps, user, request, decoded_details, download_co
 		'is_editor': app.is_editor(user),
 		'search_query': '',
 		'repository_url': get_host_url(request) + '/obr/releases',
+		'curated_category_mapping': curated_category_mapping
 	}
-	return html_response('app_page.html', c, request)
+	return html_response('apps/app_page.html', c, request)
 
 
 _AppActions = {
@@ -304,6 +269,7 @@ def install_app(request, path):
 
 def app_page(request, app_name):
 	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
+	curated_category_mapping = get_object_or_none(CuratedCategoriesMapping, app=app)
 	released_apps = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
 	latest_release = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
 	decoded_details = latest_release.Bundle_Description
@@ -330,7 +296,7 @@ def app_page(request, app_name):
 				return result
 			if request.is_ajax():
 				return json_response(result)
-	return _mk_app_page(app, released_apps, user, request, decoded_details, download_count)
+	return _mk_app_page(app, released_apps, user, request, decoded_details, download_count, curated_category_mapping)
 
 # ============================================
 #      App Page Editing
@@ -380,9 +346,8 @@ def _mk_basic_field_saver(field, func=None):
 
 	return saver
 
-
-def _save_tags(app, request, release):
-	tag_count = request.POST.get('tag_count')
+def _save_curated_categories(app, request, release):
+	tag_count = request.POST.get('count')
 	if not tag_count:
 		raise ValueError('no tag_count specified')
 	try:
@@ -392,15 +357,16 @@ def _save_tags(app, request, release):
 
 	tags = []
 	for i in range(tag_count):
-		tag_key = 'tag_' + str(i)
+		tag_key = 'cat_' + str(i)
 		tag = request.POST.get(tag_key)
 		if not tag:
 			raise ValueError('expected ' + tag_key)
 		tags.append(tag)
-	app.categories.clear()
+	app_mapping, _ = CuratedCategoriesMapping.objects.get_or_create(app=app)
+	app_mapping.curated_categories.clear()
 	for tag in tags:
-		tag_obj, _ = Category.objects.get_or_create(fullname=tag, name=fullname_to_name(tag))
-		app.categories.add(tag_obj)
+		tag_obj = CuratedCategory.objects.get(curated_category=tag)
+		app_mapping.curated_categories.add(tag_obj)
 
 	_flush_tag_caches()
 
@@ -569,7 +535,7 @@ _AppEditActions = {
 	'save_code_repository_url': _mk_basic_field_saver('code_repository_url'),
 	'save_contact_email': _mk_basic_field_saver('contact_email'),
 	'save_bundle_description': _mk_basic_field_saver('Bundle_Description'),
-	'save_tags': _save_tags,
+	'save_curated_categories': _save_curated_categories,
 	'upload_logo': _upload_logo,
 	'upload_screenshot': _upload_screenshot,
 	'delete_screenshot': _delete_screenshot,
@@ -620,18 +586,33 @@ def app_page_edit(request, app_name):
 		if request.is_ajax():
 			return json_response(result)
 
-	all_tags = [tag.fullname for tag in Category.objects.all()]
+
+	# -- IGBF-2520 -- START --
+	curated_cat = {}
+	for category_obj in CuratedCategory.objects.all():
+		if category_obj.curated_category_type in curated_cat.keys():
+			curated_cat[category_obj.curated_category_type].append(category_obj.curated_category)
+		else:
+			curated_cat[category_obj.curated_category_type] = [category_obj.curated_category]
+	# -- IGBF-2520 -- END --
+	mapped_cc = []
+	for mapping in CuratedCategoriesMapping.objects.filter(app=app):
+		for cc in mapping.curated_categories.all():
+			mapped_cc.append(cc)
+
+	# print(mapped_cc)
 	c = {
 		'app': app,
-		'latest_released':latest_released,
-		'released_apps':released_apps,
-		'all_tags': all_tags,
+		'latest_released': latest_released,
+		'released_apps': released_apps,
+		'mapped_cc': mapped_cc,
+		'curated_cat': curated_cat,
 		'max_file_img_size_b': _AppPageEditConfig.max_img_size_b,
 		'max_icon_dim_px': _AppPageEditConfig.max_icon_dim_px,
 		'thumbnail_height_px': _AppPageEditConfig.thumbnail_height_px,
 		'app_description_maxlength': _AppPageEditConfig.app_description_maxlength,
 	}
-	return html_response('app_page_edit.html', c, request)
+	return html_response('apps/app_page_edit.html', c, request)
 
 
 def custom_search_query(request):
@@ -642,12 +623,13 @@ def custom_search_query(request):
 	:return:
 	"""
 	query_string = request.GET.get('q', None).strip("\"")
+	if len(query_string)==0:
+		return redirect('/') 
 	sqs = SearchQuerySet().auto_query(query_string).load_all()
 	setsqs = set()
 	for release in sqs:
 		setsqs.add(release.object.app)
 	if len(setsqs) <= 0:
-		return render(request, 'search/search.html', {'object_list': setsqs, 'query_string': query_string})
+		return html_response('search/search.html', {'object_list': setsqs, 'query_string': query_string}, request, processors=(_nav_panel_context,))
 	else:
-		return render(request, 'search/search.html', {'object_list': setsqs})
-
+		return html_response('search/search.html', {'object_list': setsqs}, request, processors=(_nav_panel_context,))
