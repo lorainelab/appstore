@@ -29,7 +29,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 <div class="col-md-12">
 	{# App Name and Icon #}
 	<div class="row">
-		<div class="col-md-9">
+		<div class="col-md">
 			<div class="row">
 				<div class="col-md-2 img-div" style="background-image: url('{{latest_released.logo_url}}');background-size: contain;"></div>
 				<div class="col-md-8">
@@ -185,7 +185,7 @@ logger = logging.getLogger("apps/app_page.html") %}
 					</div>
 			</div>
 		</div>
-		<div class="col-md-3">
+		<div class="col-md col-right-fix-size">
 			{# Editor menu #}
 			{% if is_editor %}
 			<div class="btn-group mt-5 mb-3">
