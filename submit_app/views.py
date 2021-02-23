@@ -120,8 +120,7 @@ def _app_summary(pending):
     is_app_submission_error = False
     app_summary = ALL_NEW_APP_MSG
     is_app_status_set = False
-
-    pending_obj = get_object_or_none(AppPending, Bundle_SymbolicName=pending.Bundle_SymbolicName, Bundle_Version=pending.Bundle_Version, submitter_approved=True)
+    pending_objs = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, submitter_approved=True)
     app = get_object_or_none(App, Bundle_SymbolicName=pending.Bundle_SymbolicName)
     if app is not None:
         released_objs = Release.objects.filter(active=True, app=app)
@@ -132,18 +131,17 @@ def _app_summary(pending):
                 app_summary = ALREADY_RELEASED_APP_MSG
                 break
         if (not is_app_status_set):
+            is_app_status_set = True
             app_summary = NEW_VERSION_APP_MSG
-    if (pending_obj):
-        #if pending_obj.Bundle_Version == pending.Bundle_Version:
-        app_summary = APP_REPLACEMENT_JAR_MSG
-        is_app_status_set = True
-        #if(not is_app_status_set):
-        #    app_summary = NOT_YET_RELEASED_APP_MSG
-    else:
-        #pending_obj = get_object_or_none(Bundle_SymbolicName=pending.Bundle_SymbolicName, submitter_approved=True)
-        pending_obj = AppPending.objects.filter(Bundle_SymbolicName=pending.Bundle_SymbolicName, submitter_approved=True).first()
-        if(is_app_status_set is False and pending_obj):
+    elif (pending_objs):
+        for pending_obj in pending_objs:
+            if pending_obj.Bundle_Version == pending.Bundle_Version:
+                app_summary = APP_REPLACEMENT_JAR_MSG
+                is_app_status_set = True
+                break
+        if(not is_app_status_set):
             app_summary = NOT_YET_RELEASED_APP_MSG
+
     return app_summary, is_app_submission_error
 # IGBF-2026 end
 
