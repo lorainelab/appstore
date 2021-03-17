@@ -4,14 +4,18 @@
 
 /* Apps Tile CSS */
 .box-part{
-    height: 100%;
-    min-height: 13.5rem;
+    display: inline-block;
+    height: 90%;
     border-radius: 4px;
-    padding:6px 14px;
     cursor: pointer;
-    overflow: hidden;
     border: 0.5px solid #d6d6d6;
-    border: 0.5px solid #d6d6d6;
+    padding: 1rem 1.5rem;
+    transition: .2s;
+    background: #ffffff;
+}
+
+.card-inside{
+  overflow: hidden;
 }
 
 .box-part:hover {
@@ -30,12 +34,12 @@
     margin:20px 0px;
 }
 
-.custom-img {
-    width: 80px;
-    height: 80px;
+.app-logo {
+    width: 45px;
+    height: 45px;
     background-repeat: no-repeat;
     background-size: contain;
-    margin: 0px 2px 2px 0px;
+    margin-right: 0.5rem;
 }
 
 .true-divide {
@@ -47,34 +51,42 @@
     float: right;
     position:absolute;
     max-height: 155px;
-    overflow: hidden;
-}
-
-.desc-spaced p {
-    font-size: 0.95rem;
-    padding-bottom: 5px;
-    display: block;
-    line-height: 1.2em;
-	overflow: hidden;
-}
-
-.app-button-title {
-    font-size: 1.1rem;
-    font-weight: bold;
-    width: 100%;
-}
-
-.tile-legend {
-    font-size: 12px;
-    color: grey;
-    font-weight: bold;
-}
-
-.authored {
-    color: grey;
-    font-size: 0.8rem;
 }
 
 .desc-spaced {
-    line-height: 1.35em;
+    font-size: 0.95rem;
+    line-height: normal;
+    color: #737373;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
+.app-button-title {
+    font-size: 1.0rem;
+}
+
+.tile-legend{
+    font-size: 65%;
+    color: grey;
+    font-weight: bold;
+    line-height: normal;
+    margin-bottom: 0;
+}
+
+.authored {
+    font-size: 0.68rem;
+    line-height: normal;
+}
+
+.card-header{
+    display: flex;
+    align-items: center;
+    height: 55px;
+    overflow: hidden;
+    padding: 0;
+    background: none;
+    border: none;
+  }
