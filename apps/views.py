@@ -104,21 +104,6 @@ def apps_default(request):
 	}
 	return html_response('apps/apps_default.html', c, request, processors=(_nav_panel_context,))
 
-
-def all_apps(request):
-	apps = App.objects.order_by('Bundle_Name')
-	releases = {}
-	for app in apps:
-		released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
-		releases[app] = released_app
-	c = {
-		'apps': apps,
-		'navbar_selected_link': 'all',
-		'releases': releases
-	}
-	return html_response('apps/all_apps.html', c, request, processors=(_nav_panel_context,))
-
-
 def apps_with_tag(request, tag_name):
 	apps = []
 	releases = dict()
@@ -624,7 +609,7 @@ def custom_search_query(request):
 	"""
 	query_string = request.GET.get('q', None).strip("\"")
 	if len(query_string)==0:
-		return redirect('/') 
+		return redirect('/')
 	sqs = SearchQuerySet().auto_query(query_string).load_all()
 	setsqs = set()
 	for release in sqs:
