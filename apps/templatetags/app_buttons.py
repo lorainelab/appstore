@@ -64,40 +64,13 @@ def app_buttons(apps, releases):
 
 
 @register.inclusion_tag('apps/list_of_apps_search.html')
-def list_of_apps_search(apps, releases, include_relevancy = False):
-    # a list of sort buttons to display
+def list_of_apps_search(apps, releases):
     if releases == "Temp":
         releases = {}
         for app in apps:
             released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
             releases[app] = released_app
 
-                    # button name       div attr name          attr type
-    sort_criteria = (('name',           'object.Bundle_Name',            'str'),
-                    ('downloads',      'object.downloads',           'int'))
-
-    if include_relevancy:
-        sort_criteria = (('relevancy',  'order_index',  'int'), ) + sort_criteria
-
     return {'apps_with_releases': apps,
             'releases': releases,
-            'sort_criteria': sort_criteria,
-            }
-
-
-@register.inclusion_tag('apps/list_of_apps.html')
-def list_of_apps(apps, releases, include_relevancy = False):
-
-    # a list of sort buttons to display
-                    # button name       div attr name          attr type
-    sort_criteria = (('name',           'Bundle_Name',            'str'),
-                     ('downloads',      'downloads',           'int'),
-                     ('newest release', 'created', 'date'))
-
-    if include_relevancy:
-        sort_criteria = (('relevancy',  'order_index',  'int'), ) + sort_criteria
-
-    return {'apps_with_releases': apps,
-            'releases': releases,
-            'sort_criteria': sort_criteria,
             }
