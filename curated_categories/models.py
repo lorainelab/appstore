@@ -29,7 +29,7 @@ class CuratedCategory(models.Model):
 class CuratedCategoriesMapping(models.Model):
 
     curated_categories = models.ManyToManyField(CuratedCategory, blank=True)
-    app = models.ForeignKey(App, blank=False, on_delete=True)
+    app = models.ForeignKey(App, blank=False, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["app"]
