@@ -1,5 +1,4 @@
 from django.db import models
-from apps.models import App
 
 
 class CuratedCategory(models.Model):
@@ -29,7 +28,7 @@ class CuratedCategory(models.Model):
 class CuratedCategoriesMapping(models.Model):
 
     curated_categories = models.ManyToManyField(CuratedCategory, blank=True)
-    app = models.ForeignKey(App, blank=False, on_delete=models.CASCADE)
+    app = models.ForeignKey("apps.app", blank=False, on_delete=models.CASCADE)
 
     class Meta:
         ordering = ["app"]
