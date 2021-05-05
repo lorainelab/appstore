@@ -48,10 +48,33 @@
                 </div>
                 <div class="col-md-4 col-sm-2 col-2 d-flex align-items-center justify-content-center">
                     <div class="reserved center">
-                        <p style="text-align:center;"> Curious about App Store? <a href="https://youtu.be/0h1XDQDc7a0">Watch a demo.</a>
+                        <p style="text-align:center;"> Curious about App Store? <button type="button" class="btn btn-primary video-btn" data-toggle="modal" data-src="https://youtube.com/embed/0h1XDQDc7a0" data-target="#myModal">
+                              Watch a Demo
+                          </button>
                         </p>
                     </div>
                 </div>
+
+
+
+
+                <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                      <div class="modal-body">
+                       <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                        </button>
+                        <!-- 16:9 aspect ratio -->
+                        <div class="embed-responsive embed-responsive-16by9">
+                            <iframe class="embed-responsive-item" src="" id="video"  allowscriptaccess="always" allow="autoplay"></iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+
                 <div class="col-md-4 col-sm-5 col-5" style="text-align: right;">
                     <a href="{% url 'submit-app' %}" class="btn btn-success submit-app ml-5 mt-2">
                         Submit App
