@@ -28,3 +28,7 @@ body {
   color:#fff;
   opacity:1;
 }
+.video-btn.btn-link{
+  text-decoration: none;
+  padding-left: 0px;
+}
