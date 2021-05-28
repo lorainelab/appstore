@@ -3,7 +3,7 @@ $(function () {
 })
 
 $(document).ready(function(){
-    $('[data-toggle="popover"]').popover();
+
 });
 
 var bioviz_url = $('#bioviz-url').text();
@@ -20,4 +20,26 @@ $('#TopMenu').find('a').each(function() {
         $(this).attr('href', '/');
     }
 
+});
+
+$(document).ready(function() {
+
+  $('[data-toggle="popover"]').popover();
+
+
+  // Gets the video src from the data-src
+  var $videoSrc;
+  $('.video-btn').click(function() {
+      $videoSrc = $(this).data( "src" );
+  });
+
+  // when the modal is opened autoplay it
+  $('#myModal').on('shown.bs.modal', function (e) {
+    $("#video").attr('src',$videoSrc + "?autoplay=1&amp;modestbranding=1&amp;showinfo=0" );
+  })
+
+  // stop playing the youtube video when I close the modal
+  $('#myModal').on('hide.bs.modal', function (e) {
+      $("#video").attr('src',$videoSrc);
+  })
 });
