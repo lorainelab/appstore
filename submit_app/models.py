@@ -9,8 +9,6 @@ from django.dispatch import receiver
 
 from apps.models import App, Release
 from util.view_util import get_object_or_none
-
-
 def pending_file_path(release, filename):
     # Upload_to method returns the object and the filename
     return pathjoin('pending_releases', release.Bundle_SymbolicName + '-' +
@@ -52,16 +50,16 @@ class AppPending(models.Model):
 
     def make_release(self, app):
         # copy fields from previous released app into new release of same app
-        previous_release = copy.copy(Release.objects.filter(app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1])
-        release, _ = Release.objects.get_or_create(app=app, Bundle_Version=self.Bundle_Version)
-        release.platform_compatibility = self.works_with
-        release.created = datetime.datetime.today()
-        release.Bundle_Description = self.Bundle_Description
-        release.repository_xml = self.repository_xml
-        release.uploader_ip = self.uploader_ip
+        release, _ = Release.objects.get_or_create(app=app, Bundle_Version=self.Bundle_Version,
+                   platform_compatibility=self.works_with,
+                   created=datetime.datetime.today(),
+                   Bundle_Description=self.Bundle_Description,
+                   repository_xml=self.repository_xml,
+                   uploader_ip=self.uploader_ip)
         release.save()
         release.release_file.save(basename(self.release_file.name), self.release_file)
         release.calc_checksum()
+        previous_release = Release.objects.filter(app=app).exclude(id=release.id).order_by('-created').first()
         if previous_release:
             release.short_title = previous_release[0].short_title
             release.license_url = previous_release[0].license_url

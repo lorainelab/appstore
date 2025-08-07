@@ -11,7 +11,7 @@ from django.contrib.auth.models import User
 from django.db.models import F
 from django.http import HttpResponse, Http404, HttpResponseBadRequest, HttpResponseForbidden, HttpResponseRedirect
 from django.shortcuts import get_object_or_404, render
-from django.utils.text import unescape_entities
+import html
 
 from apps.models import App, Author, OrderedAuthor, Screenshot, Release
 from curated_categories.models import CuratedCategory, CuratedCategoriesMapping
@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 def _unescape_and_unquote(s):
 	if not s: return s
-	return unescape_entities(unquote(s))
+	return html.unescape(unquote(s))
 
 
 # ============================================
@@ -85,14 +85,15 @@ def apps_default(request):
 	releases = {}
 	downloaded_apps = dict()
 	for app in apps:
-		released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') AS UNSIGNED)"}).order_by('-natural_version')[:1][0]
-		releases[app] = released_app
+		released_app = Release.objects.filter(active=True, app=app).order_by('-created').first()
+		if released_app:
+			releases[app] = released_app
 		releases_obj = Release.objects.filter(app=app)
 		total_download = 0
 		for release in releases_obj:
 			downloads = ReleaseDownloadsByDate.objects.filter(release=release)
-		for download in downloads:
-			total_download += download.count
+			for download in downloads:
+				total_download += download.count
 		downloaded_apps[app] = total_download
 	sorted_dict = collections.OrderedDict(sorted(downloaded_apps.items(), key=lambda kv: kv[1], reverse=True))
 	c = {
@@ -113,9 +114,9 @@ def apps_with_tag(request, tag_name):
 		curated_cat = CuratedCategory.objects.get(curated_category=tag_name)
 		apps = CuratedCategoriesMapping.objects.filter(curated_categories=curated_cat)
 		for app_query in apps:
-			releases[app_query.app] = Release.objects.filter(active=True, app=app_query.app).extra(
-				select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by(
-				'-natural_version')[:1][0]
+			released_app = Release.objects.filter(active=True, app=app_query.app).order_by('-created').first()
+			if released_app:
+				releases[app_query.app] = released_app
 	except CuratedCategoriesMapping.DoesNotExist:
 		pass
 
@@ -129,7 +130,7 @@ def apps_with_tag(request, tag_name):
 
 
 def apps_with_author(request, author_name):
-	releases_obj = Release.objects.filter(active=True, authors__name__exact=author_name).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
+	releases_obj = Release.objects.filter(active=True, authors__name__exact=author_name).order_by('-created')
 	releases = {}
 	apps = []
 
@@ -159,7 +160,7 @@ def apps_with_author(request, author_name):
 
 def _app_rate(app, user, post, latest_release):
 	rating_n = post.get('rating')
-	releases=Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
+	releases=Release.objects.filter(active=True, app=app).order_by('-created')
 	try:
 		rating_n = int(rating_n)
 		if not (0 <= rating_n <= 5):
@@ -181,7 +182,7 @@ def _app_ratings_delete_all(app, user, post):
 		return HttpResponseForbidden()
 	app.stars = 0
 	app.save()
-	releases = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
+	releases = Release.objects.filter(active=True, app=app).order_by('-created')
 	for release in releases:
 		release.stars =0
 		release.save()
@@ -255,8 +256,8 @@ def install_app(request, path):
 def app_page(request, app_name):
 	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
 	curated_category_mapping = get_object_or_none(CuratedCategoriesMapping, app=app)
-	released_apps = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
-	latest_release = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
+	released_apps = Release.objects.filter(active=True, app=app).order_by('-created')
+	latest_release = Release.objects.filter(active=True, app=app).order_by('-created').first()
 	decoded_details = latest_release.Bundle_Description
 	download_count = 0
 	for release in released_apps:
@@ -279,7 +280,7 @@ def app_page(request, app_name):
 				return HttpResponseBadRequest(str(e))
 			if isinstance(result, HttpResponse):
 				return result
-			if request.is_ajax():
+			if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
 				return json_response(result)
 	return _mk_app_page(app, released_apps, user, request, decoded_details, download_count, curated_category_mapping)
 
@@ -547,8 +548,8 @@ def app_page_edit(request, app_name):
 	app_name: Bundle Symbolic Name
 	"""
 	app = get_object_or_404(App, Bundle_SymbolicName=app_name)
-	released_apps = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')
-	latest_released = released_apps[:1][0]
+	released_apps = Release.objects.filter(active=True, app=app).order_by('-created')
+	latest_released = released_apps.first()
 	if not app.is_editor(request.user):
 		return HttpResponseForbidden()
 	if request.method == 'POST':
@@ -568,7 +569,7 @@ def app_page_edit(request, app_name):
 			return HttpResponseRedirect('all/')
 		app.save()
 		latest_released.save()
-		if request.is_ajax():
+		if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
 			return json_response(result)
 
 

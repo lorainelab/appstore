@@ -8,7 +8,7 @@ class ReleaseIndex(indexes.SearchIndex, indexes.Indexable):
 
     Bundle_Description = indexes.CharField(model_attr='Bundle_Description', null=True)
 
-    authors = indexes.MultiValueField(model_attr='authors', null=True)
+    authors = indexes.MultiValueField(null=True)
 
     app = indexes.CharField(model_attr='app')
 

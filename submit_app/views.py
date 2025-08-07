@@ -336,7 +336,7 @@ def pending_apps(request):
         except AppPending.DoesNotExist as ValueError:
             return HttpResponseBadRequest('invalid pending_id')
         _PendingAppsActions[action](pending_app, request)
-        if request.is_ajax():
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return json_response(True)
     pending_apps = AppPending.objects.all().filter(submitter_approved=True)
     return html_response('submit_app/pending_apps.html', {'pending_apps': pending_apps}, request)

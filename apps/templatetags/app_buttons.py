@@ -68,7 +68,7 @@ def list_of_apps_search(apps, releases):
     if releases == "Temp":
         releases = {}
         for app in apps:
-            released_app = Release.objects.filter(active=True, app=app).extra(select={'natural_version': "CAST(REPLACE(Bundle_Version, '.', '') as UNSIGNED)"}).order_by('-natural_version')[:1][0]
+            released_app = Release.objects.filter(active=True, app=app).annotate(natural_version=Cast(Replace(F("Bundle_Version"), Value("."), Value("")),output_field=IntegerField())).order_by('-natural_version').first()
             releases[app] = released_app
 
     return {'apps_with_releases': apps,
