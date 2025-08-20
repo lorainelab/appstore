@@ -1,4 +1,6 @@
 from django import template
+from django.db.models.functions import Cast, Replace
+from django.db.models import F, Value, IntegerField
 from apps.models import App, Release
 from curated_categories.models import CuratedCategoriesMapping, CuratedCategory
 from download.models import ReleaseDownloadsByDate
