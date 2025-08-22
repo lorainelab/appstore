@@ -3,7 +3,7 @@ import logging
 from zipfile import ZipFile, BadZipfile
 
 import requests
-from django.utils.encoding import smart_text
+from django.utils.encoding import smart_str
 from requests.exceptions import ConnectionError
 
 from apps.models import VersionRE
@@ -63,9 +63,9 @@ def process_jar(jar_file):
     app_name, app_ver, app_dependencies, has_export_pkg = parser_func(manifest)
     details_dict['has_export_pkg'] = has_export_pkg
 
-    details_dict['Bundle_Name'] = smart_text(app_name, errors='replace')
-    details_dict['Bundle_Version'] = smart_text(app_ver, errors='replace')
-    details_dict['Bundle_SymbolicName'] = smart_text(Bundle_SymbolicName, errors='replace')
+    details_dict['Bundle_Name'] = smart_str(app_name, errors='replace')
+    details_dict['Bundle_Version'] = smart_str(app_ver, errors='replace')
+    details_dict['Bundle_SymbolicName'] = smart_str(Bundle_SymbolicName, errors='replace')
     return details_dict
 
 
