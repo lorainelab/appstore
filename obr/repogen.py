@@ -8,7 +8,6 @@ from xml.etree import ElementTree as ET
 from apps.models import Release
 from submit_app.models import AppPending
 
-
 def get_bundle_symbolic_name(input):
     """
     :param input: Complete Name of the application
@@ -44,10 +43,7 @@ def xml_generator(dict_ver, gen_tree, tree, state):
         curr_desc = ET.SubElement(current_resource, 'description')
         curr_desc.text = base64.b64encode(bytes(dict_ver.Bundle_Description, 'utf-8')).decode('utf-8')
 
-    if state == 'pending':
-        current_resource.set('uri', '/installapp/pending_releases/' + dict_ver.release_file.name)
-    else:
-        current_resource.set('uri', '/installapp/' + str(dict_ver.release_file.name))
+    current_resource.set('uri', '/installapp/' + str(dict_ver.release_file.name))
 
     super_tree.append(current_resource)
     return super_tree

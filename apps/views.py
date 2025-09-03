@@ -14,6 +14,7 @@ from django.shortcuts import get_object_or_404, render
 import html
 
 from apps.models import App, Author, OrderedAuthor, Screenshot, Release
+from submit_app.models import AppPending
 from curated_categories.models import CuratedCategory, CuratedCategoriesMapping
 from download.models import ReleaseDownloadsByDate
 from util.id_util import fullname_to_name
@@ -242,15 +243,16 @@ def string_to_array(version, delem):
 
 
 def install_app(request, path):
-	result = path.split('/')
-	app = App.objects.get(Bundle_SymbolicName=result[0])
-	release = Release.objects.get(app=app, Bundle_Version=result[2])
-	ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
-	ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count=F('count') + 1)
-	if settings.USE_S3:
-		return HttpResponseRedirect('https://' + settings.AWS_S3_CUSTOM_DOMAIN + '/' + settings.AWS_LOCATION + '/' + path)
-	else:
-		return HttpResponseRedirect('/media/' + path)
+    result = path.split('/')
+    if result[0] != 'pending_releases':
+        app = App.objects.get(Bundle_SymbolicName=result[0])
+        release = Release.objects.get(app=app, Bundle_Version=result[2])
+        ReleaseDownloadsByDate.objects.get_or_create(release=release, when=datetime.date.today())
+        ReleaseDownloadsByDate.objects.filter(release=release, when=datetime.date.today()).update(count=F('count') + 1)
+    if settings.USE_S3:
+        return HttpResponseRedirect('https://' + settings.AWS_S3_CUSTOM_DOMAIN + '/' + settings.AWS_LOCATION + '/' + path)
+    else:
+        return HttpResponseRedirect('/media/' + path)
 
 
 def app_page(request, app_name):
